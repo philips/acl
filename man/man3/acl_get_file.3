@@ -53,9 +53,13 @@ is ACL_TYPE_DEFAULT, the default ACL of
 .Va path_p
 is returned. If
 .Va type
-is TYPE_DEFAULT and no default ACL is associated with
+is ACL_TYPE_DEFAULT and no default ACL is associated with the directory
 .Va path_p ,
-then an ACL containing zero ACL entries is returned.
+then an ACL containing zero ACL entries is returned. If
+.Va type
+specifies a type of ACL that cannot be associated with
+.Va path_p ,
+then the function fails.
 .Pp
 This function may cause memory to be allocated.  The caller should free any
 releasable memory, when the new ACL is no longer required, by calling
@@ -84,6 +88,11 @@ to the corresponding value:
 .It Bq Er EACCES
 Search permission is denied for a component of the path prefix or the
 object exists and the process does not have appropriate access rights.
+.Pp
+Argument
+.Va type
+specifies a type of ACL that cannot be associated with
+.Va path_p .
 .It Bq Er EINVAL
 The argument
 .Va type

@@ -1,3 +1,10 @@
+2.0.13 (25 June 2002)
+* Make acl_get_file() fail for regular files and type ACL_TYPE_DEFAULT,
+  as required by 1003.1e draft 17. Update manual page accordingly.
+* Make acl_set_file() fail for regular files and type ACL_TYPE_DEFAULT,
+  as required by 1003.1e draft 17. Update manual page accordingly.
+* Updated libacl version number from libacl.so.1.0.1 to libacl.so.1.0.2.
+
 2.0.12 (25 June 2002)
 * Increment the libacl version so that its possible for other packages
   like Samba to easily tell which library version has the libacl build

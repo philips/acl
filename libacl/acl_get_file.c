@@ -69,15 +69,20 @@ acl_get_file(const char *path_p, acl_type_t type)
 		acl_t acl = __acl_from_xattr(ext_acl_p, retval);
 		return acl;
 	} else if (retval == 0 || errno == ENOATTR) {
-		if (type == ACL_TYPE_ACCESS) {
-			struct stat st;
+		struct stat st;
 
-			if (stat(path_p, &st) == 0)
-				return acl_from_mode(st.st_mode);
-			else
+		if (stat(path_p, &st) != 0)
+			return NULL;
+
+		if (type == ACL_TYPE_DEFAULT) {
+			if (S_ISDIR(st.st_mode))
+				return acl_init(0);
+			else {
+				errno = EACCES;
 				return NULL;
+			}
 		} else
-			return acl_init(0);
+			return acl_from_mode(st.st_mode);
 	} else
 		return NULL;
 }

@@ -56,7 +56,7 @@ shall be set. If the argument
 .Va type
 specifies a type of ACL that cannot be associated with
 .Va path_p ,
-then the function will fail.
+then the function fails.
 .Pp
 The
 .Va acl
@@ -88,6 +88,11 @@ to the corresponding value:
 .It Bq Er EACCES
 Search permission is denied for a component of the path prefix or the
 object exists and the process does not have appropriate access rights.
+.Pp
+Argument
+.Va type
+specifies a type of ACL that cannot be associated with
+.Va path_p .
 .It Bq Er EINVAL
 The argument
 .Va acl

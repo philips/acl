@@ -37,7 +37,7 @@ include $(TOPDIR)/include/builddefs
 LTLIBRARY = libacl.la
 LTLIBS = -lattr
 LT_CURRENT = 1
-LT_REVISION = 1
+LT_REVISION = 2
 LT_AGE = 0
 
 CFILES = $(POSIX_CFILES) $(LIBACL_CFILES) $(INTERNAL_CFILES)
