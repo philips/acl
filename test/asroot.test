@@ -17,8 +17,8 @@ user::rw-
 user:lisa:r--
 user:joe:rw-
 group::r--
-mask:rw-
-other:---
+mask::rw-
+other::---
 
 $ su lisa -c cat\ asroot/null
 $ su lisa -c echo\ abc\ >asroot/null
@@ -32,8 +32,8 @@ $ getfacl --omit-header asroot/fifo
 user::rw-
 user:joe:---
 group::r--
-mask:r--
-other:---
+mask::r--
+other::---
 
 $ rm asroot/fifo
 $ mknod asroot/block b 1 1
@@ -42,8 +42,8 @@ $ getfacl --omit-header asroot/block
 user::rw-
 user:joe:---
 group::r--
-mask:r--
-other:---
+mask::r--
+other::---
 
 $ rm asroot/block
 $ rmdir asroot

@@ -33,8 +33,9 @@
 TOPDIR = ..
 include $(TOPDIR)/include/builddefs
 
-LSRCFILES = acl.ea block
-SUBDIRS = lib perf src stress
+LSRCFILES = run mode \
+	    getfacl-noacl.test asroot.test misc.test setfacl-noacl.test \
+	    fileutil.test perm.test setfacl.test make-tree
 
 include $(BUILDRULES)
 

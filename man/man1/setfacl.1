@@ -1,24 +1,20 @@
-.\" Access COntrol Lists manual pages
+.\" Access Control Lists manual pages
 .\"
 .\" (C) 2000 Andreas Gruenbacher, <a.gruenbacher@computer.org>
 .\"
 .\" This manual page may used unter the terms of the GNU LGPL license, either
 .\" version 2 of this license, or (at your option) any later version.
-.\" 
-.fam T
+.\"
 .TH SETFACL 1 "ACL File Utilities" "May 2000" "Access Control Lists"
 .SH NAME
 setfacl \- set file access control lists
 .SH SYNOPSIS
 
 .B setfacl
-[-bkndRLPvh] [ [{-s|-m|-x} acl_spec ...] file ... ] ...
+[-bkndRLPvh] [{-s|-m|-x} acl_spec] [{-S|-M|-X} acl_file] file ...
 
 .B setfacl
-[-bkndRLPvh] [ [{-S|-M|-X} acl_file ...] file ... ] ...
-
-.B setfacl
-[-t] -B file
+--restore=file
 
 .SH DESCRIPTION
 This utility sets Access Control Lists (ACLs) of files and directories.
@@ -46,10 +42,6 @@ ACL entries for this operation must include permissions.
 The
 .IR "-m (--modify)" " and " "-M (--modify-file)"
 options modify the ACL of a file or directory.
-.\".I Absolute
-.\"as well as
-.\".I relative
-.\"ACL entries are accepted as parameters.
 ACL entries for this operation must include permissions.
 
 The
@@ -63,7 +55,7 @@ When reading from files using the
 .I -S, -M,
 and
 .IR -X
-options, setfacl accepts a superset of the output getfacl produces.
+options, setfacl accepts the output getfacl produces.
 There is at most one ACL entry per line. After a Pound sign (`#'),
 everything up to the end of the line is treated as a comment.
 
@@ -99,20 +91,17 @@ All operations apply to the Default ACL. Regular ACL entries in the
 input set are promoted to Default ACL entries. Default ACL entries in
 the input set are discarded. (A warning is issued if that happens).
 .TP 4
-.I --restore
+.I --restore=file
 Restore a permission backup created by `getfacl -R' or similar. All permissions
 of a complete directory subtree are restored using this mechanism. If the input
 contains owner comments or group comments, and setfacl is run by root, the
-owner and owning group of all files are restored as well. This option cannot be mixed with other options except `-t'.
+owner and owning group of all files are restored as well. This option cannot be mixed with other options except `--test'.
 .TP 4
 .I --test
 Test mode. Instead of changing the ACLs of any files, the resulting ACLs are listed.
 .TP 4
 .I -R, --recursive
 Apply operations to all files and directories recursively. This option cannot be mixed with `--restore'.
-.TP 4
-.I --post-order
-Apply operations to all files and directories recursively. Traverse subdirectories in post-order (directories are processed after their children are processed). This option cannot be mixed with `--restore'.
 .TP 4
 .I -L, --logical
 Logical walk, follow symbolic links. The default behavior is to follow symbolic link arguments, and to skip symbolic links encountered
@@ -140,7 +129,6 @@ inserted for clarity):
 
 .fam C
 .TP
-.\".RI "[d[efault]:] [u[ser]:]" "uid " [:[+|^] perms ]
 .RI "[d[efault]:] [u[ser]:]" "uid " [: perms ]
 .fam T
 Permissions of a named user. Permissions of the file owner if
@@ -148,7 +136,6 @@ Permissions of a named user. Permissions of the file owner if
 is empty.
 .fam C
 .TP
-.\".RI "[d[efault]:] g[roup]:" "gid " [:[+|^] perms ]
 .RI "[d[efault]:] g[roup]:" "gid " [: perms ]
 .fam T
 Permissions of a named group. Permissions of the owning group if
@@ -156,35 +143,20 @@ Permissions of a named group. Permissions of the owning group if
 is empty.
 .fam C
 .TP
-.\".RI "[d[efault]:] m[ask] [:[+|^]" " perms " ]
-.RI "[d[efault]:] m[ask] [:" perms ]
+.RI "[d[efault]:] m[ask][:] [:" perms ]
 .fam T
 Effective rights mask
 .fam C
 .TP
-.\".RI "[d[efault]:] o[ther] [:[+|^]" " perms" ]
-.RI "[d[efault]:] o[ther] [:" perms ]
+.RI "[d[efault]:] o[ther][:] [:" perms ]
 .fam T
 Permissions of others.
 .PP
 Whitespace between delimiter characters and non-delimiter characters is ignored.
 .PP
-.\"An ACL entry is called
-.\".I absolute
-.\"here if it contains the
-.\".I perms
-.\"field.
-.\"It is
-.\".I relative
-.\"if it includes one of the modifiers `+' or '^' and the
-.\".I perms
-.\"field.
 .PP
 Proper ACL entries including permissions are used in modify and set operations. (options
 .IR -m ", " -M ", " -s " and " -S ).
-.\".I Relative
-.\"entries may only be used in modify operations (options
-.\".IR -m " and " -M ).
 Entries without the
 .I perms
 field are used for
@@ -241,12 +213,6 @@ de the union of all permissions affected by the mask entry. (See the
 option description).
 .PP
 .SH EXAMPLES
-Replacing the ACL of a file
-.RS
-.fam C
-setfacl -s u::rw,g::r,o:-,g:staff:rw file
-.fam T
-.RE
 .PP
 Granting an additional user read access
 .RS
@@ -254,18 +220,11 @@ Granting an additional user read access
 setfacl -m u:lisa:r file
 .fam T
 .RE
-.\".PP
-.\"Adding write access to the permissions of a user
-.\".RS
-.\".fam C
-.\"setfacl -m u:lisa:+w file
-.\".fam T
-.\".RE
 .PP
 Revoking write access from all groups and all named users (using the effective rights mask)
 .RS
 .fam C
-setfacl -m m:rx file
+setfacl -m m::rx file
 .fam T
 .RE
 .PP
@@ -289,23 +248,12 @@ Copying the access ACL into the Default ACL
 getfacl -a dir | setfacl -d -M- dir
 .fam T
 .RE
-.PP
-Copying a directory subtree; copying all ACLs from one subtree to the other (using the
-.I bash
-shell)
-.RS
-.fam C
-cp -r dir1 dir2 && (cd dir1 && getfacl -R .) | \\
-    (cd dir2 && setfacl -restore=-)
-.fam T
-.RE
 .SH CONFORMANCE TO POSIX 1003.1e DRAFT STANDARD 17
 If the environment variable POSIXLY_CORRECT is defined, the default behavior of setfacl changes as follows: All non-standard options are disabled.
 The ``default:'' prefix is disabled.
-.\"Relative ACL entries (``+'' and ``^'' modifiers) are disabled.
 The
 .IR -x " and " -X
-options also accept permissions (and ignore them). 
+options also accept permission fields (and ignore them). 
 .SH AUTHOR
 Andreas Gruenbacher,
 .RI < a.gruenbacher@computer.org >.

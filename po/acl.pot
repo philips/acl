@@ -118,18 +118,6 @@ msgstr ""
 msgid "%s: %s in line %d of standard input\n"
 msgstr ""
 
-msgid "# (empty acl)\n"
-msgstr ""
-
-msgid "# (acl unchanged)\n"
-msgstr ""
-
-msgid "# (empty default acl)\n"
-msgstr ""
-
-msgid "# (default acl unchanged)\n"
-msgstr ""
-
 #, c-format
 msgid "%s: %s: Resulting ACL `%s': %s at entry %d\n"
 msgstr ""

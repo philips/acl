@@ -4,14 +4,12 @@
 $ umask 022
 $ mkdir dir
 $ umask 077
-$ ./echo_into inside dir/file
+$ touch dir/file
 $ setfacl -m u:joe:rw,u:lisa:- dir/file
 $ su lisa -c cat\ dir/file
 cat: dir/file: Permission denied
 $ su joe -c cat\ dir/file
-inside
-$ su joe -c ./echo_into\ out\ dir/file
+$ su joe -c touch\ dir/file
 $ cat dir/file
-out
 $ rm dir/file
 $ rmdir dir

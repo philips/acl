@@ -45,7 +45,7 @@ LDIRT = config.log .dep config.status config.cache confdefs.h conftest* \
 
 # TODO - get "po" (internationalisation stuff) into SUBDIRS below;
 # Ideally, incorporate into include/buildrules (& use in attr too).
-SUBDIRS = include libacl getfacl setfacl chacl man build test doc
+SUBDIRS = include libacl getfacl setfacl chacl man build test doc po examples
 
 default: $(CONFIGURE)
 ifeq ($(HAVE_BUILDDEFS), no)
@@ -78,4 +78,5 @@ install-lib: default
 
 realclean distclean: clean
 	rm -f $(LDIRT) $(CONFIGURE)
+	rm -rf autom4te.cache
 	[ ! -d Logs ] || rmdir Logs

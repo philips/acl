@@ -35,10 +35,7 @@
 	} while (0)
 
 
-static int
-parse_acl_entry(
-	const char **text_p,
-	acl_t *acl_p);
+static int parse_acl_entry( const char **text_p, acl_t *acl_p);
 
 
 /* 23.4.13 */

@@ -1,4 +1,9 @@
-2.0.0 (21 February 2001)
+2.0.1 (27 February 2002)
+* Apply Andreas Gruenbacher's diffs
+* Fix up chacl for deletion of access ACL to
+  be in line with Andreas G. 
+
+2.0.0 (21 February 2002)
 * Reworked to use the new official system call API.
 * Sync up with the XFS project, the SGI folk now use this source.
 * Jumped to version 2 to allow XFS users to upgrade
@@ -12,6 +17,8 @@
 * Extended attribute documentation has moved into the extended
   attribute package from SGI ("attr"), this ACL package now deals
   exclusively with ACLs.
+* acl_from_text sometimes did not set errno when failing.
+* moved files and simplified #includes in libacl
 
 0.7.22
 * Create a shared version of libacl, instead of linking statically.

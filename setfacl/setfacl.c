@@ -2,7 +2,7 @@
   File: setfacl.c
   (Linux Access Control List Management)
 
-  Copyright (C) 1999, 2000
+  Copyright (C) 1999-2002
   Andreas Gruenbacher, <a.gruenbacher@computer.org>
  	
   This program is free software; you can redistribute it and/or
@@ -27,11 +27,11 @@
 #include <errno.h>
 #include <sys/stat.h>
 #include <dirent.h>
+#include <libgen.h>
 #include <ftw.h>
 #include "sequence.h"
 #include "parse.h"
 
-//#define _GNU_SOURCE
 #include <getopt.h>
 
 #include <locale.h>
@@ -49,17 +49,16 @@ do_set(
 
 /* '-' stands for `process non-option arguments in loop' */
 #if !POSIXLY_CORRECT
-#  define CMD_LINE_OPTIONS "-:bkndm:M:x:X:vh" "s:S:RLP"
-#  define CMD_LINE_SPEC "[-bkndRLPvh] " \
-                        "{ -s|-S|-m|-M|-x|-X ... } file ..."
+#  define CMD_LINE_OPTIONS "-:bknds:S:m:M:x:X:RLP"
+#  define CMD_LINE_SPEC "[-bkndRLP] { -s|-S|-m|-M|-x|-X ... } file ..."
 #endif
-#define POSIXLY_CMD_LINE_OPTIONS "-:bkndm:M:x:X:vh"
-#define POSIXLY_CMD_LINE_SPEC "[-bkndvh] {-m|-M|-x|-X ... } file ..."
+#define POSIXLY_CMD_LINE_OPTIONS "-:bkndm:M:x:X:"
+#define POSIXLY_CMD_LINE_SPEC "[-bknd] {-m|-M|-x|-X ... } file ..."
 
 struct option long_options[] = {
 #if !POSIXLY_CORRECT
-	{ "set",		0, 0, 's' },
-	{ "set-file",		0, 0, 'S' },
+	{ "set",		1, 0, 's' },
+	{ "set-file",		1, 0, 'S' },
 
 	{ "mask",		0, 0, 'r' },
 	{ "recursive",		0, 0, 'R' },
@@ -68,10 +67,10 @@ struct option long_options[] = {
 	{ "restore",		1, 0, 'B' },
 	{ "test",		0, 0, 't' },
 #endif
-	{ "modify",		0, 0, 'm' },
-	{ "modify-file",	0, 0, 'M' },
-	{ "remove",		0, 0, 'x' },
-	{ "remove-file",	0, 0, 'X' },
+	{ "modify",		1, 0, 'm' },
+	{ "modify-file",	1, 0, 'M' },
+	{ "remove",		1, 0, 'x' },
+	{ "remove-file",	1, 0, 'X' },
 
 	{ "default",		0, 0, 'd' },
 	{ "no-mask",		0, 0, 'n' },
@@ -280,8 +279,8 @@ void help(void)
 	}
 #endif
 	printf(_(
-"  -v, --version           print version and exit\n"
-"  -h, --help              this help text\n"));
+"      --version           print version and exit\n"
+"      --help              this help text\n"));
 }
 
 
@@ -318,31 +317,24 @@ int __do_set(const char *file, const struct stat *stat,
 
 	if (do_set(file, stat, __seq))
 		__errors++;
+
+	/* We also get here in non-recursive mode. In that case,
+	   return something != 0 to abort nftw. */
+
+	if (!opt_recursive)
+		return 1;
+
 	return 0;
 }
 
 int walk_tree(const char *file, seq_t seq)
 {
-	if (!opt_recursive) {
-		struct stat st;
-
-		if (stat(file, &st)) {
-			fprintf(stderr, "%s: %s: %s\n", progname, file,
-				strerror(errno));
-			return 1;
-		}
-		if (do_set(file, &st, seq))
-			return 1;
-		return 0;
-	}
-
 	__errors = 0;
 	__seq = seq;
-	if (nftw(file, __do_set, 0, opt_recursive * FTW_PHYS)) {
+	if (nftw(file, __do_set, 0, opt_walk_physical * FTW_PHYS) < 0) {
 		fprintf(stderr, "%s: %s\n", progname, strerror(errno));
 		__errors++;
 	}
-		return 1;
 	return __errors;
 }
 
@@ -377,7 +369,7 @@ int main(int argc, char *argv[])
 	seq_t seq = NULL;
 	int seq_cmd, parse_mode;
 	
-	progname = argv[0];
+	progname = basename(argv[0]);
 
 #if POSIXLY_CORRECT
 	cmd_line_options = POSIXLY_CMD_LINE_OPTIONS;
@@ -670,7 +662,7 @@ int main(int argc, char *argv[])
 synopsis:
 	fprintf(stderr, _("Usage: %s %s\n"),
 		progname, cmd_line_spec);
-	fprintf(stderr, _("Try `%s -h' for more information.\n"),
+	fprintf(stderr, _("Try `%s --help' for more information.\n"),
 		progname);
 	status = 2;
 	goto cleanup;

@@ -12,10 +12,10 @@ getfacl \- get file access control lists
 .SH SYNOPSIS
 
 .B getfacl
-[\-adRLPvh] file ...
+[\-dRLPvh] file ...
 
 .B getfacl
-[\-adRLPvh] -
+[\-dRLPvh] -
 
 .SH DESCRIPTION
 For each file, getfacl displays the file name, owner, the group,
@@ -78,7 +78,7 @@ accessing the file mode.
 
 .SS OPTIONS
 .TP 4
-.I -a, --access
+.I --access
 Display the file access control list.
 .TP
 .I -d, --default
@@ -99,9 +99,6 @@ Skip files that only have the base ACL entries (owner, group, others).
 .I -R, --recursive
 List the ACLs of all files and directories recursively.
 .TP
-.I --post-order
-List the ACLs of all files and directories recursively, and process the directory tree in post-order (directories are processed after their children are processed). This option most probably is unnecessary and was added for completeness only.
-.TP
 .I -L, --logical
 Logical walk, follow symbolic links. The default behavior is to follow
 symbolic link arguments, and to skip symbolic links encountered in
@@ -116,8 +113,7 @@ Use an alternative tabular output format. The ACL and the default ACL are displa
 .TP
 .I --absolute-names
 Do not strip leading slash characters (`/'). The default behavior is to
-strip leading slashes, so that an ACL listing can be easily applied to a
-different directory sub-tree.
+strip leading slash characters.
 .TP
 .I -v, --version
 Print the version of getfacl and exit.

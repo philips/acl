@@ -2,7 +2,7 @@
   File: getfacl.c
   (Linux Access Control List Management)
 
-  Copyright (C) 1999, 2000
+  Copyright (C) 1999-2002
   Andreas Gruenbacher, <a.gruenbacher@computer.org>
  	
   This program is free software; you can redistribute it and/or
@@ -31,10 +31,10 @@
 #include <string.h>
 #include <sys/stat.h>
 #include <dirent.h>
+#include <libgen.h>
 #include <ftw.h>
 #include "user_group.h"
 
-//#define _GNU_SOURCE
 #include <getopt.h>
 
 #include <locale.h>
@@ -44,9 +44,9 @@
 #define POSIXLY_CORRECT_STR "POSIXLY_CORRECT"
 
 #if !POSIXLY_CORRECT
-#  define CMD_LINE_OPTIONS "adRLPvh"
+#  define CMD_LINE_OPTIONS "dRLP"
 #endif
-#define POSIXLY_CMD_LINE_OPTIONS "dvh"
+#define POSIXLY_CMD_LINE_OPTIONS "d"
 
 struct option long_options[] = {
 #if !POSIXLY_CORRECT
@@ -470,13 +470,28 @@ int do_print(const char *path_p, const struct stat *st)
 				printf("# group: %d\n", (int)st->st_gid);
 		}
 
-		if (acl != NULL &&
-		    acl_print(stdout, acl, NULL, print_options) < 0)
-			goto fail;
-		if (default_acl != NULL &&
-		    acl_print(stdout, default_acl, default_prefix,
-		              print_options) < 0)
-			goto fail;
+		if (acl != NULL) {
+			char *acl_text = acl_to_any_text(acl, NULL,
+				 "", '\n', "", print_options);
+			if (!acl_text)
+				goto fail;
+			if (puts(acl_text) < 0) {
+				acl_free(acl_text);
+				goto fail;
+			}
+			acl_free(acl_text);
+		}
+		if (default_acl != NULL) {
+			char *acl_text = acl_to_any_text(default_acl, NULL,
+				default_prefix, '\n', "", print_options);
+			if (!acl_text)
+				goto fail;
+			if (puts(acl_text) < 0) {
+				acl_free(acl_text);
+				goto fail;
+			}
+			acl_free(acl_text);
+		}
 	}
 	if (acl || default_acl || opt_comments)
 		printf("\n");
@@ -509,14 +524,13 @@ void help(void)
 #if !POSIXLY_CORRECT
 	} else {
 		printf(_(
-"  -a, --access            display the file access control list only\n"
+"      --access            display the file access control list only\n"
 "  -d, --default           display the default access control list only\n"
 "      --omit-header       do not display the comment header\n"
 "      --all-effective     print all effective rights\n"
 "      --no-effective      print no effective rights\n"
 "      --skip-base         skip files that only have the base entries\n"
 "  -R, --recursive         recurse into subdirectories\n"
-"      --post-order        visit subdirectories first\n"
 "  -L, --logical           logical walk, follow symbolic links\n"
 "  -P  --physical          physical walk, do not follow symbolic links\n"
 "      --tabular           use tabular output format\n"
@@ -524,8 +538,8 @@ void help(void)
 	}
 #endif
 	printf(_(
-"  -v, --version           print version and exit\n"
-"  -h, --help              this help text\n"));
+"      --version           print version and exit\n"
+"      --help              this help text\n"));
 }
 
 
@@ -544,26 +558,20 @@ int __do_print(const char *file, const struct stat *stat,
 
 	if (do_print(file, stat))
 		__errors++;
+
+	/* We also get here in non-recursive mode. In that case,
+	   return something != 0 to abort nftw. */
+
+	if (!opt_recursive)
+		return 1;
+
 	return 0;
 }
 
 int walk_tree(const char *file)
 {
-	if (!opt_recursive) {
-		struct stat st;
-
-		if (stat(file, &st)) {
-			fprintf(stderr, "%s: %s: %s\n", progname, file,
-			        strerror(errno));
-			return 1;
-		}
-		if (do_print(file, &st))
-			return 1;
-		return 0;
-	}
-
 	__errors = 0;
-	if (nftw(file, __do_print, 0, opt_recursive * FTW_PHYS)) {
+	if (nftw(file, __do_print, 0, opt_walk_physical * FTW_PHYS) < 0) {
 		fprintf(stderr, "%s: %s\n", progname, strerror(errno));
 		__errors++;
 	}
@@ -591,7 +599,7 @@ int main(int argc, char *argv[])
 	int opt;
 	char *line;
 
-	progname = argv[0];
+	progname = basename(argv[0]);
 
 #if POSIXLY_CORRECT
 	cmd_line_options = POSIXLY_CMD_LINE_OPTIONS;
@@ -730,7 +738,7 @@ int main(int argc, char *argv[])
 synopsis:
 	fprintf(stderr, _("Usage: %s [-%s] file ...\n"),
 	        progname, cmd_line_options);
-	fprintf(stderr, _("Try `%s -h' for more information.\n"),
+	fprintf(stderr, _("Try `%s --help' for more information.\n"),
 		progname);
 	return 2;
 }

@@ -1,10 +1,20 @@
+msgid ""
+msgstr ""
+""
+"Last-Translator: \n"
+"PO-Revision-Date: 2002-02-22 08:12GMT\n"
+"Language-Team:  <en@li.org>\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: KBabel 0.9.5\n"
+
 # German translation for ACL utilities
 # Copyright (C) 2000 Free Software Foundation, Inc.
-# Andreas Gr¸nbacher <a.gruenbacher@computer.org>, 2000.
+# Andreas Gr√ºnbacher <a.gruenbacher@computer.org>, 2000.
 #
 #, c-format
 msgid "%s: Removing leading '/' from absolute path names\n"
-msgstr "%s: Entferne f¸hrenden '/' von absoluten Pfadnamen\n"
+msgstr "%s: Entferne f√ºhrende '/' von absoluten Pfadnamen\n"
 
 #, c-format
 msgid "%s %s -- get file access control lists\n"
@@ -25,7 +35,6 @@ msgid ""
 "      --no-effective      print no effective rights\n"
 "      --skip-base         skip files that only have the base entries\n"
 "  -R, --recursive         recurse into subdirectories\n"
-"      --post-order        visit subdirectories first\n"
 "  -L, --logical           logical walk, follow symbolic links\n"
 "  -P  --physical          physical walk, do not follow symbolic links\n"
 "      --tabular           use tabular output format\n"
@@ -36,13 +45,12 @@ msgstr ""
 "      --omit-header        Keine Datei-Kommentare ausgeben\n"
 "      --all-effective      Alle Effektivrechte-Kommentare ausgeben\n"
 "      --no-effective       Keine Effektivrechte-Kommentare ausgeben\n"
-"      --skip-base          ‹berspringe Dateien mit Basiseintr‰gen\n"
+"      --skip-base          √úberspringe Dateien mit Basiseintr√§gen\n"
 "  -R, --recursive          In Unterverzeichnisse wechseln\n"
-"      --post-order         Unterverzeichnisse zuerst besuchen\n"
 "  -L, --logical            Symbolische Links verfolgen\n"
 "  -P, --physical           Symbolische Links nicht verfolgen\n"
 "      --tabular            Tabellarisches Ausgabeformat verwenden\n"
-"      --absolute-names     F¸hrende '/' in Pfadnamen nicht entfernen\n"
+"      --absolute-names     F√ºhrende '/' in Pfadnamen nicht entfernen\n"
 
 msgid ""
 "  -v, --version           print version and exit\n"
@@ -57,15 +65,15 @@ msgstr "%s: Standardeingabe: %s\n"
 
 #, c-format
 msgid "Try `%s -h' for more information.\n"
-msgstr "Weiterf¸hrende Informationen mit `%s -h'.\n"
+msgstr "Weiterf√ºhrende Informationen mit `%s -h'.\n"
 
 #, c-format
 msgid "%s: %s: No filename found in line %d, aborting\n"
-msgstr "%s: %s: Kein Dateiname gefunden in Zeile %d; Abbruch\n"
+msgstr "%s: %s: Kein Dateiname in Zeile %d gefunden; Abbruch\n"
 
 #, c-format
 msgid "%s: No filename found in line %d of standard input, aborting\n"
-msgstr "%s: Kein Dateiname gefunden in Zeile %d der Standardeingabe; Abbruch\n"
+msgstr "%s: Kein Dateiname in Zeile %d der Standardeingabe gefunden; Abbruch\n"
 
 #, c-format
 msgid "%s: %s: %s in line %d\n"
@@ -73,11 +81,11 @@ msgstr "%s: %s: %s in Zeile %d\n"
 
 #, c-format
 msgid "%s: %s: Cannot change owner/group: %s\n"
-msgstr "%s: %s: Kann Besitzer oder Gruppe nicht ‰ndern: %s\n"
+msgstr "%s: %s: Kann Besitzer/Gruppe nicht √§ndern: %s\n"
 
 #, c-format
 msgid "%s %s -- set file access control lists\n"
-msgstr "%s %s -- Datei-Zugriffskontrollisten (ACLs) ‰ndern\n"
+msgstr "%s %s -- Datei-Zugriffskontrollisten (ACLs) √§ndern\n"
 
 #, c-format
 msgid "Usage: %s %s\n"
@@ -88,7 +96,7 @@ msgid ""
 "  -S, --set-file=file     read ACL entries to set from file\n"
 msgstr ""
 "  -s, --set=acl            Ersetze die ACL(s) von Datei(en)\n"
-"  -S, --set-file=datei     Lies die ACL-Eintr‰ge aus der Datei file\n"
+"  -S, --set-file=datei     Lies die ACL-Eintr√§ge aus der Datei file\n"
 
 msgid ""
 "  -m, --modify=acl        modify the current ACL(s) of file(s)\n"
@@ -98,11 +106,11 @@ msgid ""
 "  -b, --remove-all        remove all extended ACL entries\n"
 "  -k, --remove-default    remove the default ACL\n"
 msgstr ""
-"  -m, --modify=acl         Ver‰ndere die ACL(s) von Dazei(en)\n"
-"  -M, --modify-file=datei  Lies die ACL-Eintr‰ge aus der Datei file\n"
-"  -x, --remove=acl         Entferne Eintr‰ge aus ACLs von Datei(en)\n"
-"  -X, --remove-file=datei  Lies die ACL-Eintr‰ge aus der Datei file\n"
-"  -b, --remove-all         Alle erweiterten ACL-Eintr‰ge entfernen\n"
+"  -m, --modify=acl         Ver√§ndere die ACL(s) von Dazei(en)\n"
+"  -M, --modify-file=datei  Lies die ACL-Eintr√§ge aus der Datei file\n"
+"  -x, --remove=acl         Entferne Eintr√§ge aus ACLs von Datei(en)\n"
+"  -X, --remove-file=datei  Lies die ACL-Eintr√§ge aus der Datei file\n"
+"  -b, --remove-all         Alle erweiterten ACL-Eintr√§ge entfernen\n"
 "  -k, --remove-default     Default-ACL entfernen\n"
 
 msgid "      --mask              do recalculate the effective rights mask\n"
@@ -117,18 +125,16 @@ msgstr ""
 
 msgid ""
 "  -R, --recursive         recurse into subdirectories\n"
-"      --post-order        visit subdirectories first\n"
 "  -L, --logical           logical walk, follow symbolic links\n"
 "  -P, --physical          physical walk, do not follow symbolic links\n"
 "      --restore=file      restore ACLs (inverse of `getfacl -R')\n"
 "      --test              test mode (ACLs are not modified)\n"
 msgstr ""
 "  -R, --recursive          In Unterverzeichnisse wechseln\n"
-"      --post-order         Unterverzeichnisse zuerst besuchen\n"
 "  -L, --logical            Symbolischen Links folgen\n"
 "  -P, --physical           Symbolischen Links nicht folgen\n"
 "      --restore=datei      ACLs wiederherstellen (Umkehr von `getfacl -R')\n"
-"      --test               Testmodus (ACLs werden nicht ver‰ndert)\n"
+"      --test               Testmodus (ACLs werden nicht ver√§ndert)\n"
 
 msgid "[-bkndRLPvh] { -s|-S|-m|-M|-x|-X ... } file ..."
 msgstr "[-bkndRLPvh] { -s|-S|-m|-M|-x|-X ... } datei ..."
@@ -138,7 +144,7 @@ msgstr "[-bkndvh] {-m|-M|-x|-X ... } datei ..."
 
 #, c-format
 msgid "%s: Option -%c incomplete\n"
-msgstr "%s: Option -%c unvollst‰ndig\n"
+msgstr "%s: Option -%c unvollst√§ndig\n"
 
 #, c-format
 msgid "%s: Option -%c: %s near character %d\n"
@@ -152,18 +158,6 @@ msgstr "%s: %s in Zeile %d der Datei %s\n"
 msgid "%s: %s in line %d of standard input\n"
 msgstr "%s: %s in Zeile %d der Standardeingabe\n"
 
-msgid "# (empty acl)\n"
-msgstr "# (leere ACL)\n"
-
-msgid "# (acl unchanged)\n"
-msgstr "# (ACL nicht ver‰ndert)\n"
-
-msgid "# (empty default acl)\n"
-msgstr "# (leere Default-ACL)\n"
-
-msgid "# (default acl unchanged)\n"
-msgstr "# (Default-ACL nicht ver‰ndert)\n"
-
 #, c-format
 msgid "%s: %s: Resulting ACL `%s': %s at entry %d\n"
 msgstr "%s: %s: Resultierende ACL `%s': %s bei Eintrag %d\n"
@@ -174,16 +168,17 @@ msgstr "%s: %s: Resultierende Default-ACL `%s': %s bei Eintrag %d\n"
 
 #, c-format
 msgid "%s: %s: Only directories can have a default ACL\n"
-msgstr "%s: %s: Nur Verzeichnisse kˆnnen eine Default-ACL haben\n"
+msgstr "%s: %s: Nur Verzeichnisse k√∂nnen eine Default-ACL haben\n"
 
 msgid "Multiple entries"
-msgstr "Mehrfache Eintr‰ge"
+msgstr "Mehrfache Eintr√§ge"
 
 msgid "Duplicate entries"
-msgstr "Doppelte Eintr‰ge"
+msgstr "Doppelte Eintr√§ge"
 
 msgid "Missing or wrong entry"
-msgstr "Fehlende oder falsche Eintr‰ge"
+msgstr "Fehlende oder falsche Eintr√§ge"
 
 msgid "Invalid entry type"
-msgstr "Ung¸ltiger Eintragstyp"
+msgstr "Ung√ºltiger Eintragstyp"
+

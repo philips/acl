@@ -220,9 +220,30 @@ acl_delete_file(const char *path, acl_type_t type)
 {
 	int error = 0;
 
-	if (type == ACL_TYPE_ACCESS)
-		error = acl_delete_acc_file(path);
-	else
+	/* converts access ACL to a minimal ACL */
+	if (type == ACL_TYPE_ACCESS) {
+		acl_t acl;
+		acl_entry_t entry;
+		acl_tag_t tag;
+
+		acl = acl_get_file(path, ACL_TYPE_ACCESS);
+		if (!acl)
+			return -1;
+		error = acl_get_entry(acl, ACL_FIRST_ENTRY, &entry);
+		while (error == 1) {
+			acl_get_tag_type(entry, &tag);
+			switch(tag) {
+				case ACL_USER:
+				case ACL_GROUP:
+				case ACL_MASK:
+					acl_delete_entry(acl, entry);
+					break;
+			 }
+			error = acl_get_entry(acl, ACL_NEXT_ENTRY, &entry);
+		}
+		if (!error)
+			error = acl_set_file(path, ACL_TYPE_ACCESS, acl);
+	} else
 		error = acl_delete_def_file(path);
 	return(error);
 }
@@ -237,6 +258,7 @@ list_acl(char *file)
 {
 	acl_t acl = NULL;
 	acl_t dacl = NULL;
+	char *acl_text, *dacl_text = NULL;
 
 	if ((acl = acl_get_file(file, ACL_TYPE_ACCESS)) == NULL) {
 		fprintf(stderr, _("%s: cannot get access ACL on '%s': %s\n"),
@@ -248,19 +270,28 @@ list_acl(char *file)
 			program, file, strerror(errno));
 		return 0;
 	}
-	printf("%s [", file);
-	if (acl)
-		acl_print(stdout, acl, NULL, TEXT_ABBREVIATE|TEXT_NO_ENDOFLINE);
-	if (acl_entries(dacl) > 0) {
-		printf("/");
-		acl_print(stdout, dacl, NULL, TEXT_ABBREVIATE|TEXT_NO_ENDOFLINE);
+	acl_text = acl_to_any_text(acl, NULL, "", ',', "", TEXT_ABBREVIATE);
+	if (acl_text == NULL) {
+		fprintf(stderr, _("%s: cannot get access ACL text on '%s': %s\n"),
+			program, file, strerror(errno));
+		return 0;
 	}
-	printf("]\n");
-
-	if (acl)
-	    acl_free(acl);
-	if (dacl)
-	    acl_free(dacl);
+	if (acl_entries(dacl) > 0) {
+		dacl_text = acl_to_any_text(dacl, NULL, "", ',', "", TEXT_ABBREVIATE);
+		if (dacl_text == NULL) {
+			fprintf(stderr, _("%s: cannot get default ACL text on '%s': %s\n"),
+				program, file, strerror(errno));
+			return 0;
+		}
+	}
+	if (dacl_text) {
+		printf("%s [%s/%s]\n", file, acl_text, dacl_text);
+		acl_free(dacl_text);
+	} else
+		printf("%s [%s]\n", file, acl_text);
+	acl_free(acl_text);
+	acl_free(acl);
+	acl_free(dacl);
 	return 1;
 }
 

@@ -29,17 +29,9 @@
 #include "libacl.h"
 
 
-static ssize_t
-snprint_uint(
-	char *text_p,
-	ssize_t size,
-	unsigned int i);
-static const char *
-user_name(
-	uid_t uid);
-static const char *
-group_name(
-	gid_t uid);
+static ssize_t snprint_uint( char *text_p, ssize_t size, unsigned int i);
+static const char * user_name( uid_t uid);
+static const char * group_name( gid_t uid);
 
 
 /*

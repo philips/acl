@@ -355,7 +355,6 @@ else
 	    shift
 	done
 
-	# echo DIR=$dir list=\"$list\"
 	for f in $list
 	do
 	    $CP $f $dir

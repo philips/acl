@@ -30,10 +30,13 @@
 # http://oss.sgi.com/projects/GenInfo/SGIGPLNoticeExplan/
 #
 
-TOPDIR = ../..
+TOPDIR = ..
 include $(TOPDIR)/include/builddefs
 
-LSRCFILES = TESTS make-tree
+LINGUAS = de
+
+LSRCFILES = Make.rules POTFILES.in acl.pot de.po
+LDIRT = $(LINGUAS:%=%.mo)
 
 include $(BUILDRULES)
 

@@ -1,5 +1,5 @@
 /*
-  File: set_operation.c
+  File: do_set.c
   (Linux Access Control List Management)
 
   Copyright (C) 1999, 2000
@@ -111,46 +111,18 @@ print_test(
 	const acl_t acl,
 	const acl_t default_acl)
 {
-	uid_t uid = st->st_uid;
-	gid_t gid = st->st_gid;
-	const char *str;
+	char *acl_text, *default_acl_text;
 
-	fprintf(file, "# file: %s\n", path_p);
-	if (uid != ACL_UNDEFINED_ID) {
-		if ((str = user_name(uid)) != NULL)
-			fprintf(file, "# owner: %s\n", str);
-		else
-			fprintf(file, "# owner: %d\n", (int)uid);
-	}
-	if (gid != ACL_UNDEFINED_ID) {
-		if ((str = group_name(gid)) != NULL)
-			fprintf(file, "# group: %s\n", str);
-		else
-			fprintf(file, "# group: %d\n", (int)gid);
-	}
-	if (acl) {
-		if (acl_entries(acl) == 0)
-			fprintf(file, _("# (empty acl)\n"));
-		else
-			acl_print(file, acl, NULL,
-			          TEXT_SOME_EFFECTIVE | TEXT_SMART_INDENT);
-	} else {
-		fprintf(file, _("# (acl unchanged)\n"));
-	}
-	if (default_acl) {
-		if (acl_entries(default_acl) == 0) {
-			if (S_ISDIR(st->st_mode))
-			fprintf(file, _("# (empty default acl)\n"));
-		} else {
-			acl_print(file, default_acl, "default:",
-			          TEXT_SOME_EFFECTIVE | TEXT_SMART_INDENT);
-		}
-	} else {
-		if (S_ISDIR(st->st_mode))
-			fprintf(file, _("# (default acl unchanged)\n"));
-	}
-
-	fprintf(file, "\n");
+	acl_text = acl_to_any_text(acl, NULL,
+		 "", ',', "", TEXT_ABBREVIATE);
+	default_acl_text = acl_to_any_text(default_acl, NULL,
+		 "d:", ',', "", TEXT_ABBREVIATE);
+	fprintf(file, "%s: %s%s%s\n", path_p,
+		acl_text ? acl_text : "",
+		(acl_text && default_acl_text) ? "," : "",
+		default_acl_text ? default_acl_text : "");
+	acl_free(acl_text);
+	acl_free(default_acl_text);
 }
 
 
@@ -215,6 +187,17 @@ remove_extended_entries(
 	acl_tag_t tag;
 	int error;
 	
+	/*
+	 * Removing the ACL_MASK entry from the ACL results in
+	 * increased permissions for the owning group if the
+	 * ACL_GROUP_OBJ entry contains permissions not contained
+	 * in the ACL_MASK entry. We remove these permissions from
+	 * the ACL_GROUP_OBJ entry to avoid that.
+	 *
+	 * After removing the ACL, the file owner and the owning group
+	 * therefore have the same permissions as before.
+	 */
+
 	ent = find_entry(acl, ACL_MASK, ACL_UNDEFINED_ID);
 	group_obj = find_entry(acl, ACL_GROUP_OBJ, ACL_UNDEFINED_ID);
 	if (ent && group_obj) {

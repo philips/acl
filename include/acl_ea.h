@@ -12,13 +12,13 @@
 #define ACL_EA_VERSION		0x0002
 
 typedef struct {
-	__u16		e_tag;
-	__u16		e_perm;
-	__u32		e_id;
+	u_int16_t	e_tag;
+	u_int16_t	e_perm;
+	u_int32_t	e_id;
 } acl_ea_entry;
 
 typedef struct {
-	__u32		a_version;
+	u_int32_t	a_version;
 	acl_ea_entry	a_entries[0];
 } acl_ea_header;
 

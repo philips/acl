@@ -180,9 +180,6 @@ fi
 
 dnl machine characteristics
 AC_C_BIGENDIAN
-AC_CHECK_SIZEOF(short)
-AC_CHECK_SIZEOF(int)
-AC_CHECK_SIZEOF(long)
 
 dnl GNU gettext
 #ALL_LINGUAS="de"

@@ -33,9 +33,6 @@ extern "C" {
    ("u::rwx" instead of "user::rwx"). */
 #define TEXT_ABBREVIATE			0x10
 
-/* Don't put an end-of-line ('\n') after the ACL */
-#define TEXT_NO_ENDOFLINE		0x20
-
 /* acl_check error codes */
 
 #define ACL_MULTI_ERROR		(0x1000)     /* multiple unique objects */
@@ -43,77 +40,25 @@ extern "C" {
 #define ACL_MISS_ERROR		(0x3000)     /* missing required entry */
 #define ACL_ENTRY_ERROR		(0x4000)     /* wrong entry type */
 
-extern char *
-acl_to_any_text(
-	acl_t acl,
-	ssize_t *len_p,
-	const char *prefix,
-	char separator,
-	const char *suffix,
-	int options);
-extern ssize_t
-acl_entry_to_any_str(
-	const acl_entry_t entry_d,
-	char *text_p,
-	ssize_t size,
-	const acl_entry_t mask_d,
-	const char *prefix,
-	int options);
-extern int
-acl_cmp(
-	acl_t acl1,
-	acl_t acl2);
-extern int
-acl_check(
-	acl_t acl,
-	int *last);
-extern acl_t
-acl_from_mode(
-	mode_t mode);
-extern int
-acl_equiv_mode(
-	acl_t acl,
-	mode_t *mode_p);
-extern acl_t
-acl_get_file_mode(
-	const char *path_p);
-extern acl_t
-acl_get_fd_mode(
-	int fd);
-extern int
-acl_set_file_mode(
-	const char *path_p,
-	acl_type_t type,
-	acl_t acl);
-extern int
-acl_set_fd_mode(
-	int fd,
-	acl_t acl);
-int
-acl_extended_file(
-	const char *path_p);
-int
-acl_extended_fd(
-	int fd);
-extern int
-acl_print(
-        FILE *file,
-        acl_t acl,
-        const char *prefix,
-        int options);
-extern int
-acl_entries(
-	acl_t acl);
-extern const char *
-acl_error(
-	int code);
-extern int
-acl_get_perm(
-	acl_permset_t permset_d,
-	acl_perm_t perm);
-extern int
-acl_delete_acc_file(
-	const char *file);
+extern char *acl_to_any_text(acl_t acl, ssize_t *len_p, const char *prefix,
+			     char separator, const char *suffix, int options);
+extern ssize_t acl_entry_to_any_str(const acl_entry_t entry_d, char *text_p,
+				    ssize_t size, const acl_entry_t mask_d,
+				    const char *prefix, int options);
+extern int acl_cmp(acl_t acl1, acl_t acl2);
+extern int acl_check(acl_t acl, int *last);
+extern acl_t acl_from_mode(mode_t mode);
+extern int acl_equiv_mode(acl_t acl, mode_t *mode_p);
+extern acl_t acl_get_file_mode(const char *path_p);
+extern acl_t acl_get_fd_mode(int fd);
+extern int acl_set_file_mode(const char *path_p, acl_type_t type, acl_t acl);
+extern int acl_set_fd_mode(int fd, acl_t acl);
+int acl_extended_file(const char *path_p);
+int acl_extended_fd(int fd);
+extern int acl_print(FILE *file, acl_t acl, const char *prefix, int options);
+extern int acl_entries(acl_t acl);
+extern const char *acl_error(int code);
+extern int acl_get_perm(acl_permset_t permset_d, acl_perm_t perm);
 
 #ifdef __cplusplus
 }

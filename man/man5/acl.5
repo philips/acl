@@ -74,7 +74,7 @@ following entries:
 .nf
 	u::rw- (ACL_USER_OBJ entry)
 	g::r-- (ACL_GROUP_OBJ entry)
-	o:---  (ACL_OTHER entry)
+	o::--- (ACL_OTHER entry)
 .fi
 .fam T
 .RE
@@ -88,7 +88,7 @@ must be at most one ACL_USER or ACL_GROUP entry per access control list. An ACL 
 .nf
 	u:joe:rw- (ACL_USER entry)
 	g:webteam:rw- (ACL_GROUP entry)
-	m:rw- (ACL_MASK entry)
+	m::rw- (ACL_MASK entry)
 .fi
 .fam T
 .RE

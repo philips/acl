@@ -1,5 +1,0 @@
-#!/bin/sh
-
-grep ^toolies: /etc/group >/dev/null   || groupadd toolies
-grep ^lisa:    /etc/passwd >/dev/null  || useradd -g toolies lisa
-grep ^joe:     /etc/passwd >/dev/null  || useradd -g toolies joe

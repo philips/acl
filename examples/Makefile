@@ -30,12 +30,11 @@
 # http://oss.sgi.com/projects/GenInfo/SGIGPLNoticeExplan/
 #
 
-TOPDIR = ../..
+TOPDIR = ..
 include $(TOPDIR)/include/builddefs
 
-LSRCFILES = run mode echo_into prepare-tests \
-	    getfacl-noacl.test asroot.test misc.test setfacl-noacl.test \
-	    fileutil.test perm.test setfacl.test
+LSRCFILES = README Makefile.examples get-acl.c set-acl.c copy-acl.c
+LDIRT = get-acl set-acl copy-acl
 
 include $(BUILDRULES)
 
