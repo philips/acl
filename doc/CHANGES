@@ -1,3 +1,10 @@
+acl-1.0.5 (6 June 2001)
+	- Fix up acl_to_text and acl_to_short_text so that if it is
+	  given an empty ACL then an empty string is returned. 
+          Suggestion made by Juergen Hasch where comparing with
+	  the ext2 Posix ACL patch of Andreas Gruenbacher.
+	- Update acl.h to define ACL_OTHER (same as ACL_OTHER_OBJ).
+
 acl-1.0.4 (29 May 2001)
 	- Fix up acl_get_file, acl_get_fd bug for non-irix semantics
 	  which I introduced in 1.0.3 (thanks Juergen Hasch).
