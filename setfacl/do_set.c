@@ -379,7 +379,7 @@ do_set(
 			goto fail;
 		if (error > 0) {
 			acl_text = acl_to_any_text(acl, NULL, ',', 0);
-			fprintf(stderr, _("%s: %s: Malformed ACL `%s': "
+			fprintf(stderr, _("%s: %s: Malformed access ACL `%s': "
 			        "%s at entry %d\n"), progname, path_p,
 				acl_text, acl_error(error), which_entry+1);
 			acl_free(acl_text);
