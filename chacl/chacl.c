@@ -36,6 +36,7 @@
  */
 
 #include <sys/types.h>
+#include <sys/stat.h>
 #include <acl.h>
 #include <stdlib.h>
 #include <string.h>
@@ -43,34 +44,40 @@
 #include <getopt.h>
 #include <stdio.h>
 #include <errno.h>
+#include <dirent.h>
 
 static int acl_delete_file (const char * path, acl_type_t type);
 static int list_acl(char *file);
+static int set_acl(acl_t acl, acl_t dacl, const char *fname);
+static int walk_dir(acl_t acl, acl_t dacl, const char *fname);
+
 static char *program;
+static int rflag;
 
 static void
-usage (void)
+usage(void)
 {
-	fprintf (stderr, "%s: usage: \n", program);
-	fprintf (stderr, "\t%s acl pathname ...\n", program);
-	fprintf (stderr, "\t%s -d dacl pathname ...\n", program);
-	fprintf (stderr, "\t%s -b acl dacl pathname ...\n", program);
-	fprintf (stderr, "\t%s -R pathname ...\n", program);
-	fprintf (stderr, "\t%s -D pathname ...\n", program);
-	fprintf (stderr, "\t%s -B pathname ...\n", program);
-	fprintf (stderr, "\t%s -l pathname ...\n", program);
-	exit (1);
+	fprintf(stderr, "%s: usage: \n", program);
+	fprintf(stderr, "\t%s acl pathname ...\n", program);
+	fprintf(stderr, "\t%s -d dacl pathname ...\n", program);
+	fprintf(stderr, "\t%s -b acl dacl pathname ...\n", program);
+	fprintf(stderr, "\t%s -R pathname ...\n", program);
+	fprintf(stderr, "\t%s -D pathname ...\n", program);
+	fprintf(stderr, "\t%s -B pathname ...\n", program);
+	fprintf(stderr, "\t%s -l pathname ...\n", program);
+	fprintf(stderr, "\t%s -r pathname ...\n", program);
+	exit(1);
 }
 
 int
-main (int argc, char *argv[])
+main(int argc, char *argv[])
 {
 	const char *inv_acl = "%s: \"%s\" is an invalid ACL specification.\n";
-	char *p;
+	char *file;
 	int switch_flag = 0;            /* ensure only one switch is used */
 	int args_required = 1;	
 	int failed = 0;			/* exit status */
-	int c;					/* For use by getopt(3) */
+	int c;				/* For use by getopt(3) */
 	int dflag = 0;			/* a Default ACL is desired */
 	int bflag = 0;			/* a both ACLs are desired */
 	int Rflag = 0;			/* set to true to remove an acl */
@@ -80,27 +87,24 @@ main (int argc, char *argv[])
 	acl_t acl = NULL;		/* File ACL */
 	acl_t dacl = NULL;		/* Directory Default ACL */
 
-	/* create program name */
-	p = strrchr (argv[0], '/');
-	program = p != NULL ? p + 1 : argv[0];
+	program = basename(argv[0]);
 
 	acl_set_compat(ACL_COMPAT_IRIXGET);
 
 	/* parse arguments */
-	while ((c = getopt (argc, argv, "bdlRDB")) != -1)
-	{
-		if (switch_flag) usage();
-		switch_flag=1;		
+	while ((c = getopt(argc, argv, "bdlRDBr")) != -1) {
+		if (switch_flag) 
+			usage();
+		switch_flag = 1;
 
-		switch (c)
-		{
+		switch (c) {
 			case 'b':
 				bflag = 1;
-				args_required=3;
+				args_required = 3;
 				break;
 			case 'd':
 				dflag = 1;
-				args_required=2;
+				args_required = 2;
 				break;
 			case 'R':
 				Rflag = 1;
@@ -114,59 +118,57 @@ main (int argc, char *argv[])
 			case 'l':
 				lflag = 1;
 				break;
+			case 'r':
+				rflag = 1;
+				break;
 			default:
-				usage ();
+				usage();
 				break;
 		}
 	}
 
 	/* if not enough arguments quit */
-	if ((argc-optind) < args_required)
-		usage ();
+	if ((argc - optind) < args_required)
+		usage();
 
         /* list the acls */
-	if ( lflag ) 
-        {
-	    for (;optind < argc;optind++)
-	    {	
-                char *file = argv[optind];
-                if (!list_acl(file))
-                {
-                    failed++;
-                }
-            }
-	    return (failed);
-        }
+	if (lflag) {
+		for (; optind < argc; optind++) {	
+			file = argv[optind];
+			if (!list_acl(file))
+				failed++;
+		}
+		return(failed);
+	}
 
 	/* remove the acls */
-	if ( Rflag || Dflag || Bflag )
-	{
-		for (;optind < argc;optind++)
-		{	
-			if (!Dflag && acl_delete_file (argv[optind], ACL_TYPE_ACCESS) == -1)	
-			{
-				fprintf (stderr,"%s: error removing access acl on \"%s\": %s\n", 
-					program, argv[optind],strerror(errno));
+	if (Rflag || Dflag || Bflag) {
+		for (; optind < argc; optind++) {	
+			file = argv[optind];
+			if (!Dflag &&
+			    (acl_delete_file(file, ACL_TYPE_ACCESS) == -1)) {
+				fprintf(stderr,
+			"%s: error removing access acl on \"%s\": %s\n",
+					program, file, strerror(errno));
 				failed++;
 			}
-			if (!Rflag && acl_delete_file (argv[optind], ACL_TYPE_DEFAULT) == -1)	
-			{
-				fprintf (stderr,"%s: error removing default acl on \"%s\": %s\n", 
-					program, argv[optind],strerror(errno));
+			if (!Rflag &&
+			    (acl_delete_file(file, ACL_TYPE_DEFAULT) == -1)) {
+				fprintf(stderr,
+			"%s: error removing default acl on \"%s\": %s\n", 
+					program, file, strerror(errno));
 				failed++;
 			}
 		}
-		return (failed);
+		return(failed);
 	} 
-
 
 	/* file access acl */
 	if (! dflag) { 
-		acl = acl_from_text (argv[optind]);
-		if (acl == NULL || acl_valid(acl) == -1)
-		{
-			fprintf (stderr, inv_acl, program, argv[optind]);
-			return (1);
+		acl = acl_from_text(argv[optind]);
+		if (acl == NULL || acl_valid(acl) == -1) {
+			fprintf(stderr, inv_acl, program, argv[optind]);
+			return(1);
 		} 
 		optind++;
 	}
@@ -175,56 +177,37 @@ main (int argc, char *argv[])
 	/* directory default acl */
 	if (bflag || dflag) {
 		dacl = acl_from_text (argv[optind]);
-		if (dacl == NULL || acl_valid(dacl) == -1)
-		{
-			fprintf (stderr, inv_acl, program, argv[optind]);
-			return (1);
+		if (dacl == NULL || acl_valid (dacl) == -1) {
+			fprintf(stderr, inv_acl, program, argv[optind]);
+			return(1);
 		}
 		optind++;
-	} 
-
-
-	/* place acls on files */
-	for (;optind < argc;optind++)
-	{
-		/* set regular acl */
-		if (acl &&
-		    acl_set_file (argv[optind], ACL_TYPE_ACCESS, acl) == -1)
-		{
-			fprintf (stderr,"%s: error setting access acl on \"%s\": %s\n",
-				 program, argv[optind],strerror(errno));
-			failed++;
-		}
-		/* set default acl */
-		if (dacl &&
-		    acl_set_file (argv[optind], ACL_TYPE_DEFAULT, dacl) == -1)
-		{
-			fprintf (stderr,"%s: error setting default acl on \"%s\": %s\n",
-				 program, argv[optind],strerror(errno));
-			failed++;
-		}
 	}
 
-	if (acl)
-		acl_free (acl);
-	if (dacl)
-		acl_free (dacl);
+	/* place acls on files */
+	for (; optind < argc; optind++)
+		failed += set_acl(acl, dacl, argv[optind]);
 
-	return (failed);
+	if (acl)
+		acl_free(acl);
+	if (dacl)
+		acl_free(dacl);
+
+	return(failed);
 }
 
 /* 
  *   deletes an access acl or directory default acl if one exists
  */ 
 static int 
-acl_delete_file (const char * path, acl_type_t type)
+acl_delete_file(const char *path, acl_type_t type)
 {
 	struct acl acl;
-	int error=0;
+	int error = 0;
 
 	acl.acl_cnt = ACL_NOT_PRESENT;
 
-	error = acl_set_file( path,type,&acl) ;
+	error = acl_set_file(path, type, &acl);
 
 	return(error);
 }
@@ -242,47 +225,41 @@ list_acl(char *file)
 	char *buf_acl = NULL;
 	char *buf_dacl = NULL;
 
-	acl = acl_get_file(file, ACL_TYPE_ACCESS);
-	if (acl == NULL) {
-	    fprintf (stderr, "%s: error getting ACL on \"%s\": %s\n",
-			 program, file, strerror(errno));
-            return 0;
+	if ((acl = acl_get_file(file, ACL_TYPE_ACCESS)) == NULL) {
+		fprintf(stderr, "%s: error getting ACL on \"%s\": %s\n",
+			program, file, strerror(errno));
+		return 0;
 	}
         if (acl->acl_cnt != ACL_NOT_PRESENT) {
-	    buf_acl = acl_to_short_text (acl, (ssize_t *) NULL);
-	    if (buf_acl == NULL) {
-		fprintf (stderr, "%s: error converting ACL to short text "
-				 "for file \"%s\": %s\n",
-			     program, file, strerror(errno));
+		buf_acl = acl_to_short_text(acl, (ssize_t *) NULL);
+		if (buf_acl == NULL) {
+			fprintf(stderr,
+		"%s: error converting ACL to short text for file \"%s\": %s\n",
+				program, file, strerror(errno));
+			return 0;
+		}
+	}
+
+	if ((dacl = acl_get_file(file, ACL_TYPE_DEFAULT)) == NULL) {
+		fprintf(stderr, "%s: error getting default ACL on \"%s\": %s\n",
+			program, file, strerror(errno));
 		return 0;
-	    }
-        }
-         
-	dacl = acl_get_file(file, ACL_TYPE_DEFAULT);
-	if (dacl == NULL) {
-	    fprintf (stderr, "%s: error getting default ACL on \"%s\": %s\n",
-			 program, file, strerror(errno));
-	    return 0;
-        }
-        if (dacl->acl_cnt > 0) {
-	    buf_dacl = acl_to_short_text (dacl, (ssize_t *) NULL);
-	    if (buf_dacl == NULL) {
-		fprintf (stderr, "%s: error converting default ACL to short text "
-				 "for file \"%s\": %s\n",
-			     program, file, strerror(errno));
-		return 0;
-	    }
-        }
+	}
+	if (dacl->acl_cnt > 0) {
+		buf_dacl = acl_to_short_text(dacl, (ssize_t *) NULL);
+		if (buf_dacl == NULL) {
+			fprintf(stderr,
+	"%s: error converting default ACL to short text for file \"%s\": %s\n",
+				program, file, strerror(errno));
+			return 0;
+	    	}
+	}
 
 	printf("%s [", file);
 	if (buf_acl)
-	{
-	    printf("%s", buf_acl);
-	}
+		printf("%s", buf_acl);
 	if (buf_dacl)
-	{
-	    printf("/%s", buf_dacl);
-	}
+		printf("/%s", buf_dacl);
 	printf("]\n");
 
         if (acl)
@@ -295,4 +272,66 @@ list_acl(char *file)
 	    acl_free(buf_dacl);
       
         return(1);
+}
+
+static int
+set_acl(acl_t acl, acl_t dacl, const char *fname)
+{
+	int failed = 0;
+
+	if (rflag)
+		failed += walk_dir(acl, dacl, fname);
+
+	/* set regular acl */
+	if (acl && acl_set_file(fname, ACL_TYPE_ACCESS, acl) == -1) {
+		fprintf(stderr,"%s: error setting access acl on \"%s\": %s\n",
+			 program, fname, strerror(errno));
+		failed++;
+	}
+	/* set default acl */
+	if (dacl && acl_set_file(fname, ACL_TYPE_DEFAULT, dacl) == -1) {
+		fprintf(stderr,"%s: error setting default acl on \"%s\": %s\n",
+			program, fname, strerror(errno));
+		failed++;
+	}
+
+	return(failed);
+}
+
+static int
+walk_dir(acl_t acl, acl_t dacl, const char *fname)
+{
+	int failed = 0;
+	DIR *dir;
+	struct dirent64 *d;
+	char *name;
+
+	if ((dir = opendir(fname)) == NULL) {
+		if (errno != ENOTDIR) {
+			fprintf(stderr, "%s: opendir failed: %s\n",
+				program, strerror(errno));
+			return(1);
+		}
+		return(0);	/* got a file, not an error */
+	}
+
+	while ((d = readdir64(dir)) != NULL) {
+		/* skip "." and ".." entries */
+		if (strcmp(d->d_name, ".") == 0 || strcmp(d->d_name, "..") == 0)
+			continue;
+		
+		name = malloc(strlen(fname) + strlen(d->d_name) + 2);
+		if (name == NULL) {
+			fprintf(stderr, "%s: malloc failed: %s\n",
+				program, strerror(errno));
+			exit(1);
+		}
+		sprintf(name, "%s/%s", fname, d->d_name);
+
+		failed += set_acl(acl, dacl, name);
+		free(name);
+	}
+	closedir(dir);
+
+	return(failed);
 }
