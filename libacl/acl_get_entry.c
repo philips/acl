@@ -27,8 +27,11 @@ int
 acl_get_entry(acl_t acl, int entry_id, acl_entry_t *entry_p)
 {
 	acl_obj *acl_obj_p = ext2int(acl, acl);
-	if (!acl_obj_p)
+	if (!acl_obj_p) {
+		if (entry_p)
+			*entry_p = NULL;
 		return -1;
+	}
 	if (!entry_p) {
 		errno = EINVAL;
 		return -1;

@@ -27,8 +27,11 @@ int
 acl_get_permset(acl_entry_t entry_d, acl_permset_t *permset_p)
 {
 	acl_entry_obj *entry_obj_p = ext2int(acl_entry, entry_d);
-	if (!entry_obj_p)
+	if (!entry_obj_p) {
+		if (permset_p)
+			*permset_p = NULL;
 		return -1;
+	}
 	if (!permset_p) {
 		errno = EINVAL;
 		return -1;

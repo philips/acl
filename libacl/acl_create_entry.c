@@ -56,6 +56,8 @@ acl_create_entry(acl_t *acl_p, acl_entry_t *entry_p)
 	acl_obj *acl_obj_p;
 	acl_entry_obj *entry_obj_p;
 	if (!acl_p || !entry_p) {
+		if (entry_p)
+			*entry_p = NULL;
 		errno = EINVAL;
 		return -1;
 	}
