@@ -1,3 +1,11 @@
+acl (1.0.8) unstable; urgency=low
+
+  * Work around syscall number collision on recent ia64 kernels
+  * Numerous API changes to more closely follow the draft POSIX ACL
+    standard, and to help with its use within Samba
+
+ -- Nathan Scott <nathans@debian.org>  Mon,  2 Jul 2001 13:02:02 +1000
+
 acl (1.0.2) unstable; urgency=low
 
   * Updates to man pages.

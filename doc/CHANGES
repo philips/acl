@@ -1,3 +1,6 @@
+acl-1.0.8 (02 Jul 2001)
+	- Work around syscall number collision on recent ia64 kernels
+
 acl-1.0.7 (20 June 2001)
 	- Change acl_get_qualifier() to dynamically allocate
 	  the returned qualifier so that acl_free() can be
@@ -24,7 +27,7 @@ acl-1.0.5 (6 June 2001)
 	- Update acl.h to define ACL_OTHER (same as ACL_OTHER_OBJ).
 
 acl-1.0.4 (29 May 2001)
-	- Fix up acl_get_file, acl_get_fd bug for non-irix semantics
+	- Fix up acl_get_file, acl_get_fd bug for non-IRIX semantics
 	  which I introduced in 1.0.3 (thanks Juergen Hasch).
         - Make acl_get_entry match Posix 23.4.13.3 semantics.
         - Make acl_create_entry match Posix 23.4.7.2 semantics.

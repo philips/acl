@@ -1153,10 +1153,10 @@ acl_set_tag_type (acl_entry_t entry_d, acl_tag_t tag_type)
 #elif __ia64__
 #  define HAVE_ACL_SYSCALL 1
 #  ifndef SYS__acl_get
-#    define SYS__acl_get	1216
+#    define SYS__acl_get	1261
 #  endif
 #  ifndef SYS__acl_set
-#    define SYS__acl_set	1217
+#    define SYS__acl_set	1262
 #  endif
 #else
 #  define HAVE_ACL_SYSCALL 0
