@@ -46,7 +46,14 @@ extern "C" {
 #define SGI_ACL_FILE_SIZE	12
 #define SGI_ACL_DEFAULT_SIZE	15
 
+/*
+ * An IRIX defined macro not in P1003.1e
+ * With ACL_COMPAT_IRIXGET set
+ * it used to signify an empty ACL.
+ * It is also used to delete an ACL.
+ */
 #define ACL_NOT_PRESENT	-1
+
 /*
  * Number of "base" ACL entries
  * (USER_OBJ, GROUP_OBJ, MASK, & OTHER_OBJ)
@@ -108,14 +115,22 @@ struct acl {
  */
 #define ACL_UNDEFINED_ID	((unsigned int)-1)
 
+/*
+ * Values for acl compatibility
+ */
+#define ACL_COMPAT_DEFAULT	0x00
+#define ACL_COMPAT_IRIXGET	0x01
+
 typedef struct acl * acl_t;
 typedef acl_perm_t * acl_permset_t;
+typedef unsigned int acl_compat_t;
 
 /*
  * User-space POSIX data types and functions.
  */
 #ifndef __KERNEL__
 
+extern void acl_set_compat(acl_compat_t);
 extern int acl_add_perm(acl_permset_t, acl_perm_t);
 extern int acl_clear_perms(acl_permset_t);
 extern ssize_t acl_copy_ext(void *, acl_t, ssize_t);

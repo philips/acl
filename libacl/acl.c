@@ -33,7 +33,9 @@
  * http://oss.sgi.com/projects/GenInfo/SGIGPLNoticeExplan/
  */
 
+#include <sys/stat.h>
 #include <sys/types.h>
+#include <unistd.h>
 #include <acl.h>
 #include <pwd.h>
 #include <grp.h>
@@ -56,6 +58,12 @@
 
 #define setoserror(E)	errno = (E)
 
+/* 
+ * Compatibility flag for IRIX functionality
+ * Default is to support common Linux/Posix ACL functionality
+ * and thus is set to zero.
+ */
+static acl_compat_t acl_compat = 0;
 
 static char *
 skip_white(char *s)
@@ -565,6 +573,32 @@ acl_delete_def_file (const char *path_p)
 		return 0;
 }
 
+void
+acl_set_compat(acl_compat_t compat_bits)
+{
+	if (compat_bits)
+	    acl_compat |= compat_bits;
+	else
+	    acl_compat = 0;
+}
+
+static void
+acl_from_mode(acl_t aclp, uid_t uid, gid_t gid, mode_t mode)
+{
+	aclp->acl_cnt = 3;
+        aclp->acl_entry[0].ae_tag  = ACL_USER_OBJ;
+        aclp->acl_entry[0].ae_id   = uid;
+        aclp->acl_entry[0].ae_perm = (mode & S_IRWXU) >> 6;
+
+        aclp->acl_entry[1].ae_tag  = ACL_GROUP_OBJ;
+        aclp->acl_entry[1].ae_id   = gid;
+        aclp->acl_entry[1].ae_perm = (mode & S_IRWXG) >> 3;
+
+        aclp->acl_entry[2].ae_tag  = ACL_OTHER_OBJ;
+        aclp->acl_entry[2].ae_id   = ACL_UNDEFINED_ID;
+        aclp->acl_entry[2].ae_perm = (mode & S_IRWXO);
+}
+
 /* 
  * Get an ACL by file descriptor.
  */
@@ -584,8 +618,17 @@ acl_get_fd (int fd)
 		free ((void *) aclp);
 		return (NULL);
 	}
-	else
+	else if (acl_compat & ACL_COMPAT_IRIXGET) {
 		return aclp;
+	}
+	else {
+		/* copy over a minimum ACL from mode bits */
+		struct stat st;
+		if (fstat(fd, &st) != 0)
+			return NULL;
+		acl_from_mode(aclp, st.st_uid, st.st_gid, st.st_mode);
+		return aclp;
+	}
 }
 
 /* 
@@ -625,8 +668,22 @@ acl_get_file (const char *path_p, acl_type_t type)
 		free ((void *) aclp);
 		return (NULL);
 	}
-	else
+	else if (acl_compat & ACL_COMPAT_IRIXGET) {
 		return aclp;
+	}
+	else if (type == ACL_TYPE_ACCESS) {
+		/* copy over a minimum ACL from mode bits */
+		struct stat st;
+		if (stat(path_p, &st) != 0)
+			return NULL;
+		acl_from_mode(aclp, st.st_uid, st.st_gid, st.st_mode);
+		return aclp;
+	}
+	else { /* default ACL */
+		/* empty ACL and NOT ACL_NOT_PRESENT */
+		aclp->acl_cnt = 0; 
+		return aclp;
+	}
 }
 
 /* 

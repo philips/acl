@@ -14,6 +14,13 @@ open file referred to by \f2fd\fP.
 If
 .B _POSIX_MAC
 is in effect, then the process must have MAC read access to the object.
+If no access ACL is associated with the \f2fd\fP, then the resultant ACL
+is dependent on the ACL compatibility mode (see
+.BR acl_set_compat (8)
+). If \f2ACL_COMPAT_IRIXGET\f1 is
+set then an ACL with a count of ACL_NOT_PRESENT is returned. Otherwise,
+when no compatibility mode has been set, a mininum 3 ACE ACL based on the 
+file's mode is returned.
 .PP
 .I acl_set_fd
 sets the ACL for the open file referred to by \f2fd\fP from the \f2struct acl\fP
@@ -52,7 +59,10 @@ ENOMEM
 allocation of the \f2struct acl\fP failed.
 .TP 16
 ENOSYS
-ACL support is not available (not installed).
+ACL support is not configured in kernel.
+.TP 16
+EOPNOTSUPP (ENOTSUP)
+ACL support is not available for given filesystem.
 .PP
 .I acl_set_fd:
 .TP 16
@@ -70,7 +80,10 @@ The file system is full or some other resource needed for the ACL storage
 is not available.
 .TP 16
 ENOSYS
-ACL support is not available (not installed).
+ACL support is not configured in kernel.
+.TP 16
+EOPNOTSUPP (ENOTSUP)
+ACL support is not available for given filesystem.
 .TP 16
 EPERM
 The process does not have appropriate privilege to
@@ -79,3 +92,6 @@ perform the operation to set the ACL.
 EROFS
 This function requires modification of a file system which is currently
 read-only.
+.SH SEE ALSO
+.BR acl_get_file (8),
+.BR acl_set_compat (8).

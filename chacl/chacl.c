@@ -84,14 +84,7 @@ main (int argc, char *argv[])
 	p = strrchr (argv[0], '/');
 	program = p != NULL ? p + 1 : argv[0];
 
-#ifdef HIDDEN
-	/* continue only if ACLs enabled */
-	if (sysconf (_SC_ACL) <= 0)
-	{
-		fprintf (stderr, "%s ACLs not enabled.\n", program);
-		return (1);
-	}
-#endif
+	acl_set_compat(ACL_COMPAT_IRIXGET);
 
 	/* parse arguments */
 	while ((c = getopt (argc, argv, "bdlRDB")) != -1)
@@ -271,7 +264,7 @@ list_acl(char *file)
 			 program, file, strerror(errno));
 	    return 0;
         }
-        if (dacl->acl_cnt != ACL_NOT_PRESENT) {
+        if (dacl->acl_cnt > 0) {
 	    buf_dacl = acl_to_short_text (dacl, (ssize_t *) NULL);
 	    if (buf_dacl == NULL) {
 		fprintf (stderr, "%s: error converting default ACL to short text "

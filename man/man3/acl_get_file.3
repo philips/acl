@@ -12,11 +12,18 @@ acl_get_file, acl_set_file  \- get or set the ACL for a pathname
 returns a pointer to an allocated \f2struct acl\fP associated with the
 pathname pointed to by \f2path\fP.  \f2type\fP determines whether the
 default ACL (\f2type == ACL_TYPE_DEFAULT\fP) or access ACL (\f2type == ACL_TYPE_ACCESS\fP) is returned.  The default ACL is available only for directories.
-If there is no default ACL associated with the specified directory, an
-ACL containing zero entries is returned.
 If
 .B _POSIX_MAC
 is in effect, then the process must have MAC read access to the object.
+If no ACL is associated with the \f2path\fP, then the resultant ACL
+is dependent on the ACL compatibility mode (see
+.BR acl_set_compat (8)
+). If \f2ACL_COMPAT_IRIXGET\f1 is
+set then an ACL with a count of ACL_NOT_PRESENT is returned. 
+If no compatibility mode has been set and the ACL is an access ACL then
+a mininum 3 ACE ACL based on the file's mode is returned.
+If no compatibility mode has been set and the ACL is a default ACL then
+an ACL with a count of zero entries is returned.
 .PP
 .I acl_set_file
 sets the ACL of the specified pathname.  \f2type\fP indicates which ACL, 
@@ -63,7 +70,10 @@ ENOMEM
 allocation of the \f2struct acl\fP failed.
 .TP 16
 ENOSYS
-ACL support is not available (not installed).
+ACL support is not configured in kernel.
+.TP 16
+EOPNOTSUPP (ENOTSUP)
+ACL support is not available for given filesystem.
 .TP 16
 ENOTDIR
 A component of the path prefix is not a directory.
@@ -91,7 +101,10 @@ The file system is full or some other resource needed for the ACL storage
 is not available.
 .TP 16
 ENOSYS
-ACL support is not available (not installed).
+ACL support is not configured in kernel.
+.TP 16
+EOPNOTSUPP (ENOTSUP)
+ACL support is not available for given filesystem.
 .TP 16
 ENOTDIR
 A component of the path prefix is not a directory.
@@ -103,3 +116,6 @@ perform the operation to set the ACL.
 EROFS
 This function requires modification of a file system which is currently
 read-only.
+.SH SEE ALSO
+.BR acl_get_fd (8),
+.BR acl_set_compat (8).
