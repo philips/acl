@@ -39,10 +39,12 @@ __acl_init_obj(void)
 acl_t
 acl_init(int count)
 {
+	acl_obj *obj;
 	if (count < 0) {
 		errno = EINVAL;
 		return NULL;
 	}
-	return int2ext(__acl_init_obj());
+	obj = __acl_init_obj();
+	return int2ext(obj);
 }
 
