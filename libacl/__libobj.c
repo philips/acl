@@ -13,7 +13,7 @@ __new_obj_p(int magic, size_t size)
 {
 	obj_prefix *obj_p = (obj_prefix *)malloc(size);
 	if (obj_p)
-		obj_p->p_magic = magic;
+		obj_p->p_magic = (long)magic;
 	return obj_p;
 }
 
@@ -29,7 +29,7 @@ __free_obj_p(obj_prefix *obj_p)
 obj_prefix *
 __check_obj_p(obj_prefix *obj_p, int magic)
 {
-	if (!obj_p || obj_p->p_magic != magic) {
+	if (!obj_p || obj_p->p_magic != (long)magic) {
 		errno = EINVAL;
 		return NULL;
 	}

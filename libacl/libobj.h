@@ -30,8 +30,10 @@
 
 
 /* prefix for all objects */
+/* [Note: p_magic is a long rather than int so that this structure */
+/* does not become padded by the compiler on 64-bit architectures] */
 typedef struct {
-	int			p_magic;
+	long			p_magic;
 } obj_prefix;
 
 #define pmagic i.p_magic
