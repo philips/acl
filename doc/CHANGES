@@ -4,6 +4,7 @@
 * Make acl_set_file() fail for regular files and type ACL_TYPE_DEFAULT,
   as required by 1003.1e draft 17. Update manual page accordingly.
 * Updated libacl version number from libacl.so.1.0.1 to libacl.so.1.0.2.
+* Updated chacl(1) command to behave correctly with this libacl change.
 
 2.0.12 (25 June 2002)
 * Increment the libacl version so that its possible for other packages

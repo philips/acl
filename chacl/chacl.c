@@ -265,7 +265,8 @@ list_acl(char *file)
 			program, file, strerror(errno));
 		return 0;
 	}
-	if ((dacl = acl_get_file(file, ACL_TYPE_DEFAULT)) == NULL) {
+	if ((dacl = acl_get_file(file, ACL_TYPE_DEFAULT)) == NULL &&
+	    (errno != EACCES)) {	/* EACCES given if not a directory */
 		fprintf(stderr, _("%s: cannot get default ACL on '%s': %s\n"),
 			program, file, strerror(errno));
 		return 0;
