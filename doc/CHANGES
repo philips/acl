@@ -1,3 +1,18 @@
+2.2.4 (10 February 2003)
+* Merge several patches from Andreas - note that the library minor
+  version number has been incremented (libacl.so.1.0.3 -> 1.0.4)
+* A minor acl.5 update.
+* Fix memory leak in libacl (reported by
+  Leo Qiu <leoxqiu@yahoo.com> -- thanks!).
+* Preallocation of ACL entries in acl_init() to avoid calling
+  malloc() repeatedly.
+* Moved ACL entry reordering outside of loops to avoid O(n^2)
+  behavior (where n = #entries).
+* Fixed bug in acl_get_file() when the guessed number of entries
+  in a default ACL turned out to be too low (access ACL was used
+  instead).
+* Correct a signedness issue in getfacl's handling of uid/gid.
+
 2.2.3 (06 February 2003)
 * Fix order of library declarations in tools to allow linking when
   only a static libattr library is available (mario@klebsch.de).
