@@ -53,6 +53,7 @@ acl_check (acl_t acl, int *last)
 		setoserror (EINVAL);
 		return -1;
 	}
+	acl_entry_sort(acl);
 	if (last)
 		*last = 0;
 
