@@ -29,7 +29,7 @@ Package: libacl1
 Depends: ${shlibs:Depends}
 Section: libs
 Priority: optional
-Conflicts: acl (<< 2.0.0)
+Conflicts: acl (<< 2.0.0), libacl1-kerberos4kth
 Architecture: any
 Description: Access control list shared library
  This package contains the libacl.so dynamic library containing

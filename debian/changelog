@@ -1,3 +1,11 @@
+acl (2.2.10-1) unstable; urgency=low
+
+  * New upstream release
+  * Added runtime conflict with libacl1-kerberos4kth, as the
+    presence of this package breaks Samba's use of libacl1.
+
+ -- Nathan Scott <nathans@debian.org>  Mon, 26 May 2003 11:38:53 +1000
+
 acl (2.2.9-1) unstable; urgency=low
 
   * New upstream release
