@@ -55,7 +55,6 @@ extern int acl_set_file_mode(const char *path_p, acl_type_t type, acl_t acl);
 extern int acl_set_fd_mode(int fd, acl_t acl);
 int acl_extended_file(const char *path_p);
 int acl_extended_fd(int fd);
-extern int acl_print(FILE *file, acl_t acl, const char *prefix, int options);
 extern int acl_entries(acl_t acl);
 extern const char *acl_error(int code);
 extern int acl_get_perm(acl_permset_t permset_d, acl_perm_t perm);
