@@ -36,7 +36,7 @@ include $(TOPDIR)/include/builddefs
 LTCOMMAND = chacl
 CFILES = chacl.c
 
-LLDLIBS = $(LIBATTR) $(LIBACL)
+LLDLIBS = $(LIBACL) $(LIBATTR)
 LTDEPENDENCIES = $(LIBACL)
 
 default: $(LTCOMMAND)

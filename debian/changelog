@@ -1,3 +1,9 @@
+acl (2.2.3-1) unstable; urgency=low
+
+  * New upstream release
+
+ -- Nathan Scott <nathans@debian.org>  Thu,  6 Feb 2003 13:19:35 +1100
+
 acl (2.2.1-1) unstable; urgency=low
 
   * Clarify acl(5) with respect to fileutils support (closes: #172642)
