@@ -92,6 +92,7 @@ struct acl {
 /*
  * Values for acl_tag_t
  */
+#define ACL_UNDEFINED_TAG	0x00			/* undefined tag */
 #define ACL_USER_OBJ		0x01			/* owner */
 #define ACL_USER		0x02			/* additional users */
 #define ACL_GROUP_OBJ		0x04			/* group */
@@ -106,6 +107,7 @@ struct acl {
 /*
  * Values for acl_perm_t
  */
+#define ACL_PERM_NONE	00
 #define ACL_READ	04
 #define ACL_WRITE	02
 #define ACL_EXECUTE	01
@@ -146,6 +148,7 @@ extern acl_t acl_from_text(const char *);
 extern int acl_get_entry(acl_t, int, acl_entry_t *);
 extern acl_t acl_get_fd(int);
 extern acl_t acl_get_file(const char *, acl_type_t);
+extern int acl_get_perm(acl_permset_t, acl_perm_t);
 extern int acl_get_permset(acl_entry_t, acl_permset_t *);
 extern void *acl_get_qualifier(acl_entry_t);
 extern int acl_get_tag_type(acl_entry_t, acl_tag_t *);

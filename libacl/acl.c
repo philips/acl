@@ -618,17 +618,15 @@ acl_get_fd (int fd)
 		free ((void *) aclp);
 		return (NULL);
 	}
-	else if (acl_compat & ACL_COMPAT_IRIXGET) {
-		return aclp;
-	}
-	else {
+	else if (! (acl_compat & ACL_COMPAT_IRIXGET) &&
+	           (aclp->acl_cnt == ACL_NOT_PRESENT)) {
 		/* copy over a minimum ACL from mode bits */
 		struct stat st;
 		if (fstat(fd, &st) != 0)
 			return NULL;
 		acl_from_mode(aclp, st.st_uid, st.st_gid, st.st_mode);
-		return aclp;
 	}
+	return aclp;
 }
 
 /* 
@@ -668,22 +666,21 @@ acl_get_file (const char *path_p, acl_type_t type)
 		free ((void *) aclp);
 		return (NULL);
 	}
-	else if (acl_compat & ACL_COMPAT_IRIXGET) {
-		return aclp;
+	else if (!(acl_compat & ACL_COMPAT_IRIXGET) &&
+                  (aclp->acl_cnt == ACL_NOT_PRESENT)) {
+		if (type == ACL_TYPE_ACCESS) {
+			/* copy over a minimum ACL from mode bits */
+			struct stat st;
+			if (stat(path_p, &st) != 0)
+				return NULL;
+			acl_from_mode(aclp, st.st_uid, st.st_gid, st.st_mode);
+		}
+		else { /* default ACL */
+			/* empty ACL and NOT ACL_NOT_PRESENT */
+			aclp->acl_cnt = 0; 
+		}
 	}
-	else if (type == ACL_TYPE_ACCESS) {
-		/* copy over a minimum ACL from mode bits */
-		struct stat st;
-		if (stat(path_p, &st) != 0)
-			return NULL;
-		acl_from_mode(aclp, st.st_uid, st.st_gid, st.st_mode);
-		return aclp;
-	}
-	else { /* default ACL */
-		/* empty ACL and NOT ACL_NOT_PRESENT */
-		aclp->acl_cnt = 0; 
-		return aclp;
-	}
+	return aclp;
 }
 
 /* 
@@ -776,7 +773,7 @@ acl_dup (acl_t acl)
 
 
 /*
- * Point to an ACE
+ * Get an ACE - 23.4.14.3 
  */
 int
 acl_get_entry (acl_t acl, int which, acl_entry_t *acep)
@@ -786,21 +783,26 @@ acl_get_entry (acl_t acl, int which, acl_entry_t *acep)
 	if (acl == NULL)
 		goto bad_exit;
 
+	if (acl->acl_cnt == 0) /* no entries */
+		return 0;
+
 	switch(which) {
 	case ACL_FIRST_ENTRY :
 		*acep = acl->acl_entry;
 		break;
 	case ACL_NEXT_ENTRY :
 		ne = 1 + *acep - acl->acl_entry;
-		if( (ne < 1) || (ne >= acl->acl_cnt) )
+		if( (ne < 1) || (ne > acl->acl_cnt) ) /* outside range */
 			goto bad_exit;
+		else if (ne == acl->acl_cnt) /* already at end */
+			return 0;
 		(*acep)++;
 		break;
 	default:
 		goto bad_exit;
 	}
 
-	return 0;
+	return 1;
 
 bad_exit:
 	setoserror(EINVAL);
@@ -839,44 +841,45 @@ bad_exit:
 }
 
 /*
- * Add a new ACE to an ACL
- * (malloc a new ACL to allow for future use of short ACLs)
+ * Add a new ACE to an ACL - 23.4.7.2
  */
 int
 acl_create_entry (acl_t *aclp, acl_entry_t *acep)
 {
 	int cnt, erc;
-	acl_t acl, newacl;
+	acl_t acl;
 	acl_entry_t ace;
 
-	acl = *aclp;
-	ace = *acep;
-
 	erc = EINVAL;
-	if((acl == NULL) || (ace == NULL))
+	if ((aclp == NULL) || (acep == NULL))
+		goto bad_exit;
+
+        ace = *acep;
+	acl = *aclp;
+	if (acl == NULL)
 		goto bad_exit;
 
 	cnt = acl->acl_cnt;
-	if((cnt < 0) || ((cnt+1) > ACL_MAX_ENTRIES))
+	if (cnt < 0) 
 		goto bad_exit;
 
 	erc = ENOMEM;
-	newacl = (acl_t)malloc(sizeof(struct acl));
-	if(newacl == NULL)
+	if (cnt >= ACL_MAX_ENTRIES)
 		goto bad_exit;
 
-	*newacl = *acl;
-	newacl->acl_entry[cnt] = *ace;
-	newacl->acl_cnt = cnt+1;
-
-	acl_free(*aclp);
-	*aclp = newacl;
+	ace = &acl->acl_entry[cnt];
+	ace->ae_tag = ACL_UNDEFINED_TAG;
+	ace->ae_id = ACL_UNDEFINED_ID;
+	ace->ae_perm = ACL_PERM_NONE;
+	acl->acl_cnt++;
+	*acep = ace;
 
 	return 0;
 
 bad_exit:
 	setoserror(erc);
-	*acep = NULL;
+	if (acep)
+	    *acep = NULL;
 	return -1;
 }
 
@@ -962,6 +965,13 @@ acl_delete_perm(acl_permset_t permset_d, acl_perm_t perm)
 	return 0;
 }
 
+int 
+acl_get_perm(acl_permset_t permset, acl_perm_t perm)
+{
+	return (*permset & perm);
+}
+
+
 int
 acl_get_permset (acl_entry_t entry_d, acl_permset_t *permset_p)
 {
@@ -994,14 +1004,12 @@ acl_get_qualifier (acl_entry_t entry_d)
 int
 acl_get_tag_type (acl_entry_t entry_d, acl_tag_t *tag_p)
 {
-	acl_tag_t *new_tag_p;
-	
 	if(entry_d == NULL){
 		setoserror(EINVAL);
 		return -1;
 	}
 	
-	switch ( *new_tag_p = entry_d->ae_tag ) {
+	switch ( entry_d->ae_tag ) {
 		case ACL_USER:
 		case ACL_USER_OBJ:
 		case ACL_GROUP:

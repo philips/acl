@@ -1,3 +1,10 @@
+acl-1.0.4 (29 May 2001)
+	- Fix up acl_get_file, acl_get_fd bug for non-irix semantics
+	  which I introduced in 1.0.3 (thanks Juergen Hasch).
+        - Make acl_get_entry match Posix 23.4.13.3 semantics.
+        - Make acl_create_entry match Posix 23.4.7.2 semantics.
+	- add acl_get_perm() for the Samba work
+
 acl-1.0.3 (24 May 2001)
 	- Update libacl functions of acl_get_file, acl_get_fd,
 	  so that they can do ext2 P1003.1e style semantics by default 
