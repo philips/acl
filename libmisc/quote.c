@@ -30,7 +30,10 @@ const char *quote(const char *str)
 	const unsigned char *s;
 	char *q;
 	size_t nonpr;
-	
+
+	if (!str)
+		return str;
+
 	for (nonpr = 0, s = (unsigned char *)str; *s != '\0'; s++)
 		if (!isprint(*s) || isspace(*s) || *s == '\\')
 			nonpr++;

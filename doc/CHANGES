@@ -1,3 +1,6 @@
+2.2.15 (08 August 2003)
+* Somehow the SEGV fix from 2.2.14 got lost, reinstate it.
+
 2.2.14 (04 August 2003)
 * Fix chacl argument count checking in one or two places.
 * Fix libmisc quote/unquote routines so they handle NULL as input,
