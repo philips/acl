@@ -40,8 +40,11 @@ __acl_init_obj(int count)
 	   aprealloc == aprealloc_end is true when no more pre-allocated	
 	   entries are available. */
 
-	acl_obj_p->aprealloc = (acl_entry_obj *)
-		malloc(count * sizeof(acl_entry_obj));
+	if (count > 0)
+		acl_obj_p->aprealloc = (acl_entry_obj *)
+			malloc(count * sizeof(acl_entry_obj));
+	else
+		acl_obj_p->aprealloc = NULL;
 	if (acl_obj_p->aprealloc != NULL)
 		acl_obj_p->aprealloc_end = acl_obj_p->aprealloc + count;
 	else
