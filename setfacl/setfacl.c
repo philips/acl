@@ -36,7 +36,6 @@
 
 #include <locale.h>
 #include <libintl.h>
-#define _(String) gettext (String)
 
 extern int
 do_set(
@@ -140,13 +139,15 @@ restore(
 
 		if (path_p == NULL) {
 			if (filename) {
-				fprintf(stderr, _("%s: %s: No filename found "
-				                  "in line %d, aborting\n"),
+				fprintf(stderr, gettext(
+						"%s: %s: No filename found "
+				                "in line %d, aborting\n"),
 					progname, filename, backup_line);
 			} else {
-				fprintf(stderr, _("%s: No filename found in "
-				                  "line %d of standard input, "
-					          "aborting\n"),
+				fprintf(stderr, gettext(
+						"%s: No filename found in "
+						"line %d of standard input, "
+						"aborting\n"),
 					progname, backup_line);
 			}
 			goto getout;
@@ -165,7 +166,7 @@ restore(
 				     SEQ_PARSE_MULTI,
 				     &line, NULL);
 		if (error != 0) {
-			fprintf(stderr, _("%s: %s: %s in line %d\n"),
+			fprintf(stderr, gettext("%s: %s: %s in line %d\n"),
 			        progname, filename, strerror(errno), line);
 			goto getout;
 		}
@@ -188,7 +189,7 @@ restore(
 		if (!opt_test &&
 		    (uid != ACL_UNDEFINED_ID || gid != ACL_UNDEFINED_ID)) {
 			if (chown(path_p, uid, gid) != 0) {
-				fprintf(stderr, _("%s: %s: Cannot change "
+				fprintf(stderr, gettext("%s: %s: Cannot change "
 					          "owner/group: %s\n"),
 					progname, path_p, strerror(errno));
 				status = 1;
@@ -226,11 +227,11 @@ fail:
 
 void help(void)
 {
-	printf(_("%s %s -- set file access control lists\n"),
+	printf(gettext("%s %s -- set file access control lists\n"),
 		progname, VERSION);
-	printf(_("Usage: %s %s\n"),
+	printf(gettext("Usage: %s %s\n"),
 		progname, cmd_line_spec);
-	printf(_(
+	printf(gettext(
 "  -m, --modify=acl        modify the current ACL(s) of file(s)\n"
 "  -M, --modify-file=file  read ACL entries to modify from file\n"
 "  -x, --remove=acl        remove entries from the ACL(s) of file(s)\n"
@@ -239,18 +240,18 @@ void help(void)
 "  -k, --remove-default    remove the default ACL\n"));
 #if !POSIXLY_CORRECT
 	if (!posixly_correct) {
-		printf(_(
+		printf(gettext(
 "      --set=acl           set the ACL of file(s), replacing the current ACL\n"
 "      --set-file=file     read ACL entries to set from file\n"
 "      --mask              do recalculate the effective rights mask\n"));
 	}
 #endif
-  	printf(_(
+  	printf(gettext(
 "  -n, --no-mask           don't recalculate the effective rights mask\n"
 "  -d, --default           operations apply to the default ACL\n"));
 #if !POSIXLY_CORRECT
 	if (!posixly_correct) {
-		printf(_(
+		printf(gettext(
 "  -R, --recursive         recurse into subdirectories\n"
 "  -L, --logical           logical walk, follow symbolic links\n"
 "  -P, --physical          physical walk, do not follow symbolic links\n"
@@ -258,7 +259,7 @@ void help(void)
 "      --test              test mode (ACLs are not modified)\n"));
 	}
 #endif
-	printf(_(
+	printf(gettext(
 "      --version           print version and exit\n"
 "      --help              this help text\n"));
 }
@@ -353,23 +354,23 @@ int main(int argc, char *argv[])
 
 #if POSIXLY_CORRECT
 	cmd_line_options = POSIXLY_CMD_LINE_OPTIONS;
-	cmd_line_spec = _(POSIXLY_CMD_LINE_SPEC);
+	cmd_line_spec = gettext(POSIXLY_CMD_LINE_SPEC);
 #else
 	if (getenv(POSIXLY_CORRECT_STR))
 		posixly_correct = 1;
 	if (!posixly_correct) {
 		cmd_line_options = CMD_LINE_OPTIONS;
-		cmd_line_spec = _(CMD_LINE_SPEC);
+		cmd_line_spec = gettext(CMD_LINE_SPEC);
 	} else {
 		cmd_line_options = POSIXLY_CMD_LINE_OPTIONS;
-		cmd_line_spec = _(POSIXLY_CMD_LINE_SPEC);
+		cmd_line_spec = gettext(POSIXLY_CMD_LINE_SPEC);
 	}
 #endif
 
 	setlocale(LC_MESSAGES, "");
-	bindtextdomain(PKG_NAME, LOCALEDIR);
-	textdomain(PKG_NAME);
-	
+	bindtextdomain(PACKAGE, LOCALEDIR);
+	textdomain(PACKAGE);
+
 	while ((opt = getopt_long(argc, argv, cmd_line_options,
 		                  long_options, NULL)) != -1) {
 		/* we remember the two REMOVE_ACL commands of the set
@@ -466,11 +467,13 @@ int main(int argc, char *argv[])
 				                  seq_cmd, parse_mode) != 0) {
 					if (which < 0 ||
 					    (size_t) which >= strlen(optarg)) {
-						fprintf(stderr, _("%s: Option "
+						fprintf(stderr, gettext(
+							"%s: Option "
 						        "-%c incomplete\n"),
 							progname, opt);
 					} else {
-						fprintf(stderr, _("%s: Option "
+						fprintf(stderr, gettext(
+							"%s: Option "
 						        "-%c: %s near "
 							"character %d\n"),
 							progname, opt,
@@ -554,15 +557,17 @@ int main(int argc, char *argv[])
 						errno = EINVAL;
 
 					if (file != stdin) {
-						fprintf(stderr, _("%s: %s in "
-						        "line %d of file %s\n"),
+						fprintf(stderr, gettext(
+							"%s: %s in line "
+						        "%d of file %s\n"),
 							progname,
 							strerror(errno),
 							lineno,
 							optarg);
 					} else {
-						fprintf(stderr, _("%s: %s in "
-						        "line %d of standard "
+						fprintf(stderr, gettext(
+							"%s: %s in line "
+						        "%d of standard "
 							"input\n"), progname,
 							strerror(errno),
 							lineno);
@@ -669,9 +674,9 @@ int main(int argc, char *argv[])
 	goto cleanup;
 
 synopsis:
-	fprintf(stderr, _("Usage: %s %s\n"),
+	fprintf(stderr, gettext("Usage: %s %s\n"),
 		progname, cmd_line_spec);
-	fprintf(stderr, _("Try `%s --help' for more information.\n"),
+	fprintf(stderr, gettext("Try `%s --help' for more information.\n"),
 		progname);
 	status = 2;
 	goto cleanup;

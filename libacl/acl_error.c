@@ -25,7 +25,6 @@
 #include "libacl.h"
 
 #include <libintl.h>
-#define _(String) gettext (String)
 
 
 const char *
@@ -33,13 +32,13 @@ acl_error(int code)
 {
 	switch(code) {
 		case ACL_MULTI_ERROR:
-			return _("Multiple entries");
+			return gettext("Multiple entries");
 		case ACL_DUPLICATE_ERROR:
-			return _("Duplicate entries");
+			return gettext("Duplicate entries");
 		case ACL_MISS_ERROR:
-			return _("Missing or wrong entry");
+			return gettext("Missing or wrong entry");
 		case ACL_ENTRY_ERROR:
-			return _("Invalid entry type");
+			return gettext("Invalid entry type");
 		default:
 			return NULL;
 	}

@@ -45,7 +45,6 @@
 
 #include <locale.h>
 #include <libintl.h>
-#define _(String) gettext (String)
 
 static int acl_delete_file (const char * path, acl_type_t type);
 static int list_acl(char *file);
@@ -58,16 +57,16 @@ static int rflag;
 static void
 usage(void)
 {
-	fprintf(stderr, _("Usage:\n"));
-	fprintf(stderr, _("\t%s acl pathname...\n"), program);
-	fprintf(stderr, _("\t%s -b acl dacl pathname...\n"), program);
-	fprintf(stderr, _("\t%s -d dacl pathname...\n"), program);
-	fprintf(stderr, _("\t%s -R pathname...\n"), program);
-	fprintf(stderr, _("\t%s -D pathname...\n"), program);
-	fprintf(stderr, _("\t%s -B pathname...\n"), program);
-	fprintf(stderr, _("\t%s -l pathname...\t[not IRIX compatible]\n"),
+	fprintf(stderr, gettext("Usage:\n"));
+	fprintf(stderr, gettext("\t%s acl pathname...\n"), program);
+	fprintf(stderr, gettext("\t%s -b acl dacl pathname...\n"), program);
+	fprintf(stderr, gettext("\t%s -d dacl pathname...\n"), program);
+	fprintf(stderr, gettext("\t%s -R pathname...\n"), program);
+	fprintf(stderr, gettext("\t%s -D pathname...\n"), program);
+	fprintf(stderr, gettext("\t%s -B pathname...\n"), program);
+	fprintf(stderr, gettext("\t%s -l pathname...\t[not IRIX compatible]\n"),
 			program);
-	fprintf(stderr, _("\t%s -r pathname...\t[not IRIX compatible]\n"),
+	fprintf(stderr, gettext("\t%s -r pathname...\t[not IRIX compatible]\n"),
 			program);
 	exit(1);
 }
@@ -90,6 +89,10 @@ main(int argc, char *argv[])
 	acl_t dacl = NULL;		/* Directory Default ACL */
 
 	program = basename(argv[0]);
+
+	setlocale(LC_MESSAGES, "");
+	bindtextdomain(PACKAGE, LOCALEDIR);
+	textdomain(PACKAGE);
 
 	/* parse arguments */
 	while ((c = getopt(argc, argv, "bdlRDBr")) != -1) {
@@ -147,15 +150,15 @@ main(int argc, char *argv[])
 			file = argv[optind];
 			if (!Dflag &&
 			    (acl_delete_file(file, ACL_TYPE_ACCESS) == -1)) {
-				fprintf(stderr,
-			"%s: error removing access acl on \"%s\": %s\n",
+				fprintf(stderr, gettext(
+			"%s: error removing access acl on \"%s\": %s\n"),
 					program, file, strerror(errno));
 				failed++;
 			}
 			if (!Rflag &&
 			    (acl_delete_file(file, ACL_TYPE_DEFAULT) == -1)) {
-				fprintf(stderr,
-			_("%s: error removing default acl on \"%s\": %s\n"),
+				fprintf(stderr, gettext(
+			"%s: error removing default acl on \"%s\": %s\n"),
 					program, file, strerror(errno));
 				failed++;
 			}
@@ -168,13 +171,13 @@ main(int argc, char *argv[])
 		acl = acl_from_text(argv[optind]);
 		failed = acl_check(acl, &c);
 		if (failed < 0) {
-			fprintf(stderr, _("%s: %s - %s\n"),
+			fprintf(stderr, "%s: %s - %s\n",
 				program, argv[optind], strerror(errno));
 			return 1;
 		}
 		else if (failed > 0) {
-			fprintf(stderr,
-				_("%s: access ACL '%s': %s at entry %d\n"),
+			fprintf(stderr, gettext(
+				"%s: access ACL '%s': %s at entry %d\n"),
 				program, argv[optind], acl_error(failed), c);
 			return 1;
 		}
@@ -187,13 +190,13 @@ main(int argc, char *argv[])
 		dacl = acl_from_text(argv[optind]);
 		failed = acl_check(dacl, &c);
 		if (failed < 0) {
-			fprintf(stderr, _("%s: %s - %s\n"),
+			fprintf(stderr, "%s: %s - %s\n",
 				program, argv[optind], strerror(errno));
 			return 1;
 		}
 		else if (failed > 0) {
-			fprintf(stderr,
-				_("%s: access ACL '%s': %s at entry %d\n"),
+			fprintf(stderr, gettext(
+				"%s: access ACL '%s': %s at entry %d\n"),
 				program, argv[optind], acl_error(failed), c);
 			return 1;
 		}
@@ -261,26 +264,30 @@ list_acl(char *file)
 	char *acl_text, *dacl_text = NULL;
 
 	if ((acl = acl_get_file(file, ACL_TYPE_ACCESS)) == NULL) {
-		fprintf(stderr, _("%s: cannot get access ACL on '%s': %s\n"),
+		fprintf(stderr, gettext(
+			"%s: cannot get access ACL on '%s': %s\n"),
 			program, file, strerror(errno));
 		return 0;
 	}
 	if ((dacl = acl_get_file(file, ACL_TYPE_DEFAULT)) == NULL &&
 	    (errno != EACCES)) {	/* EACCES given if not a directory */
-		fprintf(stderr, _("%s: cannot get default ACL on '%s': %s\n"),
+		fprintf(stderr, gettext(
+			"%s: cannot get default ACL on '%s': %s\n"),
 			program, file, strerror(errno));
 		return 0;
 	}
 	acl_text = acl_to_any_text(acl, NULL, ',', TEXT_ABBREVIATE);
 	if (acl_text == NULL) {
-		fprintf(stderr, _("%s: cannot get access ACL text on '%s': %s\n"),
+		fprintf(stderr, gettext(
+			"%s: cannot get access ACL text on '%s': %s\n"),
 			program, file, strerror(errno));
 		return 0;
 	}
 	if (acl_entries(dacl) > 0) {
 		dacl_text = acl_to_any_text(dacl, NULL, ',', TEXT_ABBREVIATE);
 		if (dacl_text == NULL) {
-			fprintf(stderr, _("%s: cannot get default ACL text on '%s': %s\n"),
+			fprintf(stderr, gettext(
+				"%s: cannot get default ACL text on '%s': %s\n"),
 				program, file, strerror(errno));
 			return 0;
 		}
@@ -306,13 +313,15 @@ set_acl(acl_t acl, acl_t dacl, const char *fname)
 
 	/* set regular acl */
 	if (acl && acl_set_file(fname, ACL_TYPE_ACCESS, acl) == -1) {
-		fprintf(stderr, _("%s: cannot set access acl on \"%s\": %s\n"),
-			 program, fname, strerror(errno));
+		fprintf(stderr, gettext(
+			"%s: cannot set access acl on \"%s\": %s\n"),
+			program, fname, strerror(errno));
 		failed++;
 	}
 	/* set default acl */
 	if (dacl && acl_set_file(fname, ACL_TYPE_DEFAULT, dacl) == -1) {
-		fprintf(stderr, _("%s: cannot set default acl on \"%s\": %s\n"),
+		fprintf(stderr, gettext(
+			"%s: cannot set default acl on \"%s\": %s\n"),
 			program, fname, strerror(errno));
 		failed++;
 	}
@@ -330,7 +339,7 @@ walk_dir(acl_t acl, acl_t dacl, const char *fname)
 
 	if ((dir = opendir(fname)) == NULL) {
 		if (errno != ENOTDIR) {
-			fprintf(stderr, _("%s: opendir failed: %s\n"),
+			fprintf(stderr, gettext("%s: opendir failed: %s\n"),
 				program, strerror(errno));
 			return(1);
 		}
@@ -344,7 +353,7 @@ walk_dir(acl_t acl, acl_t dacl, const char *fname)
 		
 		name = malloc(strlen(fname) + strlen(d->d_name) + 2);
 		if (name == NULL) {
-			fprintf(stderr, _("%s: malloc failed: %s\n"),
+			fprintf(stderr, gettext("%s: malloc failed: %s\n"),
 				program, strerror(errno));
 			exit(1);
 		}

@@ -37,7 +37,6 @@
 #include "parse.h"
 
 #include <libintl.h>
-#define _(String) gettext (String)
 
 
 extern const char *progname;
@@ -379,8 +378,8 @@ do_set(
 			goto fail;
 		if (error > 0) {
 			acl_text = acl_to_any_text(acl, NULL, ',', 0);
-			fprintf(stderr, _("%s: %s: Malformed access ACL `%s': "
-			        "%s at entry %d\n"), progname, path_p,
+			fprintf(stderr, gettext("%s: %s: Malformed access ACL "
+				"`%s': %s at entry %d\n"), progname, path_p,
 				acl_text, acl_error(error), which_entry+1);
 			acl_free(acl_text);
 			errors++;
@@ -406,7 +405,7 @@ do_set(
 			goto fail;
 		if (error > 0) {
 			acl_text = acl_to_any_text(default_acl, NULL, ',', 0);
-			fprintf(stderr, _("%s: %s: Malformed default ACL "
+			fprintf(stderr, gettext("%s: %s: Malformed default ACL "
 			                  "`%s': %s at entry %d\n"),
 				progname, path_p, acl_text,
 				acl_error(error), which_entry+1);
@@ -468,8 +467,9 @@ do_set(
 			}
 		} else {
 			if (acl_entries(default_acl) != 0) {
-				fprintf(stderr, _("%s: %s: Only directories "
-				                  "can have default ACLs\n"),
+				fprintf(stderr, gettext(
+						"%s: %s: Only directories "
+						"can have default ACLs\n"),
 					progname, path_p);
 				errors++;
 				goto cleanup;

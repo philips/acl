@@ -9,8 +9,10 @@ AC_SUBST(pkg_name)
 # Note: the following environment variables may be set to override the
 # defaults (to change paths and/or executables, build parameters, etc):
 #
-#   DEBUG  OPTIMIZER  MAKE  CC  LD  TAR  ZIP  RPM  AWK  SED  ECHO
-#   LIBTOOL  MALLOCLIB  DISTRIBUTION  PACKAGE_BUILDER
+#   DEBUG  OPTIMIZER  MALLOCLIB
+#   PLATFORM  DISTRIBUTION  BUILDER
+#   MAKE  CC  LD  TAR  ZIP  AWK  SED  ECHO  RPM  LIBTOOL
+#   MSGFMT  MSGMERGE  XGETTEXT
 #
 
 DEBUG=${DEBUG:-'-DDEBUG'}		# -DNDEBUG
@@ -37,12 +39,16 @@ pkg_release=$PKG_BUILD
 AC_SUBST(pkg_version)
 AC_SUBST(pkg_release)
 
-pkg_distribution="Generic Linux"
+pkg_platform=`uname -s`
+pkg_distribution="Generic $pkg_platform"
+pkg_platform=`echo $pkg_platform | tr 'A-Z' 'a-z'`
+test -z "$PLATFORM" || pkg_platform="$PLATFORM"
 test -z "$DISTRIBUTION" || pkg_distribution="$DISTRIBUTION"
 AC_SUBST(pkg_distribution)
+AC_SUBST(pkg_platform)
 
 pkg_builder=`id -u -n`@`hostname`
-test -z "$PACKAGE_BUILDER" || pkg_builder="$PACKAGE_BUILDER"
+test -z "$BUILDER" || pkg_builder="$BUILDER"
 AC_SUBST(pkg_builder)
 
 dnl check if user wants their own C compiler
@@ -70,15 +76,15 @@ test -z "$ZIP" && AC_PATH_PROG(ZIP, gzip, /bin/gzip)
 zip=$ZIP
 AC_SUBST(zip)
 
+dnl check if the makedepend program is available
+test -z "$MAKEDEPEND" && AC_PATH_PROG(MAKEDEPEND, makedepend, /bin/true)
+makedepend=$MAKEDEPEND
+AC_SUBST(makedepend)
+
 dnl check if the rpm program is available
 test -z "$RPM" && AC_PATH_PROG(RPM, rpm, /bin/rpm)
 rpm=$RPM
 AC_SUBST(rpm)
-
-dnl check if the msgfmt program is available
-test -z "$MSGFMT" && AC_CHECK_PROG(MSGFMT, msgfmt, /usr/bin/msgfmt)
-msgfmt=$MSGFMT
-AC_SUBST(msgfmt)
 
 dnl .. and what version is rpm
 rpm_version=0
@@ -96,13 +102,7 @@ if test $rpm_version -ge 4; then
 else
 	rpmbuild=$RPM
 fi
-
 AC_SUBST(rpmbuild)
-	
-dnl check if the makedepend program is available
-test -z "$MAKEDEPEND" && AC_PATH_PROG(MAKEDEPEND, makedepend, /bin/true)
-makedepend=$MAKEDEPEND
-AC_SUBST(makedepend)
 
 dnl check if symbolic links are supported
 AC_PROG_LN_S
@@ -117,6 +117,27 @@ AC_SUBST(sed)
 test -z "$ECHO" && AC_PATH_PROG(ECHO, echo, /bin/echo)
 echo=$ECHO
 AC_SUBST(echo)
+
+dnl check if the msgfmt program is available
+test -z "$MSGFMT" && AC_CHECK_PROG(MSGFMT, msgfmt, /usr/bin/msgfmt)
+msgfmt=$MSGFMT
+AC_SUBST(msgfmt)
+
+dnl check if the msgmerge program is available
+test -z "$MSGMERGE" && AC_CHECK_PROG(MSGMERGE, msgmerge, /usr/bin/msgmerge)
+msgmerge=$MSGMERGE
+AC_SUBST(msgmerge)
+
+dnl ensure xgettext is installed
+test -z "$XGETTEXT" && AC_CHECK_PROG(XGETTEXT, xgettext, /usr/bin/xgettext)
+if test "$XGETTEXT" = ""; then
+	echo
+	echo 'FATAL ERROR: xgettext does not seem to be installed.'
+	echo $pkg_name cannot be built without a working gettext installation.
+	exit 1
+fi
+xgettext=$XGETTEXT
+AC_SUBST(xgettext)
 
 dnl ensure libtool is installed
 test -z "$LIBTOOL" && AC_PATH_PROG(LIBTOOL, libtool,,/usr/bin)
@@ -167,10 +188,6 @@ libattr="-lattr"
 test -f `pwd`/../attr/libattr/libattr.la && libattr="`pwd`/../attr/libattr/libattr.la"
 test -f /usr/lib/libattr.la && libattr="/usr/lib/libattr.la"
 AC_SUBST(libattr)
-
-dnl GNU gettext
-#ALL_LINGUAS="de"
-#AM_GNU_GETTEXT
 
 dnl build definitions for use in Makefiles
 AC_OUTPUT(include/builddefs)

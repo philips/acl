@@ -34,10 +34,19 @@ TOPDIR = ..
 include $(TOPDIR)/include/builddefs
 
 LINGUAS = de
+LSRCFILES = $(LINGUAS:%=%.po)
 
-LSRCFILES = Make.rules POTFILES.in acl.pot de.po
-LDIRT = $(LINGUAS:%=%.mo)
+XGETTEXTFILES =	$(TOPDIR)/chacl/chacl.c \
+		$(TOPDIR)/setfacl/do_set.c \
+		$(TOPDIR)/setfacl/setfacl.c \
+		$(TOPDIR)/getfacl/getfacl.c \
+		$(TOPDIR)/libacl/acl_error.c
+
+default: $(LINGUAS:%=%.mo)
 
 include $(BUILDRULES)
 
-default install install-dev install-lib:
+install: default
+	$(INSTALL_LINGUAS)
+
+install-dev install-lib:

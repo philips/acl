@@ -36,7 +36,6 @@ include $(TOPDIR)/include/builddefs
 LTCOMMAND = chacl
 CFILES = chacl.c
 
-LCFLAGS = -DPKG_NAME=\"$(PKG_NAME)\" -DLOCALEDIR=\"$(gnulocaledir)\"
 LLDLIBS = $(LIBATTR) $(LIBACL)
 LTDEPENDENCIES = $(LIBACL)
 

@@ -37,7 +37,6 @@ LTCOMMAND = setfacl
 CFILES = setfacl.c do_set.c sequence.c parse.c
 HFILES = sequence.h parse.h
 
-LCFLAGS = -DPKG_NAME=\"$(PKG_NAME)\" -DLOCALEDIR=\"$(gnulocaledir)\"
 LLDLIBS = $(LIBATTR) $(LIBACL)
 LTDEPENDENCIES = $(LIBACL)
 
