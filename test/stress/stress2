@@ -1,0 +1,13 @@
+test -n "$1" || exit
+
+I=0
+while [ "$I" -lt 1000 ]; do
+	N=`printf %03d $I`
+	echo -n "$N "
+	touch $1/f$N
+	setfacl -m g:toolies:rw $1/f$N
+	setfacl -x g:toolies $1/f$N
+	setfacl -m u:joe:rw,u:mark:rw,u:lisa:r,g:toolies:r $1/f$N
+	I=$[$I+1]
+done
+echo

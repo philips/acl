@@ -1,0 +1,27 @@
+test -n "$1" || exit
+
+I=0
+K=0
+while [ "$I" -lt 1000 ]; do
+	N=`printf %03d $I`
+	echo -n "$N "
+	touch $1/f$N
+	setfacl -m u:$[$K+1000]:rw $1/f$N
+	I=$[$I+1]
+	K=$[$K+1]
+	if [ $K -eq 20 ]; then
+		K=0
+	fi
+done
+echo
+
+I=0
+while [ "$I" -lt 10000 ]; do
+	X=`printf %03d $[$RANDOM % 1000]`
+	Y=`printf %03d $[$RANDOM % 1000]`
+	echo -n "$I "
+	getfacl $1/f$X | setfacl -S- $1/f$Y
+	I=$[$I+1]
+done
+echo
+

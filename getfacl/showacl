@@ -1,0 +1,146 @@
+#!/usr/bin/perl -w
+#
+# Note that this script has been integrated into getfacl
+# (--tabular option).
+#
+
+use FileHandle;
+use strict;
+
+my $pipe = new FileHandle("getfacl " . join (" ", map { s/\s/\\$&/g; $_; } @ARGV) . " |")
+	or die ($? >> 8);
+
+file: while (1) {
+	my ($file, $owner, $owning_group);
+	my $user  = [];
+	my $group = [];
+	my $mask = undef;
+	my $other = [];
+
+	while (my $line = <$pipe>) {
+		chomp $line;
+		if ($line =~ /^# (\w+): (.+)$/) {
+			$file = $2
+				if ($1 eq 'file');
+			$owner = $2
+				if ($1 eq 'owner');
+			$owning_group = $2
+				if ($1 eq 'group');
+			next;
+		}
+		$line =~ s/\s+#effective.*$//;
+		if ($line) {
+			my $fields = [ split /:/, $line ];
+			if ($fields->[0] eq 'user') {
+				$fields->[0] =~ tr/a-z/A-Z/
+					if $fields->[1] eq '';
+				push @$user, $fields;
+			} elsif ($fields->[0] eq 'group') {
+				$fields->[0] =~ tr/a-z/A-Z/
+					if $fields->[1] eq '';
+				push @$group, $fields;
+			} elsif ($fields->[0] eq 'mask') {
+				$mask = [ $fields->[0], '', $fields->[1] ];
+			} elsif ($fields->[0] eq 'other') {
+				$other = [ $fields->[0], '', $fields->[1] ];
+			} elsif ($fields->[0] eq 'default') {
+				shift @$fields;
+				if ($fields->[0] eq 'user') {
+					add_default($user, $fields);
+				} elsif ($fields->[0] eq 'group') {
+					add_default($group, $fields);
+				} elsif ($fields->[0] eq 'mask') {
+					$mask = [ $fields->[0], '', '' ]
+						unless $mask;
+					push @$mask, $fields->[1];
+				} elsif ($fields->[0] eq 'other') {
+					$other = [ $fields->[0], '', '' ]
+						unless $other;
+					push @$other, $fields->[1];
+				}
+			}
+		} else {
+			$user->[0][1]  = $owner;
+			$group->[0][1] = $owning_group;
+			for (my $i = 1; $i < @$user; $i++) {
+				$user->[$i][2] =
+					mask_perm($user->[$i][2], $mask->[2]);
+				$user->[$i][3] =
+					mask_perm($user->[$i][3], $mask->[3])
+						if $user->[$i][3];
+			}
+			for (my $i = 0; $i < @$group; $i++) {
+				$group->[$i][2] =
+					mask_perm($group->[$i][2], $mask->[2]);
+				$group->[$i][3] =
+					mask_perm($group->[$i][3], $mask->[3])
+						if $group->[$i][3];
+			}
+
+			my $table = [ @$user, @$group ];
+			push @$table, $mask
+				if @$mask;
+			push @$table, $other;
+			print "# file: $file\n";
+			print_table($table, [5, 8, 3, 3]);
+			print "\n";
+			next file;
+		}
+	}
+	last;
+}
+
+close $pipe;
+
+sub add_default {
+	my ($list, $fields) = @_;
+
+	for (my $i = 0; $i < @$list; $i++) {
+		if ($list->[$i][1] eq $fields->[1]) {
+			push @{$list->[$i]}, $fields->[2];
+			return;
+		}
+	}
+	push @$list, [ $fields->[0], $fields->[1], '', $fields->[2] ];
+}
+
+sub print_table {
+	my ($table, $width) = @_;
+	for (my $i = 0; $i < @$table; $i++) {
+		my $row = $table->[$i];
+		for (my $j = 0; $j < @$row; $j++) {
+			$width->[$j] = length $row->[$j]
+				unless ($width->[$j] &&
+				        $width->[$j] > length $row->[$j]);
+		}
+	}
+	my $fstr = '';
+	for (my $j = 0; $j < @$width; $j++) {
+		$fstr .= "%-" . $width->[$j] . "s";
+		if ($j + 1 < @$width) {
+			$fstr .= "  ";
+		} else {
+			$fstr .= "\n";
+		}
+	}
+
+	for (my $i = 0; $i < @$table; $i++) {
+		print sprintf $fstr, @{$table->[$i]};
+	}
+}
+
+sub mask_perm {
+	my ($perm, $mask) = @_;
+
+	return $perm unless $mask;
+
+	my @p = split //, $perm;
+	my @m = split //, $mask;
+	for (my $i = 0; $i < @p; $i++) {
+		if ($p[$i] ne $m[$i]) {
+			$p[$i] = uc $p[$i];
+		}
+	}
+	return join '', @p;
+}
+

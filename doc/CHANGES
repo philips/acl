@@ -1,0 +1,115 @@
+0.7.22
+* Create a shared version of libacl, instead of linking statically.
+* Added missing error reporting to getfacl do_print() function.     
+
+0.7.16
+* Minor cleanups/fixes in the make files
+* The test cases in test/src have been updated to match the
+  corrected ACL entry syntax (see the 0.7.15 changes).
+
+0.7.15
+* acl_from_text() now accepts mask and other entries with either two
+  or three fields (`other:rwx' or `other::rwx'). Posix 1003.1e specifies
+  that these entries should have three entries, while under Solaris,
+  they have only two fields.
+* setfacl now parses mask and other entries with two or three entries.
+* getfacl now produces mask and other entries with three fields
+  (`mask::rwx' instead of the previous `mask:rwx').
+* acl_get_fd(), acl_get_file(), acl_set_fd(), acl_set_file() now only
+  fail with errno=ENOSYS if the underlying filesystem doesn't support
+  ACLs. acl_get_fd() and acl_get_file() construct ACLs from the file
+  mode permission bits if the kernel supports ACLs, but no ACL extended
+  attributes are defined for the file (errno=ENOATTR).
+* acl_to_text() wrongly separated ACL entires with ',' instead of '\n'.
+* acl_from_text() only accepted three-letter permission strings
+  (rwx, ---, rw-, etc.). Now also short strings (rw, -, etc.) are
+  supported.
+
+0.7.10
+* acl_get_fd(), acl_get_file() now don't return basic ACL's anymore.
+* acl_set_fd(), acl_set_file() fail on filesystems that don't support
+  ACLs, even if the ACL to be set is a basice ACL.
+* If msgfmt is not present on a system, the message catalog(s) are
+  no longer being built.
+
+0.7.8 (19 February 2001)
+* Buffer overflow bug in ACL library (acl_to_any_text).
+  (Reported by Charles Bertsch <CBertsch@microtest.com>)
+
+0.7.2 (22 November 2000)
+* Replace rman with groff for building HTML versions of the
+  manual pages.
+* Add descriptions of the permissions required for manipulating
+  ACLs to the manual pages.
+* Add long options to getfacl and setfacl, update the manual pages.
+* Remove some small bugs from the src/showacl Perl script.
+* showacl is now integrated in getfacl.
+* Bug in acl_to_any_text() for ACLs with 0 entries fixed.
+* Bug in acl_to_text(): Used '\n' as the ACL entry separator.
+* German messages updated.
+
+0.7.1 (23 October 2000)
+* Basic GNU gettext support and a German translation of messages
+  added.
+
+0.7.0 (22 October 2000)
+* Updates to the documentation
+* Now an ACL_MASK entry is cloned from the ACL_GROUP_OBJ entry
+  when needed also when the ACL_MASK entry is not re-calculated
+  (-n option), so setfacl doesn't complain about an invalid ACL.
+
+0.6.8 (11 October 2000)
+* src/walk_tree.c was stat()ing the targets of symbolic links in
+  WALK_PHYSICAL mode.
+* Removed spurious definitions from src/gettext.h that caused
+  problems with several versions of GNU gettext headers
+* setfacl calls acl_delete_def_file() if removing the default ACL
+  of a directory that doesn't have a default ACL. i(If the user lacks
+  appropriate permissions, that no-operation fails.) Fixed.
+* Tiny bug in src/showacl script (mask entry not applied to owning
+  group entry)
+
+0.6.5 (10 September 2000)
+* Command line options revised for POSIX compatibility (now defaults to
+  -H half-logical walk, added -L logical walk, -P physical walk).
+* Funny post-order option no longer documented.
+
+0.6.0 (24 March 2000)
+* Permissions were not set to the union of the ACL_GROUP_OBJ and
+  ACL_MASK_OBJ entries for `setfacl -b'.
+* getfacl didn't display the default ACL for links do directories.
+
+0.5.6 (31 Jan 2000)
+* Cleaned up the ACL entry ring handling in the library
+* Fixed a few minor issues with setfacl
+* Fixed a bug in acl_equiv_mode
+* Added acl_{get,set}_{file,fd}_mode functions
+
+0.5.5 (19 October 1999)
+* Updates to the documentation
+* Some other things (?)
+
+0.5.4 (up to 14 October 1999)
+* Fixed an incompatibility with more recent GNU getopt
+* Fixed a problem with errno handling in lib/text.c
+* Some cosmetic changes to streamline the distribution process
+* setfacl now implies `user:' if neither of `user', `group:',
+  `other:' and `mask:' is given. Was a major annoyance (to me).
+* errno not set when acl_read was presented with an empty file.
+* some missing '\n' chars in setfacl
+
+0.5.3
+* Fixed a bug in setfacl.c that caused the default mask to
+  be recalculated wrong.
+* Fixed a bug in acl_kernel.c:acl_check_one() that caused
+  invalid ACLs to be accepted
+
+0.5.2 (25 September 1999)
+* Added doc/Implementation.txt (some internals and ideas)
+* Fixed a bug in lib/manip.c that caused setfacl to reject
+  some valid ACLs
+* Fixed a bug that caused setfacl to produce duplicate ACL
+  entries
+* Fixed a bug/feature that caused `sefacl -s' to include the
+  current base ACL entries in results. This is not done with
+  `setfacl -bm'.

@@ -1,0 +1,5 @@
+#!/bin/sh
+
+dd if=/dev/hda8 bs=1024 skip=$1 count=1 2>/dev/null |
+hex
+

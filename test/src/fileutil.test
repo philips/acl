@@ -1,0 +1,66 @@
+!
+! Test for the patched file utilities.
+!
+$ umask 022
+$ mkdir dir
+$ mode dir
+drwxr-xr-x
+$ touch dir/f
+$ getfacl -c dir/f
+user::rw-
+group::r--
+other:r--
+
+$ umask 027
+$ cp -p dir/f dir/g
+$ getfacl -c dir/g
+user::rw-
+group::r--
+other:r--
+
+$ rm dir/g
+$ cp dir/f dir/g
+$ getfacl -c dir/g
+user::rw-
+group::r--
+other:---
+
+$ setfacl -m u::rwx,u:joe:rwx,g::rwx,o:r-x dir/.
+$ setfacl -dm u::rwx,u:joe:rwx,g::rwx,o:r-x dir/.
+$ mode dir
+drwxrwxr-x+
+$ touch dir/h
+$ getfacl -cE dir/h
+user::rw-
+user:joe:rwx
+group::rwx
+mask:rw-
+other:r--
+
+$ mkdir dir/d
+$ getfacl -cE dir/d
+user::rwx
+user:joe:rwx
+group::rwx
+mask:rwx
+other:r-x
+default:user::rwx
+default:user:joe:rwx
+default:group::rwx
+default:mask:rwx
+default:other:r-x
+
+$ cp dir/f dir/i
+$ getfacl -cE dir/i
+user::rw-
+user:joe:rwx
+group::rwx
+mask:r--
+other:r--
+
+$ mode dir/f
+-rw-r--r--
+$ cp -p dir/f dir/j
+$ mode dir/j
+-rw-r--r--
+$ rm -r dir

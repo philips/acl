@@ -1,0 +1,5 @@
+Thanks to Raymond S. Brand <rsbx@rsbx.net> for numerous improvements.
+
+Thanks to Dominik Kubla <dominik.kubla@uni-mainz.de> for adding the syscall
+entry points for non-i386 architectures.
+

@@ -1,0 +1,65 @@
+!
+! setfacl tests.
+!
+! Run these tests on a filesystem without ACL support.
+!
+$ umask 027
+$ touch f
+$ mode f
+-rw-r-----
+$ setfacl -m g::- f
+$ mode f
+-rw-------
+$ setfacl -m g::+rw f
+$ mode f
+-rw-rw----
+$ setfacl -m g::^w f
+$ mode f
+-rw-r-----
+$ setfacl -m u:: f
+setfacl: Option -m incomplete
+$ setfacl -s o:---,g::---,u::--- f
+$ mode f
+----------
+$ setfacl -s user::rw,group::r,other:- f
+$ mode f
+-rw-r-----
+$ setfacl -x u:root f
+$ setfacl -x mask f
+$ setfacl -x default:user f
+$ setfacl -b f
+$ setfacl -m u:joe:rw f
+setfacl: f: Operation not supported
+$ setfacl -m u::rwx,g::r-x,o:- f
+$ mode f
+-rwxr-x---
+$ getfacl --omit-header f
+user::rwx
+group::r-x
+other:---
+
+$ setfacl -m u::rwx,g::r-x,o:-,m:- f
+setfacl: f: Operation not supported
+$ setfacl --test -x u: f
+setfacl: f: Resulting ACL `group::r-x,other:---': Missing or wrong entry at entry 1
+$ setfacl --test -x u:x f
+setfacl: Option -x: Invalid argument near character 3
+$ rm f
+$mkdir d
+$ setfacl -m d:u:root:rwx d
+setfacl: d: Operation not supported
+$ setfacl --test -x m d
+# file: d
+# owner: @OWNER@
+# group: @GROUP@
+# (acl unchanged)
+# (default acl unchanged)
+
+$ setfacl --test -dx m d
+# file: d
+# owner: @OWNER@
+# group: @GROUP@
+# (acl unchanged)
+# (default acl unchanged)
+
+$rmdir d

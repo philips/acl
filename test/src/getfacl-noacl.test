@@ -1,0 +1,96 @@
+!
+! getfacl test on a filesystem without ACLs
+!
+! This test must be run on a filesystem with or without ACL support.
+!
+$ mkdir test
+$ cd test
+$ umask 027
+$ touch x
+$ getfacl x
+# file: x
+# owner: @OWNER@
+# group: @GROUP@
+user::rw-
+group::r--
+other::---
+
+$ getfacl --omit-header -a x
+user::rw-
+group::r--
+other::---
+
+$ getfacl --omit-header -d x
+$ getfacl --omit-header -d .
+$ getfacl --omit-header -d /
+getfacl: Removing leading '/' from absolute path names
+$ getfacl --skip-base x
+$ getfacl --omit-header --all-effective x
+user::rw-
+group::r--
+other::---
+
+$ getfacl --omit-header --no-effective x
+user::rw-
+group::r--
+other::---
+
+$ mkdir d
+$ touch d/y
+$ ln -s d l
+$ getfacl -dR .
+# file: .
+# owner: @OWNER@
+# group: @GROUP@
+
+# file: x
+# owner: @OWNER@
+# group: @GROUP@
+
+# file: d
+# owner: @OWNER@
+# group: @GROUP@
+
+# file: d/y
+# owner: @OWNER@
+# group: @GROUP@
+
+$ getfacl -dLR .
+# file: .
+# owner: @OWNER@
+# group: @GROUP@
+
+# file: x
+# owner: @OWNER@
+# group: @GROUP@
+
+# file: d
+# owner: @OWNER@
+# group: @GROUP@
+
+# file: d/y
+# owner: @OWNER@
+# group: @GROUP@
+
+# file: l
+# owner: @OWNER@
+# group: @GROUP@
+
+# file: l/y
+# owner: @OWNER@
+# group: @GROUP@
+
+$ getfacl --post-order -d d
+# file: d/y
+# owner: @OWNER@
+# group: @GROUP@
+
+# file: d
+# owner: @OWNER@
+# group: @GROUP@
+
+$ rm l
+$ rm -rf d
+$ rm x
+$ cd ..
+$ rmdir test

@@ -1,0 +1,14 @@
+#!/bin/sh
+test -z "$1" -o -z "$2" && exit
+
+while [ 1 == 1 ]; do
+	./stress4 $2
+	./stress3 $1
+	rm -rf $1/*
+	rm -rf $2/*
+	./stress2 $2
+	./stress1 $1
+	rm -rf $1/*
+	rm -rf $2/*
+done
+

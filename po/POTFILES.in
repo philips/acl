@@ -1,0 +1,11 @@
+# List of source files containing translatable strings.
+# Copyright (C) Andreas Gruenbacher, <ag@computer.org>
+
+# Libacl library files
+libacl/acl_error.c
+
+# Package source files
+src/getfacl.c
+src/setfacl.c
+src/do_set.c
+

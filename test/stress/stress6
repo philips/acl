@@ -1,0 +1,21 @@
+test -n "$1" -a -n "$2" || exit
+
+I=0
+case $2 in 
+	(r*)
+		touch $1/$2
+		while [ $I -lt 10000 ]; do
+			echo -n "$I "
+			I=$[$I + 1]
+			cat $1/$2
+		done ;;
+	(w*)
+		while [ $I -lt 5000 ]; do
+			echo -n "$I "
+			I=$[$I + 1]
+			touch $1/$2
+			rm $1/$2
+		done
+esac
+echo
+

@@ -1,0 +1,11 @@
+* Overhead a default ACL causes for creating files
+* Overhead ACLs cause for permission checking (deep tree)
+  - User = owner
+  - User != owner
+* Speed of chmod (e.g., for whole tree)
+* Speed of getfacl/setfacl
+  - Simply get many different ACLs
+  - Create new ACLs
+  - Change ACLs of many files
+* Speed of ls -l
+
