@@ -1,3 +1,6 @@
+2.2.9 (26 April 2003)
+* Rework configure.in to make use of shared macros.
+
 2.2.8 (14 April 2003)
 * Fix configure tests that used AC_PATH_PROG incorrectly.
 * Minor cosmetic cleanups to configure.in.

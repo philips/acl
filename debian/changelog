@@ -1,10 +1,10 @@
-acl (2.2.8-1) unstable; urgency=low
+acl (2.2.9-1) unstable; urgency=low
 
   * New upstream release
   * Updated policy version to which this package conforms
   * Fine-tuned the libacl1-dev dependencies a bit (closes: #188068)
 
- -- Nathan Scott <nathans@debian.org>  Mon, 14 Apr 2003 10:27:27 +1000
+ -- Nathan Scott <nathans@debian.org>  Sat, 26 Apr 2003 04:36:01 +1000
 
 acl (2.2.4-1) unstable; urgency=low
 

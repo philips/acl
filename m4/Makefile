@@ -33,7 +33,12 @@
 TOPDIR = ..
 include $(TOPDIR)/include/builddefs
 
-LSRCFILES = visibility_hidden.m4
+LSRCFILES = \
+	manual_format.m4 \
+	package_attrdev.m4 \
+	package_globals.m4 \
+	package_utilies.m4 \
+	visibility_hidden.m4
 
 default: 
 

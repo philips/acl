@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2000-2002 Silicon Graphics, Inc.  All Rights Reserved.
+# Copyright (c) 2000-2003 Silicon Graphics, Inc.  All Rights Reserved.
 # 
 # This program is free software; you can redistribute it and/or modify it
 # under the terms of version 2 of the GNU General Public License as
@@ -75,6 +75,9 @@ $(CONFIGURE):
 		$$LOCAL_CONFIGURE_OPTIONS
 	touch .census
 
+aclocal.m4::
+	aclocal --acdir=$(TOPDIR)/m4 --output=$@
+
 install: default
 	$(SUBDIRS_MAKERULE)
 	$(INSTALL) -m 755 -d $(PKG_DOC_DIR)
@@ -88,5 +91,4 @@ install-lib: default
 
 realclean distclean: clean
 	rm -f $(LDIRT) $(CONFIGURE)
-	rm -rf autom4te.cache
-	[ ! -d Logs ] || rmdir Logs
+	rm -rf autom4te.cache Logs
