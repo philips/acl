@@ -34,12 +34,12 @@ acl_extended_file(const char *path_p)
 	int retval;
 
 	retval = getxattr(path_p, ACL_EA_ACCESS, NULL, 0);
-	if (retval < 0 && errno != ENOATTR)
+	if (retval < 0 && errno != ENOATTR && errno != ENODATA)
 		return -1;
 	if (retval > base_size)
 		return 1;
 	retval = getxattr(path_p, ACL_EA_DEFAULT, NULL, 0);
-	if (retval < 0 && errno != ENOATTR)
+	if (retval < 0 && errno != ENOATTR && errno != ENODATA)
 		return -1;
 	if (retval >= base_size)
 		return 1;

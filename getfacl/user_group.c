@@ -26,11 +26,10 @@
 
 
 const char *
-user_name(
-	uid_t uid)
+user_name(uid_t uid, int numeric)
 {
-	struct passwd *passwd = getpwuid(uid);
-	static char uid_str[12];
+	struct passwd *passwd = numeric ? NULL : getpwuid(uid);
+	static char uid_str[22];
 	int ret;
 
 	if (passwd != NULL)
@@ -43,11 +42,10 @@ user_name(
 
 
 const char *
-group_name(
-	gid_t gid)
+group_name(gid_t gid, int numeric)
 {
-	struct group *group = getgrgid(gid);
-	static char gid_str[12];
+	struct group *group = numeric ? NULL : getgrgid(gid);
+	static char gid_str[22];
 	int ret;
 
 	if (group != NULL)

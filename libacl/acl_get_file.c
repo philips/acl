@@ -68,7 +68,7 @@ acl_get_file(const char *path_p, acl_type_t type)
 	if (retval > 0) {
 		acl_t acl = __acl_from_xattr(ext_acl_p, retval);
 		return acl;
-	} else if (retval == 0 || errno == ENOATTR) {
+	} else if (retval == 0 || errno == ENOATTR || errno == ENODATA) {
 		struct stat st;
 
 		if (stat(path_p, &st) != 0)

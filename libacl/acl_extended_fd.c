@@ -34,12 +34,12 @@ acl_extended_fd(int fd)
 	int retval;
 
 	retval = fgetxattr(fd, ACL_EA_ACCESS, NULL, 0);
-	if (retval < 0 && errno != ENOATTR)
+	if (retval < 0 && errno != ENOATTR && errno != ENODATA)
 		return -1;
 	if (retval > base_size)
 		return 1;
 	retval = fgetxattr(fd, ACL_EA_DEFAULT, NULL, 0);
-	if (retval < 0 && errno != ENOATTR)
+	if (retval < 0 && errno != ENOATTR && errno != ENODATA)
 		return -1;
 	if (retval >= base_size)
 		return 1;

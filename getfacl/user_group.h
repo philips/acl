@@ -25,9 +25,7 @@
 #include <grp.h>
 
 const char *
-user_name(
-	uid_t uid);
+user_name(uid_t uid, int numeric);
 const char *
-group_name(
-	gid_t uid);
+group_name(gid_t uid, int numeric);
 

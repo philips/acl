@@ -32,7 +32,7 @@ acl_delete_def_file(const char *path_p)
 	int error;
 	
 	error = removexattr(path_p, ACL_EA_DEFAULT);
-	if (error < 0 && errno != ENOATTR)
+	if (error < 0 && errno != ENOATTR && errno != ENODATA)
 		return -1;
 	return 0;
 }

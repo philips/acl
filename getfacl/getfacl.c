@@ -60,6 +60,7 @@ struct option long_options[] = {
 	{ "physical",	0, 0, 'P' },
 	{ "tabular",	0, 0, 't' },
 	{ "absolute-names",	0, 0, 'p' },
+	{ "numeric",	0, 0, 'n' },
 #endif
 	{ "default",	0, 0, 'd' },
 	{ "version",	0, 0, 'v' },
@@ -87,6 +88,7 @@ int posixly_correct = 0;  /* Posix compatible behavior? */
 int had_errors = 0;
 int absolute_warning = 0;  /* Absolute path warning was issued */
 int print_options = TEXT_SOME_EFFECTIVE;
+int opt_numeric = 0;  /* don't convert id's to symbolic names */
 
 
 struct name_list {
@@ -124,23 +126,23 @@ struct name_list *get_list(const struct stat *st, acl_t acl)
 		acl_get_tag_type(ent, &e_type);
 		switch(e_type) {
 			case ACL_USER_OBJ:
-				name = user_name(st->st_uid);
+				name = user_name(st->st_uid, opt_numeric);
 				break;
 
 			case ACL_USER:
 				id_p = acl_get_qualifier(ent);
 				if (id_p != NULL)
-					name = user_name(*id_p);
+					name = user_name(*id_p, opt_numeric);
 				break;
 
 			case ACL_GROUP_OBJ:
-				name = group_name(st->st_gid);
+				name = group_name(st->st_gid, opt_numeric);
 				break;
 
 			case ACL_GROUP:
 				id_p = acl_get_qualifier(ent);
 				if (id_p != NULL)
-					name = group_name(*id_p);
+					name = group_name(*id_p, opt_numeric);
 				break;
 		}
 		len = strlen(name);
@@ -467,8 +469,9 @@ int do_print(const char *path_p, const struct stat *st)
 	} else {
 		if (opt_comments)
 			printf("# file: %s\n# owner: %s\n# group: %s\n",
-			       path_p, user_name(st->st_uid),
-			       group_name(st->st_gid));
+				path_p,
+				user_name(st->st_uid, opt_numeric),
+				group_name(st->st_gid, opt_numeric));
 
 		if (acl != NULL) {
 			char *acl_text = acl_to_any_text(acl, NULL, '\n',
@@ -535,6 +538,7 @@ void help(void)
 "  -L, --logical           logical walk, follow symbolic links\n"
 "  -P  --physical          physical walk, do not follow symbolic links\n"
 "      --tabular           use tabular output format\n"
+"      --numeric           print numeric user/group identifiers\n"
 "      --absolute-names    don't strip leading '/' in pathnames\n"));
 	}
 #endif
@@ -689,6 +693,11 @@ int main(int argc, char *argv[])
 				if (posixly_correct)
 					goto synopsis;
 				opt_tabular = 1;
+				break;
+
+			case 'n':  /* numeric */
+				opt_numeric = 1;
+				print_options |= TEXT_NUMERIC_IDS;
 				break;
 
 			case 'v':  /* print version */

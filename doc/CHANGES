@@ -1,3 +1,15 @@
+2.0.19 (04 September 2002)
+* Correct the description of the access check algorithm in acl(5).
+* Add --numeric option to getfacl (so all uid's/gid's are displayed
+  numerically rather than by symbolic name). Also enlarge the static
+  buffer used for numeric identifiers from 12 to 22 characters, which
+  is enough for 64 bit id's.
+* Add a test case for setting just a base ACL.
+* Make the test/run script return a proper status code.
+* Check for ENOATTR and for ENODATA error numbers in places where
+  ENOATTR is expected, so if ENOATTR is assigned a separate number
+  we'll only need to rebuild.
+
 2.0.18 (21 August 2002)
 * Setfacl failed to parse ACLs with whitespace around user/group
   names or ids (e.g., 'u: bin :rw', 'u: 0 :rwx').

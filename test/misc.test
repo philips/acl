@@ -6,7 +6,9 @@
 !
 $ umask 027
 $ touch f
-$ setfacl -m u:lisa:rw f
+! Only change a base ACL:
+$ setfacl -m u::r f
+$ setfacl -m u::rw,u:lisa:rw f
 $ mode f
 -rw-rw----+
 $ getfacl --omit-header f
