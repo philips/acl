@@ -1,3 +1,8 @@
+2.0.11 (30 April 2002)
+* Fix a bug when reallocating space in __acl_to_any_text.c
+  (the bug causes ACL entries to get skipped!)
+* Minor clean-up in the test/setfacl.test script
+
 2.0.10 (22 April 2002)
 * Add accidentally removed dependency of libacl on libattr.
 

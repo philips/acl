@@ -113,11 +113,11 @@ $ rm g
 !
 $ mkdir d
 $ setfacl --test -m u::rwx,u:@OWNER@:rwx,g::r-x,o::--- d
-d: u::rwx,u:ag:rwx,g::r-x,m::rwx,o::---,*
+d: u::rwx,u:@OWNER@:rwx,g::r-x,m::rwx,o::---,*
 $ setfacl --test -m u::rwx,u:@OWNER@:rwx,g::r-x,m::---,o::--- d
-d: u::rwx,u:ag:rwx,g::r-x,m::---,o::---,*
+d: u::rwx,u:@OWNER@:rwx,g::r-x,m::---,o::---,*
 $ setfacl --test -d -m u::rwx,u:@OWNER@:rwx,g::r-x,o::--- d
-d: *,d:u::rwx,d:u:ag:rwx,d:g::r-x,d:m::rwx,d:o::---
+d: *,d:u::rwx,d:u:@OWNER@:rwx,d:g::r-x,d:m::rwx,d:o::---
 $ setfacl --test -d -m u::rwx,u:@OWNER@:rwx,g::r-x,m::---,o::--- d
-d: *,d:u::rwx,d:u:ag:rwx,d:g::r-x,d:m::---,d:o::---
+d: *,d:u::rwx,d:u:@OWNER@:rwx,d:g::r-x,d:m::---,d:o::---
 $ rmdir d

@@ -61,15 +61,7 @@ __acl_to_any_text(acl_t acl, ssize_t *len_p, const char *prefix,
 	}
 
 	FOREACH_ACL_ENTRY(entry_obj_p, acl_obj_p) {
-		if (len + entry_len + 1 > size) {
-			while (len + entry_len + 1 > size)
-				size <<= 1;
-			tmp = realloc_var_obj_p(string, string_obj_p, size);
-			if (tmp == NULL)
-				goto fail;
-			string_obj_p = tmp;
-		}
-
+	repeat:
 		entry_len = acl_entry_to_any_str(int2ext(entry_obj_p),
 		                                 string_obj_p->sstr + len,
 						 size-len,
@@ -78,9 +70,16 @@ __acl_to_any_text(acl_t acl, ssize_t *len_p, const char *prefix,
 						 options);
 		if (entry_len < 0)
 			goto fail;
-		if (len + entry_len + suffix_len + 1 > size)
-			continue;
-		len += entry_len;
+		else if (len + entry_len + suffix_len + 1 > size) {
+			while (len + entry_len + suffix_len + 1 > size)
+				size <<= 1;
+			tmp = realloc_var_obj_p(string, string_obj_p, size);
+			if (tmp == NULL)
+				goto fail;
+			string_obj_p = tmp;
+			goto repeat;
+		} else
+			len += entry_len;
 		string_obj_p->sstr[len] = separator;
 		len++;
 	}
