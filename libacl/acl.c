@@ -129,6 +129,30 @@ skip_to_separator (char *s)
 	return s;
 }
 
+/*
+ * Skip to next ':' and write nulls in the adjacent spaces.
+ * e.g. qualifier: "abc  def ghi  :"
+ * Want to have qualifier "abc  def ghi" and return pointer to ":"
+ */
+static char *
+skip_to_qual_separator (char *s)
+{
+	char *qual = s; /* point to start of qualifier */
+
+	while (*s != '\0' && *s != ':')
+		s++;
+
+	/* go back and nullify whitespace adjacent to end colon */
+	if (*s == ':') {
+		char *cp;
+		for (cp = s-1; cp >= qual && *cp == ' '; cp--) {
+			*cp = '\0';	
+		}
+	}
+
+	return s;
+}
+
 /* 
  * Translate "rwx" into internal representations
  */
@@ -270,7 +294,7 @@ acl_from_text (const char *buf_p)
 		}
 		else {
 			/* e.g. u:fred:rwx */
-			fp = skip_to_separator (qa);
+			fp = skip_to_qual_separator (qa);
 		}
 
 		/* get permissions */
