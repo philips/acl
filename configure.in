@@ -185,6 +185,7 @@ AC_CHECK_LIB(attr, getxattr,, [
 	exit 1
 ])
 libattr="-lattr"
+test -f `pwd`/../attr/libattr/libattr.la && libattr="`pwd`/../attr/libattr/libattr.la"
 test -f /usr/lib/libattr.la && libattr="/usr/lib/libattr.la"
 AC_SUBST(libattr)
 
