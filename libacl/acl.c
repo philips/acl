@@ -247,7 +247,7 @@ acl_from_text (const char *buf_p)
 				entry->ae_tag = ACL_USER_OBJ;
 			else {
 				entry->ae_tag = ACL_USER;
-				if (pw = getpwnam(qa))
+				if ((pw = getpwnam(qa)))
 					entry->ae_id = pw->pw_uid;
 				else if (isdigit(*qa))
 					entry->ae_id = atoi(qa);
@@ -264,7 +264,7 @@ acl_from_text (const char *buf_p)
 				entry->ae_tag = ACL_GROUP_OBJ;
 			else {
 				entry->ae_tag = ACL_GROUP;
-				if (gr = getgrnam (qa))
+				if ((gr = getgrnam (qa)))
 					entry->ae_id = gr->gr_gid;
 				else if (isdigit (*qa))
 					entry->ae_id = atoi(qa);
@@ -345,7 +345,7 @@ acl_to_text_internal (struct acl *aclp, ssize_t *len_p, const char *strs[],
 				break;
 			case ACL_USER: {
 				struct passwd *pw;
-				if (pw = getpwuid (entry->ae_id))
+				if ((pw = getpwuid (entry->ae_id)))
 					s = sprintf (c, "%s%s:", strs[TT_USER],
 						     pw->pw_name);
 				else
@@ -358,7 +358,7 @@ acl_to_text_internal (struct acl *aclp, ssize_t *len_p, const char *strs[],
 				break;
 			case ACL_GROUP: {
 				struct group *gr;
-				if (gr = getgrgid (entry->ae_id))
+				if ((gr = getgrgid (entry->ae_id)))
 					s = sprintf (c, "%s%s:",
 						     strs[TT_GROUP],
 						     gr->gr_name);
