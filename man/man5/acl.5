@@ -321,12 +321,12 @@ with IEEE 1003.1 (\(lqPOSIX.1\(rq) will still function as expected on
 systems with ACLs. The IEEE 1003.1e draft 17 contains the rationale for
 choosing this interface in section B.23. 
 .Sh CHANGES TO THE FILE UTILITIES
-On a system that supports ACLs, the file utilities
+On a system that supports ACLs in its file utilities, the
 .Xr ls 1 ,
 .Xr cp 1
 and
 .Xr mv 1
-change their behavior in the following way:
+commands change their behavior in the following way:
 .Bl -bullet
 .It
 For files that have a default ACL or an access ACL that contains more than

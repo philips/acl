@@ -1,3 +1,10 @@
+acl (2.2.1-1) unstable; urgency=low
+
+  * Clarify acl(5) with respect to fileutils support (closes: #172642)
+  * Fix a bash-ism in debian/rules (closes: #173025)
+
+ -- Nathan Scott <nathans@debian.org>  Mon, 16 Dec 2002 09:40:50 +1100
+
 acl (2.2.0-1) unstable; urgency=low
 
   * New upstream release
