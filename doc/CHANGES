@@ -1,3 +1,10 @@
+2.0.12 (25 June 2002)
+* Increment the libacl version so that its possible for other packages
+  like Samba to easily tell which library version has the libacl build
+  bug fixed (without having to play configure games, etc).
+* In other words, libacl.so.1.0.0 is now libacl.so.1.0.1; nothing else
+  has changed in this release.
+
 2.0.11 (30 April 2002)
 * Fix a bug when reallocating space in __acl_to_any_text.c
   (the bug causes ACL entries to get skipped!)
