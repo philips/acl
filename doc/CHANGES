@@ -1,3 +1,8 @@
+2.2.8 (14 April 2003)
+* Fix configure tests that used AC_PATH_PROG incorrectly.
+* Minor cosmetic cleanups to configure.in.
+* Some dependency fixes to the Debian packaging.
+
 2.2.7 (27 March 2003)
 * Cleanups to the build process, in particular the automatic rpm
   package generation Makefile and spec file template.
