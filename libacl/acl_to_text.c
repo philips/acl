@@ -27,6 +27,6 @@
 char *
 acl_to_text(acl_t acl, ssize_t *len_p)
 {
-	return acl_to_any_text(acl, len_p, "", '\n', "\n", TEXT_NO_EFFECTIVE);
+	return acl_to_any_text(acl, len_p, "", '\n', "\n", TEXT_SOME_EFFECTIVE);
 }
 

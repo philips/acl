@@ -1,3 +1,6 @@
+[cvs]
+* Fix up acl_to_text compliance with POSIX draft (from Andreas).
+
 2.0.4 (12 March 2002)
 * Man page updates from Andreas
 * Test script updates from Andreas
