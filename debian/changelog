@@ -1,3 +1,10 @@
+acl (2.2.11-1) unstable; urgency=low
+
+  * New upstream release
+  * Fix lib package dependencies, thanks to Steve Langasek (closes: #193149)
+
+ -- Nathan Scott <nathans@debian.org>  Wed, 04 Jun 2003 15:50:50 +1000
+
 acl (2.2.10-1) unstable; urgency=low
 
   * New upstream release
