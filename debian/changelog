@@ -1,3 +1,9 @@
+acl (2.0.4-2) unstable; urgency=low
+
+  * Fix attr-dev build dependency issue (closes: #138280)
+
+ -- Nathan Scott <nathans@debian.org>  Fri, 15 Mar 2002 07:08:50 +1100
+
 acl (2.0.4-1) unstable; urgency=low
 
   * New upstream bugfix release
