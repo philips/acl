@@ -10,11 +10,6 @@ Vendor: Andreas Gruenbacher <a.gruenbacher@computer.org>
 Group: System Environment/Base
 URL: http://acl.bestbits.at/
 
-# This really should be defined as the empty string, but RPM doesn't
-# seem to support this. (No more luck with %undefine, either.)
-# We end up with definitions like _libdir = "//lib".
-%define _exec_prefix /
-
 %description
 This package contains the getfacl and setfacl utilities needed for
 manipulating access control lists.
@@ -46,8 +41,7 @@ if [ -f .census ] ; then
    fi
 else
 %setup
-touch .census
-./configure
+@make@ configure
 fi
 
 %build

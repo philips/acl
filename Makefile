@@ -61,7 +61,17 @@ endif
 
 $(CONFIGURE):
 	autoconf
-	./configure
+	./configure \
+		--prefix=/ \
+		--exec-prefix=/ \
+		--sbindir=/bin \
+		--bindir=/usr/bin \
+		--libdir=/lib \
+		--libexecdir=/usr/lib \
+		--includedir=/usr/include \
+		--mandir=/usr/share/man \
+		--datadir=/usr/share \
+		$$LOCAL_CONFIGURE_OPTIONS
 	touch .census
 
 install: default

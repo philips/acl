@@ -1,3 +1,8 @@
+2.0.14 (04 July 2002)
+* Build infrastructure updates so that configure options can be used
+  to specify paths rather than semi-hard-coded path names controlled
+  by ROOT/ROOT_PREFIX env variables; eg. now allows /lib64 and /lib32.
+
 2.0.13 (25 June 2002)
 * Make acl_get_file() fail for regular files and type ACL_TYPE_DEFAULT,
   as required by 1003.1e draft 17. Update manual page accordingly.
