@@ -116,34 +116,23 @@ typedef struct acl_entry * acl_permset_t;
  */
 #ifndef __KERNEL__
 
-extern int acl_add_perm(acl_permset_t, acl_perm_t);
-extern int acl_calc_mask(acl_t *);
-extern int acl_clear_perms(acl_permset_t);
-extern int acl_copy_entry(acl_entry_t, acl_entry_t);
 extern ssize_t acl_copy_ext(void *, acl_t, ssize_t);
 extern acl_t acl_copy_int(const void *);
 extern int acl_create_entry(acl_t *, acl_entry_t *);
 extern int acl_delete_def_file(const char *);
 extern int acl_delete_entry(acl_t, acl_entry_t);
-extern int acl_delete_perm(acl_permset_t, acl_perm_t);
 extern acl_t acl_dup(acl_t);
+extern void acl_entry_sort(acl_t);
 extern int acl_free(void *);
 extern acl_t acl_from_text(const char *);
 extern int acl_get_entry(acl_t, int, acl_entry_t *);
 extern acl_t acl_get_fd(int);
 extern acl_t acl_get_file(const char *, acl_type_t);
-extern int acl_get_permset(acl_entry_t, acl_permset_t *);
-extern void *acl_get_qualifier(acl_entry_t);
-extern int acl_get_tag_type(acl_entry_t, acl_tag_t *);
-extern acl_t acl_init(int);
 extern int acl_set_fd(int, acl_t);
 extern int acl_set_file(const char *, acl_type_t, acl_t);
-extern int acl_set_permset(acl_entry_t, acl_permset_t);
-extern int acl_set_qualifier(acl_entry_t,const void *);
-extern int acl_set_tag_type(acl_entry_t, acl_tag_t);
 extern ssize_t acl_size(acl_t);
-extern char *acl_to_text(acl_t, ssize_t *);
 extern char *acl_to_short_text(acl_t, ssize_t *);
+extern char *acl_to_text(acl_t, ssize_t *);
 extern int acl_valid(acl_t);
 
 /* system calls */
