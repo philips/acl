@@ -33,13 +33,21 @@
 TOPDIR = ..
 include $(TOPDIR)/include/builddefs
 
-HFILES = acl.h
-LSRCFILES = builddefs.in buildrules
+SYSACL = acl.h
+LIBACL = libacl.h
+HFILES = $(SYSACL) $(LIBACL)
 
-default install :
+LSRCFILES = builddefs.in buildrules
+LDIRT = sys acl
+
+default:
+	test -L sys || $(LN_S) . sys
+	test -L acl || $(LN_S) . acl
 
 include $(BUILDRULES)
 
+install: default
 install-dev: default
 	$(INSTALL) -m 755 -d $(PKG_INC_DIR)
-	$(INSTALL) -m 644 $(HFILES) $(PKG_INC_DIR)
+	$(INSTALL) -m 644 $(SYSACL) $(PKG_INC_DIR)
+	$(INSTALL) -m 644 $(LIBACL) $(ACL_INC_DIR)

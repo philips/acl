@@ -43,7 +43,7 @@ LSRCFILES = configure configure.in Makepkgs install-sh README VERSION
 LDIRT = config.log config.status config.cache confdefs.h conftest* \
 	Logs/* built .census install.* install-dev.* *.gz
 
-SUBDIRS = include libacl chacl man doc debian build
+SUBDIRS = include libacl chacl facl man doc debian build
 
 default: $(CONFIGURE)
 ifeq ($(HAVE_BUILDDEFS), no)

@@ -43,9 +43,10 @@
 #include <limits.h>
 #include <stdlib.h>
 #include <ctype.h>
-
 #include <stdio.h>
 #include <string.h>
+
+#include <acl/libacl.h>
 
 #define LONG_FORM	0
 #define SHORT_FORM	1
@@ -58,6 +59,9 @@
 
 #define setoserror(E)	errno = (E)
 
+static int acl_get (const char *, int, struct acl *, struct acl *);
+static int acl_set (const char *, int, struct acl *, struct acl *);
+
 /* 
  * Compatibility flag for IRIX functionality
  * Default is to support common Linux/Posix ACL functionality
@@ -66,7 +70,7 @@
 static acl_compat_t acl_compat = 0;
 
 static char *
-skip_white(char *s)
+skip_white (char *s)
 {
 	char *cp;
 
@@ -79,7 +83,7 @@ skip_white(char *s)
 }
 
 static char *
-skip_to_white(char *s)
+skip_to_white (char *s)
 {
 	while (*s != '\0' && *s != ' ')
 		s++;
@@ -87,7 +91,7 @@ skip_to_white(char *s)
 }
 
 static char *
-skip_separator(char *s)
+skip_separator (char *s)
 {
 	char *cp;
 
@@ -105,7 +109,7 @@ skip_separator(char *s)
 }
 
 static char *
-skip_to_separator(char *s)
+skip_to_separator (char *s)
 {
 	while (*s != '\0' && *s != ' ' && *s != ':')
 		s++;
@@ -119,7 +123,7 @@ static int
 get_perm (char *perm, acl_perm_t *p)
 {
 	*p = (acl_perm_t)0;
-	if (perm == NULL)
+	if (!perm)
 		return 0;
 
 	while (*perm) {
@@ -143,9 +147,8 @@ get_perm (char *perm, acl_perm_t *p)
 }
 
 static void
-acl_error (void *b0, void *b1, int e)
+acl_abort (void *b0, void *b1, int e)
 {
-
 	if (b0)
 		free (b0);
 	if (b1)
@@ -173,20 +176,20 @@ acl_from_text (const char *buf_p)
 	char c;
 
 	/* check args for bogosity */
-	if (buf_p == NULL || *buf_p == '\0') {
-		acl_error (NULL, NULL, EINVAL);
+	if (!buf_p || *buf_p == '\0') {
+		acl_abort (NULL, NULL, EINVAL);
 		return (NULL);
 	}
 
 	/* allocate copy of acl text */
 	if ((bp = strdup(buf_p)) == NULL) {
-		acl_error (NULL, NULL, ENOMEM);
+		acl_abort (NULL, NULL, ENOMEM);
 		return (NULL);
 	}
 
 	/* allocate ourselves an acl */
 	if ((aclbuf = (acl_t)malloc(sizeof (*aclbuf))) == NULL) {
-		acl_error(bp, NULL, ENOMEM);
+		acl_abort(bp, NULL, ENOMEM);
 		return (NULL);
 	}
 	aclbuf->acl_cnt = 0;
@@ -210,20 +213,20 @@ acl_from_text (const char *buf_p)
 		char *tag, *qa, *perm;
 
 		if (aclbuf->acl_cnt > ACL_MAX_ENTRIES) {
-			acl_error (bp, aclbuf, EINVAL);
+			acl_abort (bp, aclbuf, EINVAL);
 			return (NULL);
 		}
 
 		/* get tag */
 		tag = fp;
-		fp = skip_to_separator(tag);
+		fp = skip_to_separator (tag);
 
 		if (*fp == '\0' && aclbuf->acl_cnt != 0)
 			break;
 
 		/* get qualifier */
-		if ((qa = skip_separator(fp)) == NULL) {
-			acl_error (bp, aclbuf, EINVAL);
+		if ((qa = skip_separator (fp)) == NULL) {
+			acl_abort (bp, aclbuf, EINVAL);
 			return (NULL);
 		}
 		if (*qa == ':') {
@@ -233,12 +236,12 @@ acl_from_text (const char *buf_p)
 		}
 		else {
 			/* e.g. u:fred:rwx */
-			fp = skip_to_separator(qa);
+			fp = skip_to_separator (qa);
 		}
 
 		/* get permissions */
-		if ((perm = skip_separator(fp)) == NULL) {
-			acl_error (bp, aclbuf, EINVAL);
+		if ((perm = skip_separator (fp)) == NULL) {
+			acl_abort (bp, aclbuf, EINVAL);
 			return (NULL);
 		}
 		fp = skip_to_white(perm);
@@ -250,25 +253,25 @@ acl_from_text (const char *buf_p)
 		entry->ae_tag = -1;
 
 		/* Process "user" tag keyword */
-		if (!strcmp(tag, "user") || !strcmp(tag, "u")) {
-			if (qa == NULL || *qa == '\0')
+		if (!strcmp (tag, "user") || !strcmp (tag, "u")) {
+			if (!qa || *qa == '\0')
 				entry->ae_tag = ACL_USER_OBJ;
 			else {
 				entry->ae_tag = ACL_USER;
-				if ((pw = getpwnam(qa)))
+				if ((pw = getpwnam (qa)))
 					entry->ae_id = pw->pw_uid;
-				else if (isdigit(*qa))
+				else if (isdigit (*qa))
 					entry->ae_id = atoi(qa);
 				else {
-					acl_error (bp, aclbuf, EINVAL);
+					acl_abort (bp, aclbuf, EINVAL);
 					return (NULL);
 				}
 			}
 		}
 
 		/* Process "group" tag keyword */
-		if (!strcmp(tag, "group") || !strcmp(tag, "g")) {
-			if (qa == NULL || *qa == '\0')
+		if (!strcmp (tag, "group") || !strcmp (tag, "g")) {
+			if (!qa || *qa == '\0')
 				entry->ae_tag = ACL_GROUP_OBJ;
 			else {
 				entry->ae_tag = ACL_GROUP;
@@ -277,38 +280,38 @@ acl_from_text (const char *buf_p)
 				else if (isdigit (*qa))
 					entry->ae_id = atoi(qa);
 				else {
-					acl_error (bp, aclbuf, EINVAL);
+					acl_abort (bp, aclbuf, EINVAL);
 					return (NULL);
 				}
 			}
 		}
 
 		/* Process "other" tag keyword */
-		if (!strcmp(tag, "other") || !strcmp(tag, "o")) {
+		if (!strcmp (tag, "other") || !strcmp (tag, "o")) {
 			entry->ae_tag = ACL_OTHER_OBJ;
 			if (qa != NULL && *qa != '\0') {
-				acl_error (bp, aclbuf, EINVAL);
+				acl_abort (bp, aclbuf, EINVAL);
 				return (NULL);
 			}
 		}
 
 		/* Process "mask" tag keyword */
-		if (!strcmp(tag, "mask") || !strcmp(tag, "m")) {
+		if (!strcmp (tag, "mask") || !strcmp (tag, "m")) {
 			entry->ae_tag = ACL_MASK;
 			if (qa != NULL && *qa != '\0') {
-				acl_error (bp, aclbuf, EINVAL);
+				acl_abort (bp, aclbuf, EINVAL);
 				return (NULL);
 			}
 		}
 
 		/* Process invalid tag keyword */
 		if (entry->ae_tag == -1) {
-			acl_error(bp, aclbuf, EINVAL);
+			acl_abort (bp, aclbuf, EINVAL);
 			return (NULL);
 		}
 
 		if (get_perm (perm, &entry->ae_perm) == -1) {
-			acl_error ((void *) bp, (void *) aclbuf, EINVAL);
+			acl_abort ((void *) bp, (void *) aclbuf, EINVAL);
 			return (NULL);
 		}
 	}
@@ -327,72 +330,67 @@ acl_to_text_internal (struct acl *aclp, ssize_t *len_p, const char *strs[],
 	acl_entry_t entry;
 
 	/* acl must be empty or valid else return */
-	if (!aclp || (acl_valid(aclp) == -1 && aclp->acl_cnt != 0))
+	if (!aclp || (acl_valid (aclp) == -1 && aclp->acl_cnt != 0))
 		return (char *) 0;
 
 	buflen = aclp->acl_cnt * MAX_ENTRY_SIZE + 1;
-	if (!(c = buf = (char *) malloc (buflen)))
-	{
-		acl_error ((void *) 0, (void *) 0, ENOMEM);
+	if (!(c = buf = (char *) malloc (buflen))) {
+		acl_abort ((void *) 0, (void *) 0, ENOMEM);
 		return (char *) 0;
 	}
 
         /* empty ACLs convert to empty strings - follow Linux AG code */
-        if (buflen==1)
-        {
+        if (buflen == 1) {
                 *c = '\0';
                 goto done;
         }
 
-	for (i = 0, delim = (isshort ? ',' : '\n'); i < aclp->acl_cnt; i++)
-	{
-		if (buflen - (c - buf) < MAX_ENTRY_SIZE)
-		{
-			acl_error ((void *) buf, (void *) 0, ENOMEM);
+	for (i = 0, delim = (isshort ? ',' : '\n'); i < aclp->acl_cnt; i++) {
+		if (buflen - (c - buf) < MAX_ENTRY_SIZE) {
+			acl_abort ((void *) buf, (void *) 0, ENOMEM);
 			return (char *) 0;
 		}
 
 		entry = &aclp->acl_entry[i];
 
-		switch (entry->ae_tag)
-		{
-			case ACL_USER_OBJ:
-				s = sprintf (c, "%s:", strs[TT_USER]);
-				break;
-			case ACL_USER: {
-				struct passwd *pw;
-				if ((pw = getpwuid (entry->ae_id)))
-					s = sprintf (c, "%s%s:", strs[TT_USER],
-						     pw->pw_name);
-				else
-					s = sprintf (c, "%s%d:", strs[TT_USER],
-						     entry->ae_id);
-				break;
-			}
-			case ACL_GROUP_OBJ:
-				s = sprintf (c, "%s:", strs[TT_GROUP]);
-				break;
-			case ACL_GROUP: {
-				struct group *gr;
-				if ((gr = getgrgid (entry->ae_id)))
-					s = sprintf (c, "%s%s:",
-						     strs[TT_GROUP],
-						     gr->gr_name);
-				else
-					s = sprintf (c, "%s%d:",
-						     strs[TT_GROUP],
-						     entry->ae_id);
-				break;
-			}
-			case ACL_OTHER_OBJ:
-				s = sprintf (c, "%s:", strs[TT_OTHER]);
-				break;
-			case ACL_MASK:
-				s = sprintf (c, "%s:", strs[TT_MASK]);
-				break;
-			default:
-				acl_error ((void *) buf, (void *) 0, EINVAL);
-				return (char *) 0;
+		switch (entry->ae_tag) {
+		case ACL_USER_OBJ:
+			s = sprintf (c, "%s:", strs[TT_USER]);
+			break;
+		case ACL_USER: {
+			struct passwd *pw;
+			if ((pw = getpwuid (entry->ae_id)))
+				s = sprintf (c, "%s%s:", strs[TT_USER],
+					     pw->pw_name);
+			else
+				s = sprintf (c, "%s%d:", strs[TT_USER],
+					     entry->ae_id);
+			break;
+		}
+		case ACL_GROUP_OBJ:
+			s = sprintf (c, "%s:", strs[TT_GROUP]);
+			break;
+		case ACL_GROUP: {
+			struct group *gr;
+			if ((gr = getgrgid (entry->ae_id)))
+				s = sprintf (c, "%s%s:",
+					     strs[TT_GROUP],
+					     gr->gr_name);
+			else
+				s = sprintf (c, "%s%d:",
+					     strs[TT_GROUP],
+					     entry->ae_id);
+			break;
+		}
+		case ACL_OTHER_OBJ:
+			s = sprintf (c, "%s:", strs[TT_OTHER]);
+			break;
+		case ACL_MASK:
+			s = sprintf (c, "%s:", strs[TT_MASK]);
+			break;
+		default:
+			acl_abort ((void *) buf, (void *) 0, EINVAL);
+			return (char *) 0;
 		}
 		c += s;
 		*c++ = (entry->ae_perm & ACL_READ) ? 'r' : '-';
@@ -439,8 +437,7 @@ acl_to_text (struct acl *aclp, ssize_t *len_p)
 ssize_t
 acl_size (struct acl *aclp)
 {
-	if (aclp == NULL)
-	{
+	if (!aclp) {
 		setoserror (EINVAL);
 		return ((ssize_t) (-1));
 	}
@@ -453,15 +450,13 @@ acl_size (struct acl *aclp)
 ssize_t
 acl_copy_ext (void *buf_p, struct acl *acl, ssize_t size)
 {
-	if (size <= 0 || !acl || !buf_p)
-	{
-		acl_error ((void *) 0, (void *) 0, EINVAL);
+	if (size <= 0 || !acl || !buf_p) {
+		acl_abort ((void *) 0, (void *) 0, EINVAL);
 		return (ssize_t) - 1;
 	}
 
-	if (size < sizeof (struct acl))
-	{
-		acl_error ((void *) 0, (void *) 0, ERANGE);
+	if (size < sizeof (struct acl)) {
+		acl_abort ((void *) 0, (void *) 0, ERANGE);
 		return (ssize_t) - 1;
 	}
 
@@ -477,16 +472,14 @@ acl_copy_int (const void *buf_p)
 {
 	struct acl *aclp;
 
-	if (buf_p == NULL)
-	{
-		acl_error ((void *) NULL, (void *) NULL, EINVAL);
+	if (!buf_p) {
+		acl_abort ((void *) NULL, (void *) NULL, EINVAL);
 		return (NULL);
 	}
 
 	aclp = (struct acl *) malloc (sizeof (*aclp));
-	if (aclp == NULL)
-	{
-		acl_error ((void *) NULL, (void *) NULL, ENOMEM);
+	if (!aclp) {
+		acl_abort ((void *) NULL, (void *) NULL, ENOMEM);
 		return (aclp);
 	}
 
@@ -512,7 +505,7 @@ acl_valid (struct acl *aclp)
 	int user = 0, group = 0, other = 0, mask = 0, mask_required = 0;
 	int i, j;
 
-	if (aclp == NULL)
+	if (!aclp)
 		goto acl_invalid;
 
 	if (aclp->acl_cnt == ACL_NOT_PRESENT)
@@ -521,41 +514,37 @@ acl_valid (struct acl *aclp)
 	if (aclp->acl_cnt < 0 || aclp->acl_cnt > ACL_MAX_ENTRIES)
 		goto acl_invalid;
 
-	for (i = 0; i < aclp->acl_cnt; i++)
-	{
-
+	for (i = 0; i < aclp->acl_cnt; i++) {
 		entry = &aclp->acl_entry[i];
-
-		switch (entry->ae_tag)
-		{
-			case ACL_USER_OBJ:
-				if (user++)
-					goto acl_invalid;
-				break;
-			case ACL_GROUP_OBJ:
-				if (group++)
-					goto acl_invalid;
-				break;
-			case ACL_OTHER_OBJ:
-				if (other++)
-					goto acl_invalid;
-				break;
-			case ACL_USER:
-			case ACL_GROUP:
-				for (j = i + 1; j < aclp->acl_cnt; j++)
-				{
-					e = &aclp->acl_entry[j];
-					if (e->ae_id == entry->ae_id && e->ae_tag == entry->ae_tag)
-						goto acl_invalid;
-				}
-				mask_required++;
-				break;
-			case ACL_MASK:
-				if (mask++)
-					goto acl_invalid;
-				break;
-			default:
+		switch (entry->ae_tag) {
+		case ACL_USER_OBJ:
+			if (user++)
 				goto acl_invalid;
+			break;
+		case ACL_GROUP_OBJ:
+			if (group++)
+				goto acl_invalid;
+			break;
+		case ACL_OTHER_OBJ:
+			if (other++)
+				goto acl_invalid;
+			break;
+		case ACL_USER:
+		case ACL_GROUP:
+			for (j = i + 1; j < aclp->acl_cnt; j++) {
+				e = &aclp->acl_entry[j];
+				if (e->ae_id == entry->ae_id &&
+				    e->ae_tag == entry->ae_tag)
+					goto acl_invalid;
+			}
+			mask_required++;
+			break;
+		case ACL_MASK:
+			if (mask++)
+				goto acl_invalid;
+			break;
+		default:
+			goto acl_invalid;
 		}
 	}
 	if (!user || !group || !other || (mask_required && !mask))
@@ -564,7 +553,7 @@ acl_valid (struct acl *aclp)
 		return 0;
 acl_invalid:
 	setoserror (EINVAL);
-	return (-1);
+	return -1;
 }
 
 /* 
@@ -577,35 +566,17 @@ acl_delete_def_file (const char *path_p)
 
 	acl.acl_cnt = ACL_NOT_PRESENT;
 	if (acl_set (path_p, -1, 0, &acl) < 0)
-		return (-1);
-	else
-		return 0;
+		return -1;
+	return 0;
 }
 
 void
-acl_set_compat(acl_compat_t compat_bits)
+acl_set_compat (acl_compat_t compat_bits)
 {
 	if (compat_bits)
 	    acl_compat |= compat_bits;
 	else
 	    acl_compat = 0;
-}
-
-static void
-acl_from_mode(acl_t aclp, uid_t uid, gid_t gid, mode_t mode)
-{
-	aclp->acl_cnt = 3;
-        aclp->acl_entry[0].ae_tag  = ACL_USER_OBJ;
-        aclp->acl_entry[0].ae_id   = uid;
-        aclp->acl_entry[0].ae_perm = (mode & S_IRWXU) >> 6;
-
-        aclp->acl_entry[1].ae_tag  = ACL_GROUP_OBJ;
-        aclp->acl_entry[1].ae_id   = gid;
-        aclp->acl_entry[1].ae_perm = (mode & S_IRWXG) >> 3;
-
-        aclp->acl_entry[2].ae_tag  = ACL_OTHER_OBJ;
-        aclp->acl_entry[2].ae_id   = ACL_UNDEFINED_ID;
-        aclp->acl_entry[2].ae_perm = (mode & S_IRWXO);
 }
 
 /* 
@@ -616,24 +587,25 @@ acl_get_fd (int fd)
 {
 	struct acl *aclp = (struct acl *) malloc (sizeof (*aclp));
 
-	if (aclp == NULL)
-	{
+	if (!aclp) {
 		setoserror (ENOMEM);
 		return (aclp);
 	}
 
-	if (acl_get (0, fd, aclp, 0) < 0)
-	{
+	if (acl_get (0, fd, aclp, 0) < 0) {
 		free ((void *) aclp);
 		return (NULL);
 	}
 	else if (! (acl_compat & ACL_COMPAT_IRIXGET) &&
-	           (aclp->acl_cnt == ACL_NOT_PRESENT)) {
+		   (aclp->acl_cnt == ACL_NOT_PRESENT)) {
 		/* copy over a minimum ACL from mode bits */
 		struct stat st;
 		if (fstat(fd, &st) != 0)
 			return NULL;
-		acl_from_mode(aclp, st.st_uid, st.st_gid, st.st_mode);
+		if ((aclp = acl_from_mode (st.st_mode)) == NULL)
+			return NULL;
+        	aclp->acl_entry[0].ae_id = st.st_uid;
+		aclp->acl_entry[1].ae_id = st.st_gid;
 	}
 	return aclp;
 }
@@ -647,42 +619,42 @@ acl_get_file (const char *path_p, acl_type_t type)
 	struct acl *aclp = (struct acl *) malloc (sizeof (*aclp));
 	int acl_get_error;
 
-	if (aclp == NULL)
-	{
+	if (!aclp) {
 		setoserror (ENOMEM);
 		return (NULL);
 	}
 
-	switch (type)
-	{
-		case ACL_TYPE_ACCESS:
-			acl_get_error = (int) acl_get (path_p, -1,
-						      aclp,
-						      (struct acl *) NULL);
-			break;
-		case ACL_TYPE_DEFAULT:
-			acl_get_error = (int) acl_get (path_p, -1,
-						      (struct acl *) NULL,
-						      aclp);
-			break;
-		default:
-			setoserror (EINVAL);
-			acl_get_error = -1;
+	switch (type) {
+	case ACL_TYPE_ACCESS:
+		acl_get_error = (int) acl_get (path_p, -1,
+					      aclp,
+					      (struct acl *) NULL);
+		break;
+	case ACL_TYPE_DEFAULT:
+		acl_get_error = (int) acl_get (path_p, -1,
+					      (struct acl *) NULL,
+					      aclp);
+		break;
+	default:
+		setoserror (EINVAL);
+		acl_get_error = -1;
 	}
 
-	if (acl_get_error < 0)
-	{
+	if (acl_get_error < 0) {
 		free ((void *) aclp);
 		return (NULL);
 	}
 	else if (!(acl_compat & ACL_COMPAT_IRIXGET) &&
-                  (aclp->acl_cnt == ACL_NOT_PRESENT)) {
+		  (aclp->acl_cnt == ACL_NOT_PRESENT)) {
 		if (type == ACL_TYPE_ACCESS) {
 			/* copy over a minimum ACL from mode bits */
 			struct stat st;
 			if (stat(path_p, &st) != 0)
 				return NULL;
-			acl_from_mode(aclp, st.st_uid, st.st_gid, st.st_mode);
+			if ((aclp = acl_from_mode (st.st_mode)) == NULL)
+				return NULL;
+			aclp->acl_entry[0].ae_id = st.st_uid;
+			aclp->acl_entry[1].ae_id = st.st_gid;
 		}
 		else { /* default ACL */
 			/* empty ACL and NOT ACL_NOT_PRESENT */
@@ -698,24 +670,20 @@ acl_get_file (const char *path_p, acl_type_t type)
 int
 acl_set_fd (int fd, struct acl *aclp)
 {
-	if (acl_valid (aclp) == -1)
-	{
+	if (acl_valid (aclp) == -1) {
 		setoserror (EINVAL);
-		return (-1);
+		return -1;
 	}
 
-	if (aclp->acl_cnt > ACL_MAX_ENTRIES)
-	{
+	if (aclp->acl_cnt > ACL_MAX_ENTRIES) {
 /* setoserror(EACL2BIG);                until EACL2BIG is defined */
 		setoserror (EINVAL);
-		return (-1);
+		return -1;
 	}
 
-	if (acl_set (0, fd, aclp, (struct acl *) NULL) < 0) {
-		return (-1);
-	}
-	else
-		return 0;
+	if (acl_set (0, fd, aclp, (struct acl *) NULL) < 0)
+		return -1;
+	return 0;
 }
 
 /* 
@@ -726,40 +694,35 @@ acl_set_file (const char *path_p, acl_type_t type, struct acl *aclp)
 {
 	int acl_set_error;
 
-	if (acl_valid (aclp) == -1)
-	{
+	if (acl_valid (aclp) == -1) {
 		setoserror (EINVAL);
-		return (-1);
+		return -1;
 	}
 
-	if (aclp->acl_cnt > ACL_MAX_ENTRIES)
-	{
+	if (aclp->acl_cnt > ACL_MAX_ENTRIES) {
 /* setoserror(EACL2BIG);                until EACL2BIG is defined */
 		setoserror (EINVAL);
-		return (-1);
+		return -1;
 	}
 
-	switch (type)
-	{
-		case ACL_TYPE_ACCESS:
-			acl_set_error = (int) acl_set (path_p, -1,
-						      aclp,
-						      (struct acl *) NULL);
-			break;
-		case ACL_TYPE_DEFAULT:
-			acl_set_error = (int) acl_set (path_p, -1,
-						      (struct acl *) NULL,
-						      aclp);
-			break;
-		default:
-			setoserror (EINVAL);
-			return (-1);
+	switch (type) {
+	case ACL_TYPE_ACCESS:
+		acl_set_error = (int) acl_set (path_p, -1,
+					      aclp,
+					      (struct acl *) NULL);
+		break;
+	case ACL_TYPE_DEFAULT:
+		acl_set_error = (int) acl_set (path_p, -1,
+					      (struct acl *) NULL,
+					      aclp);
+		break;
+	default:
+		setoserror (EINVAL);
+		return -1;
 	}
-	if (acl_set_error < 0) {
-		return (-1);
-	}
-	else
-		return 0;
+	if (acl_set_error < 0)
+		return -1;
+	return 0;
 }
 
 acl_t
@@ -767,8 +730,7 @@ acl_dup (acl_t acl)
 {
 	acl_t dup = (acl_t) NULL;
 
-	if (acl != (acl_t) NULL)
-	{
+	if (acl) {
 		dup = (acl_t) malloc (sizeof (*acl));
 		if (dup != (acl_t) NULL)
 			*dup = *acl;
@@ -789,7 +751,7 @@ acl_get_entry (acl_t acl, int which, acl_entry_t *acep)
 {
 	int ne;
 
-	if (acl == NULL)
+	if (!acl)
 		goto bad_exit;
 
 	if (acl->acl_cnt == 0) /* no entries */
@@ -827,16 +789,16 @@ acl_delete_entry (acl_t acl, acl_entry_t ace)
 {
 	int i, nd, cnt;
 
-	if (acl == NULL)
+	if (!acl)
 		goto bad_exit;
 
 	nd = ace - acl->acl_entry;
 	cnt = acl->acl_cnt;
-	if((nd < 0) || (nd >= cnt))
+	if (nd < 0 || nd >= cnt)
 		goto bad_exit;
 
 	cnt--;	/* reduce the entry count & close the hole */
-	for(i=nd; i<cnt; i++) {
+	for (i = nd; i < cnt; i++) {
 		*ace = *(ace+1);
 		ace++;
 	}
@@ -860,12 +822,12 @@ acl_create_entry (acl_t *aclp, acl_entry_t *acep)
 	acl_entry_t ace;
 
 	erc = EINVAL;
-	if ((aclp == NULL) || (acep == NULL))
+	if (!aclp || !acep)
 		goto bad_exit;
 
         ace = *acep;
 	acl = *aclp;
-	if (acl == NULL)
+	if (!acl)
 		goto bad_exit;
 
 	cnt = acl->acl_cnt;
@@ -936,12 +898,12 @@ acl_add_perm (acl_permset_t permset_d, acl_perm_t perm)
 		setoserror(EINVAL);
 		return -1;
 	}
-	
-	if(permset_d == NULL) {
+
+	if (!permset_d) {
 		setoserror(EINVAL);
 		return -1;
 	}
-		
+
 	*permset_d |= perm;	
 	return 0;
 }
@@ -949,7 +911,7 @@ acl_add_perm (acl_permset_t permset_d, acl_perm_t perm)
 int
 acl_clear_perms (acl_permset_t permset_d)
 {
-	if(permset_d == NULL) {
+	if (!permset_d) {
 		setoserror(EINVAL);
 		return -1;
 	}
@@ -965,7 +927,7 @@ acl_delete_perm(acl_permset_t permset_d, acl_perm_t perm)
 		return -1;
 	}
 	
-	if(permset_d == NULL) {
+	if (!permset_d) {
 		setoserror(EINVAL);
 		return -1;
 	}
@@ -980,11 +942,10 @@ acl_get_perm(acl_permset_t permset, acl_perm_t perm)
 	return (*permset & perm);
 }
 
-
 int
 acl_get_permset (acl_entry_t entry_d, acl_permset_t *permset_p)
 {
-	if(entry_d == NULL){
+	if (!entry_d) {
 		setoserror(EINVAL);
 		return -1;
 	}
@@ -1003,19 +964,18 @@ acl_get_qualifier (acl_entry_t entry_d)
 {
 	uid_t *retval;
 
-	if(entry_d == NULL){
+	if (!entry_d) {
 		setoserror(EINVAL);
 		return NULL;
 	}
 	
 	if ( entry_d->ae_tag != ACL_USER &&
-		 entry_d->ae_tag != ACL_GROUP ) {
-		 setoserror(EINVAL);
-		 return NULL;
+	     entry_d->ae_tag != ACL_GROUP ) {
+		setoserror(EINVAL);
+		return NULL;
 	}
-	
-	retval = malloc(sizeof(uid_t));
-	if (retval == NULL) {
+
+	if ((retval = malloc(sizeof(uid_t)))  == NULL) {
 		setoserror(ENOMEM);
 		return NULL;
 	}
@@ -1026,25 +986,24 @@ acl_get_qualifier (acl_entry_t entry_d)
 int
 acl_get_tag_type (acl_entry_t entry_d, acl_tag_t *tag_p)
 {
-	if(entry_d == NULL){
+	if (!entry_d) {
 		setoserror(EINVAL);
 		return -1;
 	}
-	
-	switch ( entry_d->ae_tag ) {
-		case ACL_USER:
-		case ACL_USER_OBJ:
-		case ACL_GROUP:
-		case ACL_GROUP_OBJ:
-		case ACL_OTHER_OBJ:
-		case ACL_MASK:
-			// only change the value if it is valid
-			*tag_p = entry_d->ae_tag;
-			return 0;
-			break;
-		default:
-			setoserror(EINVAL);
-			return -1;
+
+	switch (entry_d->ae_tag) {
+	case ACL_USER:
+	case ACL_USER_OBJ:
+	case ACL_GROUP:
+	case ACL_GROUP_OBJ:
+	case ACL_OTHER_OBJ:
+	case ACL_MASK:
+		/* only change the value if it is valid */
+		*tag_p = entry_d->ae_tag;
+		return 0;
+	default:
+		setoserror(EINVAL);
+		return -1;
 	} 
 }
 
@@ -1052,34 +1011,32 @@ acl_t
 acl_init (int count)
 {
 	acl_t a;
-	if((count > ACL_MAX_ENTRIES) || (count < 0)) {
+
+	if (count > ACL_MAX_ENTRIES || count < 0) {
 		setoserror(EINVAL);
 		return NULL;
 	}
-	else {
-		if( (a = (struct acl *)malloc(sizeof(struct acl))) == NULL){
-			setoserror(ENOMEM);
-			return NULL;
-		} 
-		a->acl_cnt = 0;
-		return a;
-	}
-
+	if ((a = (struct acl *) malloc (sizeof(struct acl))) == NULL) {
+		setoserror(ENOMEM);
+		return NULL;
+	} 
+	a->acl_cnt = 0;
+	return a;
 }
 
 int
 acl_set_permset (acl_entry_t entry_d, acl_permset_t permset_d)
 {
-	if( (entry_d == NULL) || (permset_d == NULL) ){
+	if (!entry_d || !permset_d) {
 		setoserror(EINVAL);
 		return -1;
-		}
+	}
 		
-	if(*permset_d & ~(ACL_READ|ACL_WRITE|ACL_EXECUTE)) {
+	if (*permset_d & ~(ACL_READ|ACL_WRITE|ACL_EXECUTE)) {
 		setoserror(EINVAL);
 		return -1;
-		}
-		
+	}
+
 	entry_d->ae_perm = *permset_d;
 	return 0;
 }
@@ -1087,13 +1044,12 @@ acl_set_permset (acl_entry_t entry_d, acl_permset_t permset_d)
 int
 acl_set_qualifier (acl_entry_t entry_d, const void *qual_p)
 {
-	if(entry_d == NULL || qual_p == NULL){
+	if (!entry_d || !qual_p) {
 		setoserror(EINVAL);
 		return -1;
 	}
-	
-	if(entry_d->ae_tag != ACL_GROUP &&
-		entry_d->ae_tag != ACL_USER) {
+
+	if (entry_d->ae_tag != ACL_GROUP && entry_d->ae_tag != ACL_USER) {
 		setoserror(EINVAL);
 		return -1;
 	}	
@@ -1104,24 +1060,79 @@ acl_set_qualifier (acl_entry_t entry_d, const void *qual_p)
 int
 acl_set_tag_type (acl_entry_t entry_d, acl_tag_t tag_type)
 {
-	if(entry_d == NULL){
-		setoserror(EINVAL);
+	if (!entry_d) {
+		setoserror (EINVAL);
 		return -1;
 	}
-	
+
 	switch (tag_type) {
-		case ACL_USER:
+	case ACL_USER:
+	case ACL_USER_OBJ:
+	case ACL_GROUP:
+	case ACL_GROUP_OBJ:
+	case ACL_OTHER_OBJ:
+	case ACL_MASK:
+		entry_d->ae_tag = tag_type;
+		break;
+	default:
+		setoserror (EINVAL);
+		return -1;
+	}
+	return 0;
+}
+
+/* 23.4.2 */
+int
+acl_calc_mask (acl_t *aclp)
+{
+	int i;
+	acl_entry_t ace, mask = NULL;
+	acl_perm_t perm = ACL_PERM_NONE;
+
+	if (!aclp || !*aclp) {
+		setoserror (EINVAL);
+		return -1;
+	}
+
+	for (i = 0; i < (*aclp)->acl_cnt; i++) {
+		ace = &((*aclp)->acl_entry[i]);
+		switch (ace->ae_tag) {
 		case ACL_USER_OBJ:
-		case ACL_GROUP:
-		case ACL_GROUP_OBJ:
-		case ACL_OTHER_OBJ:
+		case ACL_OTHER:
+			break;
 		case ACL_MASK:
-			entry_d->ae_tag = tag_type;
+			mask = ace;
+			break;
+		case ACL_USER:
+		case ACL_GROUP_OBJ:
+		case ACL_GROUP:
+			perm |= ace->ae_perm;
 			break;
 		default:
-			setoserror(EINVAL);
+			setoserror (EINVAL);
 			return -1;
+		}
 	}
+
+	if (!mask) {
+		if (acl_create_entry (aclp, &mask) == -1)
+			return -1;
+		mask->ae_tag = ACL_MASK;
+		acl_entry_sort (*aclp);
+	}
+	mask->ae_perm = perm;
+	return 0;
+}
+
+/* 23.4.4 */
+int
+acl_copy_entry (acl_entry_t src, acl_entry_t dest)
+{
+	if (!dest || !src) {
+		setoserror (EINVAL);
+		return -1;
+	}
+	*dest = *src;
 	return 0;
 }
 
@@ -1135,8 +1146,6 @@ acl_set_tag_type (acl_entry_t entry_d, acl_tag_t tag_type)
  * The code needs to be extended for different system call
  * numberings for different architectures.
  */
-
-#include <unistd.h>
 
 /* Need to use the kernel system call numbering
  * for the particular architecture.
@@ -1162,26 +1171,26 @@ acl_set_tag_type (acl_entry_t entry_d, acl_tag_t tag_type)
 #  define HAVE_ACL_SYSCALL 0
 #endif
 
-int
+static int
 acl_get(const char *path, int fdes, struct acl *acl, struct acl *dacl)
 {
 #if HAVE_ACL_SYSCALL
 	return syscall(SYS__acl_get, path, fdes, acl, dacl);
 #else
-	fprintf(stderr, "libacl: acl_get system call not defined "
-			"for this architecture\n");
-	return 0;
+	/* Not yet implemented - syscall for this architecture */
+	setoserror(ENOSYS);
+	return -1;
 #endif
 }
 
-int
+static int
 acl_set(const char *path, int fdes, struct acl *acl, struct acl *dacl)
 {
 #if HAVE_ACL_SYSCALL
 	return syscall(SYS__acl_set, path, fdes, acl, dacl);
 #else
-	fprintf(stderr, "libacl: acl_set system call not defined "
-			"for this architecture\n");
-	return 0;
+	/* Not yet implemented - syscall for this architecture */
+	setoserror(ENOSYS);
+	return -1;
 #endif
 }

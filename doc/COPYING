@@ -1,5 +1,6 @@
 All the libraries in "acl" are licensed under Version 2.1
-of the GNU Lesser General Public License. 
+of the GNU Lesser General Public License, as is all of the
+source below the "facl" directory.
 
 All other "acl" components are licensed under Version 2 of
 the GNU General Public License.

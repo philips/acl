@@ -157,6 +157,8 @@ AC_SUBST(pkg_sbin_dir)
 dnl include files
 pkg_inc_dir=${prefix}/include/sys
 AC_SUBST(pkg_inc_dir)
+acl_inc_dir=${prefix}/include/acl
+AC_SUBST(acl_inc_dir)
 
 dnl doc directory
 pkg_doc_dir=${prefix}/share/doc/${pkg_name}

@@ -1,15 +1,28 @@
 Access Control List package README
 __________________________________
 
-See the file doc/INSTALL for build, installation and post-
-install configuration steps.
+See the file doc/INSTALL for build and installation notes.
 
-Refer to the acl(5) manual page for general access control list
+Refer to the acl(5) manual page for general Access Control List
 (ACL) information and references to other ACL manual pages.
+
+The pioneering work on Linux ACLs for the ext2 filesystem was
+mostly done by Andreas Gruenbacher <a.gruenbacher@computer.org>.
+The getfacl and setfacl source code in this package (below the
+"facl" subdirectory) was implemented by Andreas, he also wrote
+the associated man pages, and his ACL website is a good source
+of information on the subject:
+
+	http://acl.bestbits.at/
 
 For more information and details on how to contribute to the
 XFS project see the web pages at:
 	http://oss.sgi.com/projects/xfs/
+
+Most of the initial porting work (from IRIX/XFS to Linux/XFS)
+to provide ACL support and integration with Samba, was done by
+developers at Connex -- the doc/CREDITS file in the xfsprogs
+package has contact details for these folk.
 
 For more information on the build process, please refer to
 the doc/PORTING document.

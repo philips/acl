@@ -40,6 +40,7 @@ OPTIMIZER = @opt_build@
 MALLOCLIB = @malloc_lib@
 
 LIBACL = $(TOPDIR)/libacl/libacl.la
+ACL_INC_DIR = @acl_inc_dir@
 
 PKG_NAME = @pkg_name@
 PKG_RELEASE = @pkg_release@

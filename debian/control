@@ -8,9 +8,8 @@ Standards-Version: 3.5.5
 Package: acl
 Depends: ${shlibs:Depends}
 Architecture: any
-Description: Experimental chacl utility for manipulating POSIX ACLs
- An *experimental* command (chacl) to manipulate access control
- lists according to the (draft) POSIX 1003 standard.
+Description: Utilities for manipulating access control lists
+ A set of commands for manipulating POSIX access control lists.
 
 Package: acl-dev
 Section: devel
@@ -20,5 +19,3 @@ Architecture: any
 Description: POSIX ACL static libraries and headers
  acl-dev contains the libraries and header files needed to
  develop programs which make use of access control lists.
- This is an *experimental* interface, currently only XFS is
- supported, and the interface may change.

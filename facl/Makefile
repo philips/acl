@@ -33,19 +33,32 @@
 TOPDIR = ..
 include $(TOPDIR)/include/builddefs
 
-LTLIBRARY = libacl.la
-LT_CURRENT = 1
-LT_REVISION = 0
-LT_AGE = 0
+GETFACL = getfacl
+SETFACL = setfacl
 
-CFILES = acl.c libacl.c text.c
+CFILES  = do_set.c parse.c sequence.c user_group.c walk_tree.c \
+	  $(GETFACL).c $(SETFACL).c
 
-default: $(LTLIBRARY)
+GETFOBJ = $(GETFACL).o user_group.o walk_tree.o
+SETFOBJ = $(SETFACL).o do_set.o parse.o sequence.o user_group.o walk_tree.o
+
+LLDLIBS = $(LIBACL)
+LTDEPENDENCIES = $(LIBACL)
+
+LCFLAGS = -DPACKAGE=\"$(PKG_NAME)\" -DSTR_VERSION=\"$(PKG_VERSION)\" \
+	  -DLOCALEDIR=NULL
+
+default: $(GETFACL) $(SETFACL)
 
 include $(BUILDRULES)
 
-install: default
-	$(INSTALL_LTLIB)
+$(GETFACL): $(GETFOBJ)
+	$(LTLINK) -o $@ $(CFLAGS) $(GETFOBJ) $(LDFLAGS) $(LDLIBS)
+$(SETFACL): $(SETFOBJ)
+	$(LTLINK) -o $@ $(CFLAGS) $(SETFOBJ) $(LDFLAGS) $(LDLIBS)
 
-install-dev: default
-	$(INSTALL_LTLIB_DEV)
+install: default
+	$(INSTALL) -m 755 -d $(PKG_BIN_DIR)
+	$(LTINSTALL) -m 755 $(GETFACL) $(PKG_BIN_DIR)
+	$(LTINSTALL) -m 755 $(SETFACL) $(PKG_BIN_DIR)
+install-dev:

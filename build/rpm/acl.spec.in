@@ -1,4 +1,4 @@
-Summary: Command for manipulating access control lists
+Summary: Utilities for manipulating access control lists
 Name: @pkg_name@
 Version: @pkg_version@
 Release: @pkg_release@
@@ -13,8 +13,7 @@ URL: http://oss.sgi.com/projects/xfs/
 Group: System Environment/Base
 
 %description
-A command (chacl) to manipulate POSIX access control lists
-under Linux.
+A set of commands for manipulating POSIX access control lists.
 
 %package devel
 Summary: Access control list static libraries and headers.

@@ -1,3 +1,16 @@
+acl-1.1.2 (03 Aug 2001)
+	- incorporated setfacl(1) and getfacl(1) tools, written by
+	  Andreas Gruenbacher <a.gruenbacher@computer.org>
+	- added the extra libacl routines needed in order for these
+	  tools to properly function
+	- [this should ensure the two libacl implementations (ext2/xfs)
+	   don't drift apart in incompatible ways and will also provide
+	   similar ACL tools for both - a single userspace is still the
+	   longer-term goal, but will require a common system call API]
+	- fixup some man page typos
+	- rearrange headers to better separate user/kernel
+	- failed syscall returns ENOSYS, no longer writes to stderr
+
 acl-1.1.1 (23 Jul 2001)
 	- install static libs and libtool archives into /usr/lib
 	- shared libraries are unchanged, however
