@@ -33,7 +33,7 @@
 TOPDIR = ..
 include $(TOPDIR)/include/builddefs
 
-HFILES = acl.h libacl.h acl_ea.h
+HFILES = acl.h libacl.h acl_ea.h misc.h
 LSRCFILES = builddefs.in buildmacros buildrules config.h.in
 LDIRT = sys acl
 

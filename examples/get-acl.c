@@ -42,16 +42,19 @@ int main(int argc, char *argv[])
 		acl_text = acl_to_text(acl, NULL);
 		acl_free(acl);
 
-		default_acl = acl_get_file(argv[n], ACL_TYPE_DEFAULT);
-		if (default_acl == NULL) {
-			acl_free(acl_text);
-			fprintf(stderr, "%s: getting default acl of %s: %s\n",
-				progname, argv[n], strerror(errno));
-			ret = 1;
-			continue;
+		if (S_ISDIR(st.st_mode)) {
+			default_acl = acl_get_file(argv[n], ACL_TYPE_DEFAULT);
+			if (default_acl == NULL) {
+				acl_free(acl_text);
+				fprintf(stderr, "%s: getting default acl "
+					"of %s: %s\n", progname, argv[n],
+					strerror(errno));
+				ret = 1;
+				continue;
+			}
+			default_acl_text = acl_to_text(default_acl, NULL);
+			acl_free(default_acl);
 		}
-		default_acl_text = acl_to_text(default_acl, NULL);
-		acl_free(default_acl);
 
 		printf("# file: %s\n"
 		       "# owner: %d\n"
@@ -59,10 +62,12 @@ int main(int argc, char *argv[])
 		       "%s",
 			argv[n], st.st_uid, st.st_gid, acl_text);
 
-		token = strtok(default_acl_text, "\n");
-		while (token) {
-			printf("default:%s\n", token);
-			token = strtok(NULL, "\n");
+		if (S_ISDIR(st.st_mode)) {
+			token = strtok(default_acl_text, "\n");
+			while (token) {
+				printf("default:%s\n", token);
+				token = strtok(NULL, "\n");
+			}
 		}
 		printf("\n");
 

@@ -23,6 +23,7 @@
 #include <pwd.h>
 #include <grp.h>
 #include "libacl.h"
+#include "misc.h"
 
 
 #define SKIP_WS(x) do { \
@@ -150,16 +151,13 @@ get_uid(const char *token, uid_t *uid_p)
 	struct passwd *passwd;
 
 	if (get_id(token, uid_p) == 0)
-		goto accept;
+		return 0;
 	passwd = getpwnam(token);
 	if (passwd) {
 		*uid_p = passwd->pw_uid;
-		goto accept;
+		return 0;
 	}
 	return -1;
-
-accept:
-	return 0;
 }
 
 
@@ -169,16 +167,13 @@ get_gid(const char *token, gid_t *gid_p)
 	struct group *group;
 
 	if (get_id(token, (uid_t *)gid_p) == 0)
-		goto accept;
+		return 0;
 	group = getgrnam(token);
 	if (group) {
 		*gid_p = group->gr_gid;
-		goto accept;
+		return 0;
 	}
 	return -1;
-
-accept:
-	return 0;
 }
 
 
@@ -211,7 +206,8 @@ parse_acl_entry(const char **text_p, acl_t *acl_p)
 			str = get_token(text_p);
 			if (str) {
 				entry_obj.etag = ACL_USER;
-				error = get_uid(str, &entry_obj.eid.qid);
+				error = get_uid(unquote(str),
+						&entry_obj.eid.qid);
 				free(str);
 				if (error) {
 					*text_p = backup;
@@ -229,7 +225,8 @@ parse_acl_entry(const char **text_p, acl_t *acl_p)
 			str = get_token(text_p);
 			if (str) {
 				entry_obj.etag = ACL_GROUP;
-				error = get_gid(str, &entry_obj.eid.qid);
+				error = get_gid(unquote(str),
+						&entry_obj.eid.qid);
 				free(str);
 				if (error) {
 					*text_p = backup;

@@ -37,6 +37,7 @@
 #include <locale.h>
 #include "config.h"
 #include "user_group.h"
+#include "misc.h"
 
 #define POSIXLY_CORRECT_STR "POSIXLY_CORRECT"
 
@@ -87,6 +88,16 @@ int absolute_warning = 0;  /* Absolute path warning was issued */
 int print_options = TEXT_SOME_EFFECTIVE;
 int opt_numeric = 0;  /* don't convert id's to symbolic names */
 
+
+static const char *xquote(const char *str)
+{
+	const char *q = quote(str);
+	if (q == NULL) {
+		fprintf(stderr, "%s: %s\n", progname, strerror(errno));
+		exit(1);
+	}
+	return q;
+}
 
 struct name_list {
 	struct name_list *next;
@@ -142,6 +153,7 @@ struct name_list *get_list(const struct stat *st, acl_t acl)
 					name = group_name(*id_p, opt_numeric);
 				break;
 		}
+		name = xquote(name);
 		len = strlen(name);
 		if (last == NULL) {
 			first = last = (struct name_list *)
@@ -349,7 +361,7 @@ int do_show(FILE *stream, const char *path_p, const struct stat *st,
 		if (ret < 0)
 			return ret;
 	}
-	fprintf(stream, "# file: %s\n", path_p);
+	fprintf(stream, "# file: %s\n", xquote(path_p));
 	while (acl_names != NULL || dacl_names != NULL) {
 		acl_tag_t acl_tag, dacl_tag;
 
@@ -465,12 +477,13 @@ int do_print(const char *path_p, const struct stat *st)
 		if (do_show(stdout, path_p, st, acl, default_acl) != 0)
 			goto fail;
 	} else {
-		if (opt_comments)
-			printf("# file: %s\n# owner: %s\n# group: %s\n",
-				path_p,
-				user_name(st->st_uid, opt_numeric),
-				group_name(st->st_gid, opt_numeric));
-
+		if (opt_comments) {
+			printf("# file: %s\n", xquote(path_p));
+			printf("# owner: %s\n",
+			       xquote(user_name(st->st_uid, opt_numeric)));
+			printf("# group: %s\n",
+			       xquote(group_name(st->st_gid, opt_numeric)));
+		}
 		if (acl != NULL) {
 			char *acl_text = acl_to_any_text(acl, NULL, '\n',
 							 print_options);
@@ -506,7 +519,8 @@ cleanup:
 	return error;
 
 fail:
-	fprintf(stderr, "%s: %s: %s\n", progname, path_p, strerror(errno));
+	fprintf(stderr, "%s: %s: %s\n", progname, xquote(path_p),
+		strerror(errno));
 	error = -1;
 	goto cleanup;
 }
@@ -582,8 +596,8 @@ int walk_tree(const char *file)
 {
 	__errors = 0;
 	if (nftw(file, __do_print, 0, opt_walk_physical * FTW_PHYS) < 0) {
-		fprintf(stderr, "%s: %s: %s\n", progname,
-			file, strerror(errno));
+		fprintf(stderr, "%s: %s: %s\n", progname, xquote(file),
+			strerror(errno));
 		__errors++;
 	}
 	return __errors;

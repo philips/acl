@@ -37,7 +37,8 @@ LTLDFLAGS += -Wl,--version-script,$(TOPDIR)/exports
 include $(TOPDIR)/include/builddefs
 
 LTLIBRARY = libacl.la
-LTLIBS = -lattr
+LTLIBS = -lattr $(LIBMISC)
+LTDEPENDENCIES = $(LIBMISC)
 LT_CURRENT = 2
 LT_REVISION = 0
 LT_AGE = 1

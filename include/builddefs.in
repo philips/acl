@@ -41,6 +41,7 @@ MALLOCLIB = @malloc_lib@
 
 LIBACL = $(TOPDIR)/libacl/libacl.la
 LIBATTR = @libattr@
+LIBMISC = $(TOPDIR)/libmisc/libmisc.la
 
 prefix = @prefix@
 exec_prefix = @exec_prefix@

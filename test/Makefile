@@ -33,9 +33,9 @@
 TOPDIR = ..
 include $(TOPDIR)/include/builddefs
 
-LSRCFILES = run mode \
-	    getfacl-noacl.test asroot.test misc.test setfacl-noacl.test \
-	    fileutil.test perm.test setfacl.test make-tree
+LSRCFILES = run make-tree \
+	    cp.test getfacl-noacl.test misc.test nfs-dir.test \
+	    nfsacl.test permissions.test setfacl.test
 
 include $(BUILDRULES)
 

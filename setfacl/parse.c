@@ -33,6 +33,7 @@
 
 #include "sequence.h"
 #include "parse.h"
+#include "misc.h"
 
 #define SKIP_WS(x) ({ \
 	while (*(x)==' ' || *(x)=='\t' || *(x)=='\n' || *(x)=='\r') \
@@ -224,7 +225,7 @@ user_entry:
 			str = get_token(text_p);
 			if (str) {
 				cmd->c_tag = ACL_USER;
-				error = get_uid(str, &cmd->c_id);
+				error = get_uid(unquote(str), &cmd->c_id);
 				free(str);
 				if (error) {
 					*text_p = backup;
@@ -243,7 +244,7 @@ user_entry:
 			str = get_token(text_p);
 			if (str) {
 				cmd->c_tag = ACL_GROUP;
-				error = get_gid(str, &cmd->c_id); 
+				error = get_gid(unquote(str), &cmd->c_id); 
 				free(str);
 				if (error) {
 					*text_p = backup;
@@ -425,7 +426,7 @@ read_acl_comments(
 {
 	int c;
 	char linebuf[1024];
-	const char *cp;
+	char *cp;
 	char *p;
 	int comments_read = 0;
 	
@@ -469,6 +470,7 @@ read_acl_comments(
 		if (strncmp(cp, "file:", 5) == 0) {
 			cp += 5;
 			SKIP_WS(cp);
+			cp = unquote(cp);
 			
 			if (path_p) {
 				if (*path_p)
@@ -485,7 +487,7 @@ read_acl_comments(
 			if (uid_p) {
 				if (*uid_p != ACL_UNDEFINED_ID)
 					goto fail;
-				if (get_uid(cp, uid_p) != 0)
+				if (get_uid(unquote(cp), uid_p) != 0)
 					continue;
 			}
 		} else if (strncmp(cp, "group:", 6) == 0) {
@@ -495,7 +497,7 @@ read_acl_comments(
 			if (gid_p) {
 				if (*gid_p != ACL_UNDEFINED_ID)
 					goto fail;
-				if (get_gid(cp, gid_p) != 0)
+				if (get_gid(unquote(cp), gid_p) != 0)
 					continue;
 			}
 		}

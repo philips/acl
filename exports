@@ -56,6 +56,9 @@ ACL_1.0 {
 	__acl_free_acl_obj;
 	__acl_to_any_text;
 	__apply_mask_to_mode;
+
+	quote;
+	unquote;
 };
 
 ACL_1.1 {

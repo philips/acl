@@ -26,6 +26,7 @@
 #include <grp.h>
 #include <acl/libacl.h>
 #include "libacl.h"
+#include "misc.h"
 
 static ssize_t acl_entry_to_any_str(const acl_entry_t entry_d, char *text_p,
 				    ssize_t size, const acl_entry_t mask_d,
@@ -158,7 +159,8 @@ acl_entry_to_any_str(const acl_entry_t entry_d, char *text_p, ssize_t size,
 				if (options & TEXT_NUMERIC_IDS)
 					str = NULL;
 				else
-					str = user_name(entry_obj_p->eid.qid);
+					str = quote(user_name(
+						entry_obj_p->eid.qid));
 				if (str != NULL) {
 					strncpy(text_p, str, size);
 					ADVANCE(strlen(str));
@@ -180,7 +182,8 @@ acl_entry_to_any_str(const acl_entry_t entry_d, char *text_p, ssize_t size,
 				if (options & TEXT_NUMERIC_IDS)
 					str = NULL;
 				else
-					str = group_name(entry_obj_p->eid.qid);
+					str = quote(group_name(
+						entry_obj_p->eid.qid));
 				if (str != NULL) {
 					strncpy(text_p, str, size);
 					ADVANCE(strlen(str));

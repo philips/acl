@@ -1,386 +1,426 @@
-!
-! Pretty comprehensive ACL tests.
-!
-! This must be run on a filesystem with ACL support. Also, you will need
-! two dummy users (lisa and joe) and a dummy group (toolies).
-!
-$ umask 027
-$ touch f
-! Only change a base ACL:
-$ setfacl -m u::r f
-$ setfacl -m u::rw,u:lisa:rw f
-$ mode f
--rw-rw----+
-$ getfacl --omit-header f
-user::rw-
-user:lisa:rw-
-group::r--
-mask::rw-
-other::---
+Pretty comprehensive ACL tests.
+ 
+This must be run on a filesystem with ACL support. Also, you will need
+two dummy users (bin and daemon) and a dummy group (daemon).
+ 
+	$ umask 027
+	$ touch f
+	  
+Only change a base ACL:
+	$ setfacl -m u::r f
+	$ setfacl -m u::rw,u:bin:rw f
+	$ ls -dl f | awk '{print $1}'
+	> -rw-rw----+
+	
+	$ getfacl --omit-header f
+	> user::rw-
+	> user:bin:rw-
+	> group::r--
+	> mask::rw-
+	> other::---
+	> 
 
-$ rm f
-$ umask 022
-$ touch f
-$ setfacl -m u:lisa:rw f
-$ mode f
--rw-rw-r--+
-$ getfacl --omit-header f
-user::rw-
-user:lisa:rw-
-group::r--
-mask::rw-
-other::r--
+	$ rm f
+	$ umask 022
+	$ touch f
+	$ setfacl -m u:bin:rw f
+	$ ls -dl f | awk '{print $1}'
+	> -rw-rw-r--+
 
-$rm f
-$ umask 027
-$ mkdir d
-$ setfacl -m u:lisa:rwx d
-$ mode d
-drwxrwx---+
-$ getfacl --omit-header d
-user::rwx
-user:lisa:rwx
-group::r-x
-mask::rwx
-other::---
+	$ getfacl --omit-header f
+	> user::rw-
+	> user:bin:rw-
+	> group::r--
+	> mask::rw-
+	> other::r--
+	> 
 
-$ rmdir d
-$ umask 022
-$ mkdir d
-$ setfacl -m u:lisa:rwx d
-$ mode d
-drwxrwxr-x+
-$ getfacl --omit-header d
-user::rwx
-user:lisa:rwx
-group::r-x
-mask::rwx
-other::r-x
+	$rm f
+	$ umask 027
+	$ mkdir d
+	$ setfacl -m u:bin:rwx d
+	$ ls -dl d | awk '{print $1}'
+	> drwxrwx---+
 
-$ rmdir d
-!
-! Multiple users
-!
-$ umask 022
-$ touch f
-$ setfacl -m u:lisa:rw,u:joe:r f
-$ mode f
--rw-rw-r--+
-$ getfacl --omit-header f
-user::rw-
-user:lisa:rw-
-user:joe:r--
-group::r--
-mask::rw-
-other::r--
+	$ getfacl --omit-header d
+	> user::rwx
+	> user:bin:rwx
+	> group::r-x
+	> mask::rwx
+	> other::---
+	> 
 
-!
-! Multiple groups
-!
-$ setfacl -m g:users:rw,g:toolies:r f
-$ mode f
--rw-rw-r--+
-$ getfacl --omit-header f
-user::rw-
-user:lisa:rw-
-user:joe:r--
-group::r--
-group:users:rw-
-group:toolies:r--
-mask::rw-
-other::r--
+	$ rmdir d
+	$ umask 022
+	$ mkdir d
+	$ setfacl -m u:bin:rwx d
+	$ ls -dl d | awk '{print $1}'
+	> drwxrwxr-x+
 
-!
-! Remove one group
-!
-$ setfacl -x g:users f
-$ mode f
--rw-rw-r--+
-$ getfacl --omit-header f
-user::rw-
-user:lisa:rw-
-user:joe:r--
-group::r--
-group:toolies:r--
-mask::rw-
-other::r--
+	$ getfacl --omit-header d
+	> user::rwx
+	> user:bin:rwx
+	> group::r-x
+	> mask::rwx
+	> other::r-x
+	> 
 
-!
-! Remove one user
-!
-$ setfacl -x u:joe f
-$ mode f
--rw-rw-r--+
-$ getfacl --omit-header f
-user::rw-
-user:lisa:rw-
-group::r--
-group:toolies:r--
-mask::rw-
-other::r--
+	$ rmdir d
+	 
 
-$ rm f
-!
-! Default ACL
-!
-$ umask 027
-$ mkdir d
-$ setfacl -m u:lisa:rwx,u:joe:rw,d:u:lisa:rwx,d:m:rx d
-$ mode d
-drwxrwx---+
-$ getfacl --omit-header d
-user::rwx
-user:lisa:rwx
-user:joe:rw-
-group::r-x
-mask::rwx
-other::---
-default:user::rwx
-default:user:lisa:rwx	#effective:r-x
-default:group::r-x
-default:mask::r-x
-default:other::---
+Multiple users
+	 
+	$ umask 022
+	$ touch f
+	$ setfacl -m u:bin:rw,u:daemon:r f
+	$ ls -dl f | awk '{print $1}'
+	> -rw-rw-r--+
 
-!
-! Umask now ignored?
-!
-$ umask 027
-$ touch d/f
-$ mode d/f
--rw-r-----+
-$ getfacl --omit-header d/f
-user::rw-
-user:lisa:rwx	#effective:r--
-group::r-x	#effective:r--
-mask::r--
-other::---
+	$ getfacl --omit-header f
+	> user::rw-
+	> user:bin:rw-
+	> user:daemon:r--
+	> group::r--
+	> mask::rw-
+	> other::r--
+	> 
+	 
+Multiple groups
+	 
+	$ setfacl -m g:users:rw,g:daemon:r f
+	$ ls -dl f | awk '{print $1}'
+	> -rw-rw-r--+
 
-$ rm d/f
-$ umask 022
-$ touch d/f
-$ mode d/f
--rw-r-----+
-$ getfacl --omit-header d/f
-user::rw-
-user:lisa:rwx	#effective:r--
-group::r-x	#effective:r--
-mask::r--
-other::---
+	$ getfacl --omit-header f
+	> user::rw-
+	> user:bin:rw-
+	> user:daemon:r--
+	> group::r--
+	> group:daemon:r--
+	> group:users:rw-
+	> mask::rw-
+	> other::r--
+	> 
+	 
+Remove one group
+	 
+	$ setfacl -x g:users f
+	$ ls -dl f | awk '{print $1}'
+	> -rw-rw-r--+
 
-$ rm d/f
-!
-! Default ACL copying
-!
-$ umask 000
-$ mkdir d/d
-$ mode d/d
-drwxr-x---+
-$ getfacl --omit-header d/d
-user::rwx
-user:lisa:rwx	#effective:r-x
-group::r-x
-mask::r-x
-other::---
-default:user::rwx
-default:user:lisa:rwx	#effective:r-x
-default:group::r-x
-default:mask::r-x
-default:other::---
+	$ getfacl --omit-header f
+	> user::rw-
+	> user:bin:rw-
+	> user:daemon:r--
+	> group::r--
+	> group:daemon:r--
+	> mask::rw-
+	> other::r--
+	> 
+	 
+Remove one user
+	 
+	$ setfacl -x u:daemon f
+	$ ls -dl f | awk '{print $1}'
+	> -rw-rw-r--+
 
-$ rmdir d/d
-$ umask 022
-$ mkdir d/d
-$ mode d/d
-drwxr-x---+
-$ getfacl --omit-header d/d
-user::rwx
-user:lisa:rwx	#effective:r-x
-group::r-x
-mask::r-x
-other::---
-default:user::rwx
-default:user:lisa:rwx	#effective:r-x
-default:group::r-x
-default:mask::r-x
-default:other::---
+	$ getfacl --omit-header f
+	> user::rw-
+	> user:bin:rw-
+	> group::r--
+	> group:daemon:r--
+	> mask::rw-
+	> other::r--
+	> 
 
-!
-! Add some users and groups
-!
-$ setfacl -nm u:joe:rx,d:u:joe:rx,g:users:rx,g:toolies:rwx d/d
-$ mode d/d
-drwxr-x---+
-$ getfacl --omit-header d/d
-user::rwx
-user:lisa:rwx	#effective:r-x
-user:joe:r-x
-group::r-x
-group:users:r-x
-group:toolies:rwx	#effective:r-x
-mask::r-x
-other::---
-default:user::rwx
-default:user:lisa:rwx	#effective:r-x
-default:user:joe:r-x
-default:group::r-x
-default:mask::r-x
-default:other::---
+	$ rm f
+	 
+Default ACL
+	 
+	$ umask 027
+	$ mkdir d
+	$ setfacl -m u:bin:rwx,u:daemon:rw,d:u:bin:rwx,d:m:rx d
+	$ ls -dl d | awk '{print $1}'
+	> drwxrwx---+
 
-!
-! symlink in directory with default ACL?
-!
-$ ln -s d d/l
-$ mode d/l
-lrwxrwxrwx
-$ mode -L d/l
-drwxr-x---+
-$ getfacl --omit-header d/l
-user::rwx
-user:lisa:rwx	#effective:r-x
-user:joe:r-x
-group::r-x
-group:users:r-x
-group:toolies:rwx	#effective:r-x
-mask::r-x
-other::---
-default:user::rwx
-default:user:lisa:rwx	#effective:r-x
-default:user:joe:r-x
-default:group::r-x
-default:mask::r-x
-default:other::---
+	$ getfacl --omit-header d
+	> user::rwx
+	> user:bin:rwx
+	> user:daemon:rw-
+	> group::r-x
+	> mask::rwx
+	> other::---
+	> default:user::rwx
+	> default:user:bin:rwx	#effective:r-x
+	> default:group::r-x
+	> default:mask::r-x
+	> default:other::---
+	> 
+	 
+Umask now ignored?
+ 
+	$ umask 027
+	$ touch d/f
+	$ ls -dl d/f | awk '{print $1}'
+	> -rw-r-----+
 
-$ rm d/l
-!
-! Does mask manipulation work?
-!
-$ setfacl -m g:toolies:rx,u:lisa:rx d/d
-$ mode d/d
-drwxr-x---+
-$ getfacl --omit-header d/d
-user::rwx
-user:lisa:r-x
-user:joe:r-x
-group::r-x
-group:users:r-x
-group:toolies:r-x
-mask::r-x
-other::---
-default:user::rwx
-default:user:lisa:rwx	#effective:r-x
-default:user:joe:r-x
-default:group::r-x
-default:mask::r-x
-default:other::---
+	$ getfacl --omit-header d/f
+	> user::rw-
+	> user:bin:rwx	#effective:r--
+	> group::r-x	#effective:r--
+	> mask::r--
+	> other::---
+	> 
 
-$ setfacl -m d:u:lisa:rwx d/d
-$ mode d/d
-drwxr-x---+
-$ getfacl --omit-header d/d
-user::rwx
-user:lisa:r-x
-user:joe:r-x
-group::r-x
-group:users:r-x
-group:toolies:r-x
-mask::r-x
-other::---
-default:user::rwx
-default:user:lisa:rwx
-default:user:joe:r-x
-default:group::r-x
-default:mask::rwx
-default:other::---
+	$ rm d/f
+	$ umask 022
+	$ touch d/f
+	$ ls -dl d/f | awk '{print $1}'
+	> -rw-r-----+
 
-$ rmdir d/d
-!
-! Remove the default ACL
-!
-$ setfacl -k d
-$ mode d
-drwxrwx---+
-$ getfacl --omit-header d
-user::rwx
-user:lisa:rwx
-user:joe:rw-
-group::r-x
-mask::rwx
-other::---
+	$ getfacl --omit-header d/f
+	> user::rw-
+	> user:bin:rwx	#effective:r--
+	> group::r-x	#effective:r--
+	> mask::r--
+	> other::---
+	> 
 
-!
-! Reset to base entries
-!
-$ setfacl -b d
-$ mode d
-drwxr-x---
-$ getfacl --omit-header d
-user::rwx
-group::r-x
-other::---
+	$ rm d/f
+	 
+Default ACL copying
+ 
+	$ umask 000
+	$ mkdir d/d
+	$ ls -dl d/d | awk '{print $1}'
+	> drwxr-x---+
 
-!
-! Now, chmod should change the group_obj entry
-!
-$ chmod 775 d
-$ mode d
-drwxrwxr-x
-$ getfacl --omit-header d
-user::rwx
-group::rwx
-other::r-x
+	$ getfacl --omit-header d/d
+	> user::rwx
+	> user:bin:rwx	#effective:r-x
+	> group::r-x
+	> mask::r-x
+	> other::---
+	> default:user::rwx
+	> default:user:bin:rwx	#effective:r-x
+	> default:group::r-x
+	> default:mask::r-x
+	> default:other::---
+	> 
 
-$ rmdir d
-$ umask 002
-$ mkdir d
-$ setfacl -m u:joe:rwx,u:lisa:rx,d:u:joe:rwx,d:u:lisa:rx d
-$ mode d
-drwxrwxr-x+
-$ getfacl --omit-header d
-user::rwx
-user:lisa:r-x
-user:joe:rwx
-group::rwx
-mask::rwx
-other::r-x
-default:user::rwx
-default:user:lisa:r-x
-default:user:joe:rwx
-default:group::rwx
-default:mask::rwx
-default:other::r-x
+	$ rmdir d/d
+	$ umask 022
+	$ mkdir d/d
+	$ ls -dl d/d | awk '{print $1}'
+	> drwxr-x---+
 
-$ chmod 750 d
-$ mode d
-drwxr-x---+
-$ getfacl --omit-header d
-user::rwx
-user:lisa:r-x
-user:joe:rwx	#effective:r-x
-group::rwx	#effective:r-x
-mask::r-x
-other::---
-default:user::rwx
-default:user:lisa:r-x
-default:user:joe:rwx
-default:group::rwx
-default:mask::rwx
-default:other::r-x
+	$ getfacl --omit-header d/d
+	> user::rwx
+	> user:bin:rwx	#effective:r-x
+	> group::r-x
+	> mask::r-x
+	> other::---
+	> default:user::rwx
+	> default:user:bin:rwx	#effective:r-x
+	> default:group::r-x
+	> default:mask::r-x
+	> default:other::---
+	> 
+	 
+Add some users and groups
+ 
+	$ setfacl -nm u:daemon:rx,d:u:daemon:rx,g:users:rx,g:daemon:rwx d/d
+	$ ls -dl d/d | awk '{print $1}'
+	> drwxr-x---+
 
-$ chmod 750 d
-$ mode d
-drwxr-x---+
-$ getfacl --omit-header d
-user::rwx
-user:lisa:r-x
-user:joe:rwx	#effective:r-x
-group::rwx	#effective:r-x
-mask::r-x
-other::---
-default:user::rwx
-default:user:lisa:r-x
-default:user:joe:rwx
-default:group::rwx
-default:mask::rwx
-default:other::r-x
+	$ getfacl --omit-header d/d
+	> user::rwx
+	> user:bin:rwx	#effective:r-x
+	> user:daemon:r-x
+	> group::r-x
+	> group:daemon:rwx	#effective:r-x
+	> group:users:r-x
+	> mask::r-x
+	> other::---
+	> default:user::rwx
+	> default:user:bin:rwx	#effective:r-x
+	> default:user:daemon:r-x
+	> default:group::r-x
+	> default:mask::r-x
+	> default:other::---
+	> 
+	 
+Symlink in directory with default ACL?
+	 
+	$ ln -s d d/l
+	$ ls -dl d/l | awk '{print $1}'
+	> lrwxrwxrwx
 
-$ rmdir d
+	$ ls -dl -L d/l | awk '{print $1}'
+	> drwxr-x---+
+
+	$ getfacl --omit-header d/l
+	> user::rwx
+	> user:bin:rwx	#effective:r-x
+	> user:daemon:r-x
+	> group::r-x
+	> group:daemon:rwx	#effective:r-x
+	> group:users:r-x
+	> mask::r-x
+	> other::---
+	> default:user::rwx
+	> default:user:bin:rwx	#effective:r-x
+	> default:user:daemon:r-x
+	> default:group::r-x
+	> default:mask::r-x
+	> default:other::---
+	> 
+
+	$ rm d/l
+	 
+Does mask manipulation work?
+	 
+	$ setfacl -m g:daemon:rx,u:bin:rx d/d
+	$ ls -dl d/d | awk '{print $1}'
+	> drwxr-x---+
+
+	$ getfacl --omit-header d/d
+	> user::rwx
+	> user:bin:r-x
+	> user:daemon:r-x
+	> group::r-x
+	> group:daemon:r-x
+	> group:users:r-x
+	> mask::r-x
+	> other::---
+	> default:user::rwx
+	> default:user:bin:rwx	#effective:r-x
+	> default:user:daemon:r-x
+	> default:group::r-x
+	> default:mask::r-x
+	> default:other::---
+	> 
+
+	$ setfacl -m d:u:bin:rwx d/d
+	$ ls -dl d/d | awk '{print $1}'
+	> drwxr-x---+
+
+	$ getfacl --omit-header d/d
+	> user::rwx
+	> user:bin:r-x
+	> user:daemon:r-x
+	> group::r-x
+	> group:daemon:r-x
+	> group:users:r-x
+	> mask::r-x
+	> other::---
+	> default:user::rwx
+	> default:user:bin:rwx
+	> default:user:daemon:r-x
+	> default:group::r-x
+	> default:mask::rwx
+	> default:other::---
+	> 
+
+	$ rmdir d/d
+	 
+Remove the default ACL
+	 
+	$ setfacl -k d
+	$ ls -dl d | awk '{print $1}'
+	> drwxrwx---+
+
+	$ getfacl --omit-header d
+	> user::rwx
+	> user:bin:rwx
+	> user:daemon:rw-
+	> group::r-x
+	> mask::rwx
+	> other::---
+	> 
+	 
+Reset to base entries
+	 
+	$ setfacl -b d
+	$ ls -dl d | awk '{print $1}'
+	> drwxr-x---
+
+	$ getfacl --omit-header d
+	> user::rwx
+	> group::r-x
+	> other::---
+	> 
+	 
+Now, chmod should change the group_obj entry
+	 
+	$ chmod 775 d
+	$ ls -dl d | awk '{print $1}'
+	> drwxrwxr-x
+	
+	$ getfacl --omit-header d
+	> user::rwx
+	> group::rwx
+	> other::r-x
+	> 
+
+	$ rmdir d
+	$ umask 002
+	$ mkdir d
+	$ setfacl -m u:daemon:rwx,u:bin:rx,d:u:daemon:rwx,d:u:bin:rx d
+	$ ls -dl d | awk '{print $1}'
+	> drwxrwxr-x+
+
+	$ getfacl --omit-header d
+	> user::rwx
+	> user:bin:r-x
+	> user:daemon:rwx
+	> group::rwx
+	> mask::rwx
+	> other::r-x
+	> default:user::rwx
+	> default:user:bin:r-x
+	> default:user:daemon:rwx
+	> default:group::rwx
+	> default:mask::rwx
+	> default:other::r-x
+	> 
+
+	$ chmod 750 d
+	$ ls -dl d | awk '{print $1}'
+	> drwxr-x---+
+
+	$ getfacl --omit-header d
+	> user::rwx
+	> user:bin:r-x
+	> user:daemon:rwx	#effective:r-x
+	> group::rwx	#effective:r-x
+	> mask::r-x
+	> other::---
+	> default:user::rwx
+	> default:user:bin:r-x
+	> default:user:daemon:rwx
+	> default:group::rwx
+	> default:mask::rwx
+	> default:other::r-x
+	> 
+
+	$ chmod 750 d
+	$ ls -dl d | awk '{print $1}'
+	> drwxr-x---+
+
+	$ getfacl --omit-header d
+	> user::rwx
+	> user:bin:r-x
+	> user:daemon:rwx	#effective:r-x
+	> group::rwx	#effective:r-x
+	> mask::r-x
+	> other::---
+	> default:user::rwx
+	> default:user:bin:r-x
+	> default:user:daemon:rwx
+	> default:group::rwx
+	> default:mask::rwx
+	> default:other::r-x
+	> 
+
+	$ rmdir d

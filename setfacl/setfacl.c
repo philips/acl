@@ -34,6 +34,7 @@
 #include "config.h"
 #include "sequence.h"
 #include "parse.h"
+#include "misc.h"
 
 extern int
 do_set(
@@ -97,6 +98,16 @@ int chown_error;
 int promote_warning;
 
 
+static const char *xquote(const char *str)
+{
+	const char *q = quote(str);
+	if (q == NULL) {
+		fprintf(stderr, "%s: %s\n", progname, strerror(errno));
+		exit(1);
+	}
+	return q;
+}
+
 int
 has_any_of_type(
 	cmd_t cmd,
@@ -139,7 +150,8 @@ restore(
 			if (filename) {
 				fprintf(stderr, _("%s: %s: No filename found "
 						  "in line %d, aborting\n"),
-					progname, filename, backup_line);
+					progname, xquote(filename),
+					backup_line);
 			} else {
 				fprintf(stderr, _("%s: No filename found in "
 						 "line %d of standard input, "
@@ -163,14 +175,15 @@ restore(
 				     &line, NULL);
 		if (error != 0) {
 			fprintf(stderr, _("%s: %s: %s in line %d\n"),
-			        progname, filename, strerror(errno), line);
+			        progname, xquote(filename), strerror(errno),
+				line);
 			goto getout;
 		}
 
 		error = lstat(path_p, &stat);
 		if (opt_test && error != 0) {
-			fprintf(stderr, "%s: %s: %s\n", progname, path_p,
-			        strerror(errno));
+			fprintf(stderr, "%s: %s: %s\n", progname,
+				xquote(path_p), strerror(errno));
 			status = 1;
 		}
 		stat.st_uid = uid;
@@ -187,7 +200,8 @@ restore(
 			if (chown(path_p, uid, gid) != 0) {
 				fprintf(stderr, _("%s: %s: Cannot change "
 					          "owner/group: %s\n"),
-					progname, path_p, strerror(errno));
+					progname, xquote(path_p),
+					strerror(errno));
 				status = 1;
 			}
 		}
@@ -214,7 +228,8 @@ getout:
 	return status;
 
 fail:
-	fprintf(stderr, "%s: %s: %s\n", progname, filename, strerror(errno));
+	fprintf(stderr, "%s: %s: %s\n", progname, xquote(filename),
+		strerror(errno));
 	status = 1;
 	goto getout;
 }
@@ -317,7 +332,7 @@ int walk_tree(const char *file, seq_t seq)
 	__seq = seq;
 	if (nftw(file, __do_set, 0, opt_walk_physical * FTW_PHYS) < 0) {
 		fprintf(stderr, "%s: %s: %s\n", progname,
-			file, strerror(errno));
+			xquote(file), strerror(errno));
 		__errors++;
 	}
 	return __errors;
@@ -542,7 +557,8 @@ int main(int argc, char *argv[])
 					file = fopen(optarg, "r");
 					if (file == NULL) {
 						fprintf(stderr, "%s: %s: %s\n",
-							progname, optarg,
+							progname,
+							xquote(optarg),
 							strerror(errno));
 						status = 2;
 						goto cleanup;
@@ -568,7 +584,7 @@ int main(int argc, char *argv[])
 							progname,
 							strerror(errno),
 							lineno,
-							optarg);
+							xquote(optarg));
 					} else {
 						fprintf(stderr, _(
 							"%s: %s in line "
@@ -600,7 +616,8 @@ int main(int argc, char *argv[])
 					file = fopen(optarg, "r");
 					if (file == NULL) {
 						fprintf(stderr, "%s: %s: %s\n",
-							progname, optarg,
+							progname,
+							xquote(optarg),
 							strerror(errno));
 						status = 2;
 						goto cleanup;
