@@ -309,7 +309,8 @@ int walk_tree(const char *file, seq_t seq)
 	__errors = 0;
 	__seq = seq;
 	if (nftw(file, __do_set, 0, opt_walk_physical * FTW_PHYS) < 0) {
-		fprintf(stderr, "%s: %s\n", progname, strerror(errno));
+		fprintf(stderr, "%s: %s: %s\n", progname,
+			file, strerror(errno));
 		__errors++;
 	}
 	return __errors;
