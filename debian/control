@@ -28,7 +28,7 @@ Description: Access control list static libraries and headers
 Package: libacl1
 Depends: ${shlibs:Depends}
 Section: libs
-Priority: optional
+Priority: required
 Conflicts: acl (<< 2.0.0), libacl1-kerberos4kth
 Architecture: any
 Description: Access control list shared library
