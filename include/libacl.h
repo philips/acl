@@ -13,7 +13,7 @@
 extern "C" {
 #endif
 
-/* acl_entry_to_any_str(), acl_to_any_text() */
+/* Flags for acl_to_any_text() */
 
 /* Print NO, SOME or ALL effective permissions comments. SOME prints
    effective rights comments for entries which have different permissions
@@ -42,9 +42,6 @@ extern "C" {
 
 extern char *acl_to_any_text(acl_t acl, ssize_t *len_p, const char *prefix,
 			     char separator, const char *suffix, int options);
-extern ssize_t acl_entry_to_any_str(const acl_entry_t entry_d, char *text_p,
-				    ssize_t size, const acl_entry_t mask_d,
-				    const char *prefix, int options);
 extern int acl_cmp(acl_t acl1, acl_t acl2);
 extern int acl_check(acl_t acl, int *last);
 extern acl_t acl_from_mode(mode_t mode);
