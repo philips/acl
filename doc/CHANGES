@@ -1,3 +1,6 @@
+2.2.27 (29 September 2004)
+* Update m4 macros, incorporating some portability changes.
+
 2.2.26 (8 September 2004)
 * Fix email address in manual pages.
 
