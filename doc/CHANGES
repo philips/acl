@@ -1,6 +1,10 @@
+2.0.17 (12 August 2002)
+* Setfacl tried to retrieve the default ACL of regular files, which
+  resulted in errno = EACCES since 2.0.13, and broke setfacl's
+  --restore operation.
+
 2.0.16 (08 August 2002)
-* Fix an IA64 alignment issue affecting the libacl __acl_to_any_text
-  (internal) routine
+* Fix an IA64 alignment issue affecting several libacl functions.
 * Updated libacl version number from libacl.so.1.0.2 to libacl.so.1.0.3
 
 2.0.15 (08 July 2002)

@@ -159,13 +159,16 @@ retrieve_acl(
 	if (*acl)
 		return 0;
 	*acl = NULL;
-	*old_acl = acl_get_file(path_p, type);
-	if (*old_acl == NULL && (errno == ENOSYS || errno == ENOTSUP)) {
-		if (type == ACL_TYPE_ACCESS)
-			*old_acl = acl_from_mode(st->st_mode);
-		else
-			*old_acl = acl_init(0);
-	}
+	if (type == ACL_TYPE_ACCESS || S_ISDIR(st->st_mode)) {
+		*old_acl = acl_get_file(path_p, type);
+		if (*old_acl == NULL && (errno == ENOSYS || errno == ENOTSUP)) {
+			if (type == ACL_TYPE_DEFAULT)
+				*old_acl = acl_init(0);
+			else
+				*old_acl = acl_from_mode(st->st_mode);
+		}
+	} else
+		*old_acl = acl_init(0);
 	if (*old_acl == NULL)
 		return -1;
 	*acl = acl_dup(*old_acl);
