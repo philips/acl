@@ -498,7 +498,10 @@ acl_valid (struct acl *aclp)
 	if (aclp == NULL)
 		goto acl_invalid;
 
-	if (aclp->acl_cnt > ACL_MAX_ENTRIES)
+	if (aclp->acl_cnt == ACL_NOT_PRESENT)
+		return 0;
+
+	if (aclp->acl_cnt < 0 || aclp->acl_cnt > ACL_MAX_ENTRIES)
 		goto acl_invalid;
 
 	for (i = 0; i < aclp->acl_cnt; i++)
@@ -867,7 +870,7 @@ acl_entry_sort (acl_t acl)
  * numberings for different architectures.
  */
 
-#include <asm/unistd.h>
+#include <unistd.h>
 
 /* Need to use the kernel system call numbering
  * for the particular architecture.
@@ -875,43 +878,29 @@ acl_entry_sort (acl_t acl)
  */
 #if __i386__ 
 #  define HAVE_ACL_SYSCALL 1
-#  ifndef __NR__acl_get
-#    define __NR__acl_get	251
+#  ifndef SYS__acl_get
+#    define SYS__acl_get	251
 #  endif
-#  ifndef __NR__acl_set
-#    define __NR__acl_set	252
+#  ifndef SYS__acl_set
+#    define SYS__acl_set	252
 #  endif
 #elif __ia64__
 #  define HAVE_ACL_SYSCALL 1
-#  ifndef __NR__acl_get
-#    define __NR__acl_get	1216
+#  ifndef SYS__acl_get
+#    define SYS__acl_get	1216
 #  endif
-#  ifndef __NR__acl_set
-#    define __NR__acl_set	1217
+#  ifndef SYS__acl_set
+#    define SYS__acl_set	1217
 #  endif
 #else
 #  define HAVE_ACL_SYSCALL 0
-#endif
-
-#if HAVE_ACL_SYSCALL
-static _syscall4(int, _acl_get, 
-	const char *, path, 
-	int, fdes, 
-	struct acl *, acl, 
-	struct acl *, dacl);
-
-static _syscall4(int, _acl_set, 
-	const char *, path, 
-	int, fdes, 
-	struct acl *, acl, 
-	struct acl *, dacl);
 #endif
 
 int
 acl_get(const char *path, int fdes, struct acl *acl, struct acl *dacl)
 {
 #if HAVE_ACL_SYSCALL
-	return _acl_get(path, fdes, acl, dacl);
+	return syscall(SYS__acl_get, path, fdes, acl, dacl);
 #else
 	fprintf(stderr, "libacl: acl_get system call not defined "
 			"for this architecture\n");
@@ -923,7 +912,7 @@ int
 acl_set(const char *path, int fdes, struct acl *acl, struct acl *dacl)
 {
 #if HAVE_ACL_SYSCALL
-	return _acl_set(path, fdes, acl, dacl);
+	return syscall(SYS__acl_set, path, fdes, acl, dacl);
 #else
 	fprintf(stderr, "libacl: acl_set system call not defined "
 			"for this architecture\n");
