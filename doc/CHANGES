@@ -1,3 +1,9 @@
+2.0.15 (08 July 2002)
+* Fix configure warning (autoconf 2.13) - namely:
+	"AC_TRY_RUN called without default to allow cross compiling"
+* Fix a couple of typos in the documentation
+* Fix a Debian-specific build issue
+
 2.0.14 (04 July 2002)
 * Build infrastructure updates so that configure options can be used
   to specify paths rather than semi-hard-coded path names controlled

@@ -126,14 +126,9 @@ default ACLs.
 ACLs are filesystem extended attributes and hence are not typically
 archived or restored using the conventional archiving utilities.
 See
-.IR extattr (5)
-for more information about Extended Attributes and see
+.IR attr (5)
+for more information about extended attributes and see
 .IR xfsdump (8) 
-for a method to back them up under XFS.
+for a method of backing them up under XFS.
 .SH SEE ALSO
-getfacl(1),
-setfacl(1),
-acl_from_text(3),
-chmod(1),
-umask(1),
-xfsdump(8).
+.BR getfacl "(1), " setfacl "(1), " chmod "(1), " umask "(1), " acl_from_text "(3), " acl "(5), " xfsdump (8)

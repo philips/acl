@@ -1,3 +1,10 @@
+acl (2.0.15-1) unstable; urgency=low
+
+  * New upstream release (build-related and docs changes only)
+  * Follow Steve Langasek's advice to fix libattr issue (closes: #150854)
+
+ -- Nathan Scott <nathans@debian.org>  Thu,  4 Jul 2002 12:10:38 +1000
+
 acl (2.0.14-1) unstable; urgency=low
 
   * New upstream release (build-related changes only)

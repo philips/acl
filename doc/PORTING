@@ -40,9 +40,9 @@
 6. Makefiles and build environment
    First have a look at some Makefiles
 
-   	example using SUBDIRS :  attr/Makefile
-        example static library:  attr/libattr/Makefile
-        example command       :  attr/getfattr/Makefile
+   	example using SUBDIRS :  acl/Makefile
+        example static library:  acl/libacl/Makefile
+        example command       :  acl/getfacl/Makefile
 
    All Makefiles must define TOPDIR as the root of the project. This
    allows other stuff to be found relative to $(TOPDIR).
@@ -72,15 +72,15 @@
 
    # ./Makepkgs
    this script generates all of the packages supported - each has a
-   subdirectory below attr/build where knowledge specific to each
+   subdirectory below acl/build where knowledge specific to each
    package type is maintained.
 
    The script produces logs of each stage of the build (this info is
    also echoed to the screen when the "verbose" option is provided):
 
-	attr/Logs/configure	- `autoconf; ./configure' output
-	attr/Logs/default	- `make default' output
-	attr/Logs/dist		- `make build dist' output
+	acl/Logs/configure	- `autoconf; ./configure' output
+	acl/Logs/default	- `make default' output
+	acl/Logs/dist		- `make build dist' output
 
    On successful completion, the script echoes the names of packages
    successfully generated.
