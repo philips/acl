@@ -99,6 +99,7 @@ struct acl {
 #define ACL_GROUP		0x08			/* additional groups */
 #define ACL_MASK		0x10			/* mask entry */
 #define ACL_OTHER_OBJ		0x20			/* other entry */
+#define ACL_OTHER		0x20			/* POSIX other entry */
 /*
  * Values for acl_type_t
  */

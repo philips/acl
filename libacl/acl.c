@@ -326,15 +326,23 @@ acl_to_text_internal (struct acl *aclp, ssize_t *len_p, const char *strs[],
 	char *buf, *c, delim;
 	acl_entry_t entry;
 
-	if (acl_valid(aclp) == -1)
+	/* acl must be empty or valid else return */
+	if (!aclp || (acl_valid(aclp) == -1 && aclp->acl_cnt != 0))
 		return (char *) 0;
 
-	buflen = aclp->acl_cnt * MAX_ENTRY_SIZE;
+	buflen = aclp->acl_cnt * MAX_ENTRY_SIZE + 1;
 	if (!(c = buf = (char *) malloc (buflen)))
 	{
 		acl_error ((void *) 0, (void *) 0, ENOMEM);
 		return (char *) 0;
 	}
+
+        /* empty ACLs convert to empty strings - follow Linux AG code */
+        if (buflen==1)
+        {
+                *c = '\0';
+                goto done;
+        }
 
 	for (i = 0, delim = (isshort ? ',' : '\n'); i < aclp->acl_cnt; i++)
 	{
@@ -396,6 +404,7 @@ acl_to_text_internal (struct acl *aclp, ssize_t *len_p, const char *strs[],
 		*--c = '\0';
 	else
 		*c = '\0';
+done:
 	if (len_p)
 		*len_p = (ssize_t) (c - buf);
 	return buf;
