@@ -23,8 +23,7 @@
 
 
 acl_entry_obj *
-__acl_create_entry_obj(
-	acl_obj *acl_obj_p)
+__acl_create_entry_obj(acl_obj *acl_obj_p)
 {
 	acl_entry_obj *entry_obj_p;
 
@@ -47,9 +46,7 @@ __acl_create_entry_obj(
 
 /* 23.4.7 */
 int
-acl_create_entry(
-	acl_t *acl_p,
-	acl_entry_t *entry_p)
+acl_create_entry(acl_t *acl_p, acl_entry_t *entry_p)
 {
 	acl_obj *acl_obj_p;
 	acl_entry_obj *entry_obj_p;

@@ -24,8 +24,7 @@
 
 /* 23.4.2 */
 int
-acl_calc_mask(
-	acl_t *acl_p)
+acl_calc_mask(acl_t *acl_p)
 {
 	acl_obj *acl_obj_p;
 	acl_entry_obj *entry_obj_p, *mask_obj_p = NULL;

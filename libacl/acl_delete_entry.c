@@ -24,9 +24,7 @@
 
 /* 23.4.9 */
 int
-acl_delete_entry(
-	acl_t acl,
-	acl_entry_t entry_d)
+acl_delete_entry(acl_t acl, acl_entry_t entry_d)
 {
 	acl_obj *acl_obj_p = ext2int(acl, acl);
 	acl_entry_obj *entry_obj_p = ext2int(acl_entry, entry_d);

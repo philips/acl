@@ -30,9 +30,7 @@
 
 /* 23.4.21 */
 int
-acl_set_fd(
-	int fd,
-	acl_t acl)
+acl_set_fd(int fd, acl_t acl)
 {
 	acl_obj *acl_obj_p = ext2int(acl, acl);
 	char *ext_acl_p;

@@ -29,9 +29,9 @@
 #include "libacl.h"
 
 
-static ssize_t snprint_uint( char *text_p, ssize_t size, unsigned int i);
-static const char * user_name( uid_t uid);
-static const char * group_name( gid_t uid);
+static ssize_t snprint_uint(char *text_p, ssize_t size, unsigned int i);
+static const char *user_name(uid_t uid);
+static const char *group_name(gid_t uid);
 
 
 /*
@@ -67,13 +67,8 @@ static const char * group_name( gid_t uid);
 	}
 
 ssize_t
-acl_entry_to_any_str(
-	const acl_entry_t entry_d,
-	char *text_p,
-	ssize_t size,
-	const acl_entry_t mask_d,
-	const char *prefix,
-	int options)
+acl_entry_to_any_str(const acl_entry_t entry_d, char *text_p, ssize_t size,
+	const acl_entry_t mask_d, const char *prefix, int options)
 {
 	#define TABS 4
 	static const char *tabs = "\t\t\t\t";
@@ -253,10 +248,7 @@ acl_entry_to_any_str(
 */
 
 static ssize_t
-snprint_uint(
-	char *text_p,
-	ssize_t size,
-	unsigned int i)
+snprint_uint(char *text_p, ssize_t size, unsigned int i)
 {
 	unsigned int tmp = i;
 	int digits = 1;
@@ -284,8 +276,7 @@ snprint_uint(
 
 
 static const char *
-user_name(
-	uid_t uid)
+user_name(uid_t uid)
 {
 	struct passwd *passwd = getpwuid(uid);
 
@@ -297,8 +288,7 @@ user_name(
 
 
 static const char *
-group_name(
-	gid_t gid)
+group_name(gid_t gid)
 {
 	struct group *group = getgrgid(gid);
 

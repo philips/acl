@@ -29,8 +29,7 @@
 
 
 const char *
-acl_error(
-	int code)
+acl_error(int code)
 {
 	switch(code) {
 		case ACL_MULTI_ERROR:

@@ -32,9 +32,7 @@
 
 /* 23.4.16 */
 acl_t
-acl_get_file(
-	const char *path_p,
-	acl_type_t type)
+acl_get_file(const char *path_p, acl_type_t type)
 {
 	const size_t size_guess = acl_ea_size(16);
 	char *ext_acl_p = alloca(size_guess);

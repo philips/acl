@@ -1,3 +1,9 @@
+2.0.2 (01 March 2002)
+* Apply several patches from Andreas, namely:
+* man page fixes
+* libacl code reformatting
+* acl_from_text errno handling
+
 2.0.1 (27 February 2002)
 * Apply Andreas Gruenbacher's diffs.
 * Fix up chacl for deletion of access ACL to be in line with Andreas. 

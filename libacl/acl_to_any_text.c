@@ -21,17 +21,13 @@
 
 #include <stdio.h>
 #include <errno.h>
+#include <string.h>
 #include <acl/libacl.h>
 #include "libacl.h"
 
 char *
-acl_to_any_text(
-	acl_t acl,
-	ssize_t *len_p,
-	const char *prefix,
-	char separator,
-	const char *suffix,
-	int options)
+acl_to_any_text(acl_t acl, ssize_t *len_p, const char *prefix, char separator,
+	const char *suffix, int options)
 {
 	acl_obj *acl_obj_p = ext2int(acl, acl);
 	ssize_t size, len = 0, entry_len = 0,

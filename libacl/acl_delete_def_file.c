@@ -27,13 +27,12 @@
 
 /* 23.4.8 */
 int
-acl_delete_def_file(
-	const char *path_p)
+acl_delete_def_file(const char *path_p)
 {
 	int error;
 	
 	error = removexattr(path_p, ACL_EA_DEFAULT);
-	if (error < 0)
+	if (error < 0 && errno != ENOATTR)
 		return -1;
 	return 0;
 }

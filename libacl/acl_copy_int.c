@@ -24,8 +24,7 @@
 
 /* 23.4.6 */
 acl_t
-acl_copy_int(
-	const void *buf_p)
+acl_copy_int(const void *buf_p)
 {
 	const struct __acl *ext_acl = (struct __acl *)buf_p;
 	const struct __acl_entry *ent_p = ext_acl->x_entries, *end_p;

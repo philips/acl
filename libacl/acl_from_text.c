@@ -35,13 +35,12 @@
 	} while (0)
 
 
-static int parse_acl_entry( const char **text_p, acl_t *acl_p);
+static int parse_acl_entry(const char **text_p, acl_t *acl_p);
 
 
 /* 23.4.13 */
 acl_t
-acl_from_text(
-	const char *buf_p)
+acl_from_text(const char *buf_p)
 {
 	acl_t acl;
 	acl = acl_init(0);
@@ -74,9 +73,7 @@ fail:
 
 
 static int
-skip_tag_name(
-	const char **text_p,
-	const char *token)
+skip_tag_name(const char **text_p, const char *token)
 {
 	size_t len = strlen(token);
 	const char *text = *text_p;
@@ -102,8 +99,7 @@ delimiter:
 
 
 static char *
-get_token(
-	const char **text_p)
+get_token(const char **text_p)
 {
 	char *token = NULL;
 	const char *ep;
@@ -129,9 +125,7 @@ after_token:
 
 
 static int
-get_id(
-	const char *token,
-	id_t *id_p)
+get_id(const char *token, id_t *id_p)
 {
 	char *ep;
 	long l;
@@ -151,9 +145,7 @@ get_id(
 
 
 static int
-get_uid(
-	const char *token,
-	uid_t *uid_p)
+get_uid(const char *token, uid_t *uid_p)
 {
 	struct passwd *passwd;
 
@@ -172,9 +164,7 @@ accept:
 
 
 static int
-get_gid(
-	const char *token,
-	gid_t *gid_p)
+get_gid(const char *token, gid_t *gid_p)
 {
 	struct group *group;
 
@@ -200,9 +190,7 @@ accept:
 */
 
 static int
-parse_acl_entry(
-	const char **text_p,
-	acl_t *acl_p)
+parse_acl_entry(const char **text_p, acl_t *acl_p)
 {
 	acl_entry_obj entry_obj;
 	acl_entry_t entry_d;
@@ -218,7 +206,7 @@ parse_acl_entry(
 	switch (**text_p) {
 		case 'u':  /* user */
 			if (!skip_tag_name(text_p, "user"))
-				goto bad_tag_name;
+				goto fail;
 			backup = *text_p;
 			str = get_token(text_p);
 			if (str) {
@@ -236,7 +224,7 @@ parse_acl_entry(
 
 		case 'g':  /* group */
 			if (!skip_tag_name(text_p, "group"))
-				goto bad_tag_name;
+				goto fail;
 			backup = *text_p;
 			str = get_token(text_p);
 			if (str) {
@@ -254,7 +242,7 @@ parse_acl_entry(
 
 		case 'm':  /* mask */
 			if (!skip_tag_name(text_p, "mask"))
-				goto bad_tag_name;
+				goto fail;
 			/* skip empty entry qualifier field (this field may
 			   be missing for compatibility with Solaris.) */
 			SKIP_WS(*text_p);
@@ -265,7 +253,7 @@ parse_acl_entry(
 
 		case 'o':  /* other */
 			if (!skip_tag_name(text_p, "other"))
-				goto bad_tag_name;
+				goto fail;
 			/* skip empty entry qualifier field (this field may
 			   be missing for compatibility with Solaris.) */
 			SKIP_WS(*text_p);
@@ -275,26 +263,26 @@ parse_acl_entry(
 			break;
 
 		default:
-			goto bad_tag_name;
+			goto fail;
 	}
 
 	for (perm_chars=0; perm_chars<3; perm_chars++, (*text_p)++) {
 		switch(**text_p) {
 			case 'r':
 				if (entry_obj.eperm.sperm & ACL_READ)
-					return -1;
+					goto fail;
 				entry_obj.eperm.sperm |= ACL_READ;
 				break;
 
 			case 'w':
 				if (entry_obj.eperm.sperm  & ACL_WRITE)
-					return -1;
+					goto fail;
 				entry_obj.eperm.sperm  |= ACL_WRITE;
 				break;
 
 			case 'x':
 				if (entry_obj.eperm.sperm  & ACL_EXECUTE)
-					return -1;
+					goto fail;
 				entry_obj.eperm.sperm  |= ACL_EXECUTE;
 				break;
 
@@ -304,7 +292,7 @@ parse_acl_entry(
 
 			default:
 				if (perm_chars == 0)
-					return -1;
+					goto fail;
 				goto create_entry;
 		}
 	}
@@ -316,7 +304,7 @@ create_entry:
 		return -1;
 	return 0;
 
-bad_tag_name:
+fail:
 	errno = EINVAL;
 	return -1;
 }

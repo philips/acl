@@ -28,8 +28,7 @@
 
 
 int
-acl_extended_fd(
-	int fd)
+acl_extended_fd(int fd)
 {
 	int base_size = sizeof(acl_ea_header) + 3 * sizeof(acl_ea_entry);
 	int retval;

@@ -23,8 +23,7 @@
 
 
 acl_obj *
-__acl_init_obj(
-	void)
+__acl_init_obj(void)
 {
 	acl_obj *acl_obj_p = new_obj_p(acl);
 	if (!acl_obj_p)
@@ -38,8 +37,7 @@ __acl_init_obj(
 
 /* 23.4.20 */
 acl_t
-acl_init(
-	int count)
+acl_init(int count)
 {
 	if (count < 0) {
 		errno = EINVAL;

@@ -24,9 +24,7 @@
 
 /* 23.4.19 */
 int
-acl_get_tag_type(
-	acl_entry_t entry_d,
-	acl_tag_t *tag_type_p)
+acl_get_tag_type(acl_entry_t entry_d, acl_tag_t *tag_type_p)
 {
 	acl_entry_obj *entry_obj_p = ext2int(acl_entry, entry_d);
 	if (!entry_obj_p)

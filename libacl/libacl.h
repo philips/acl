@@ -103,8 +103,8 @@ struct __acl {
 };
 
 int __acl_reorder_obj_p(acl_entry_obj *acl_entry_obj_p);
-acl_obj * __acl_init_obj(void);
-acl_entry_obj * __acl_create_entry_obj(acl_obj *acl_obj_p);
+acl_obj *__acl_init_obj(void);
+acl_entry_obj *__acl_create_entry_obj(acl_obj *acl_obj_p);
 void __acl_free_acl_obj(acl_obj *acl_obj_p);
 
 #define FOREACH_ACL_ENTRY(entry_obj_p, acl_obj_p) \

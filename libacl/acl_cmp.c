@@ -23,9 +23,7 @@
 
 
 int
-acl_cmp(
-	acl_t acl1,
-	acl_t acl2)
+acl_cmp(acl_t acl1, acl_t acl2)
 {
 	acl_obj *acl1_obj_p = ext2int(acl, acl1),
 	        *acl2_obj_p = ext2int(acl, acl2);

@@ -24,9 +24,7 @@
 
 
 static inline int
-__acl_entry_compare(
-	acl_entry_obj *a_p,
-	acl_entry_obj *b_p)
+__acl_entry_compare(acl_entry_obj *a_p, acl_entry_obj *b_p)
 {
 	if (a_p->etag < b_p->etag)
 		return -1;
@@ -48,8 +46,7 @@ __acl_entry_compare(
   (yet) are not reordered.
 */
 int
-__acl_reorder_obj_p(
-	acl_entry_obj *entry_obj_p)
+__acl_reorder_obj_p(acl_entry_obj *entry_obj_p)
 {
 	acl_obj *acl_obj_p = entry_obj_p->econtainer;
 	acl_entry_obj *here_obj_p;

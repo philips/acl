@@ -30,10 +30,7 @@
 
 /* 23.4.22 */
 int
-acl_set_file(
-	const char *path_p,
-	acl_type_t type,
-	acl_t acl)
+acl_set_file(const char *path_p, acl_type_t type, acl_t acl)
 {
 	acl_obj *acl_obj_p = ext2int(acl, acl);
 	char *ext_acl_p;

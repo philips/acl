@@ -35,8 +35,7 @@
 */
 
 acl_t
-acl_from_mode(
-	mode_t mode)
+acl_from_mode(mode_t mode)
 {
 	acl_obj *acl_obj_p;
 	acl_entry_obj *entry_obj_p;

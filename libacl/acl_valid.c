@@ -26,8 +26,7 @@
 
 /* 23.4.28 */
 int
-acl_valid(
-	acl_t acl)
+acl_valid(acl_t acl)
 {
 	int result;
 

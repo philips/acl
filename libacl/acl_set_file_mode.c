@@ -31,10 +31,7 @@ Same as acl_set_file, but based on the file mode permission bits.
 */
 
 int
-acl_set_file_mode(
-	const char *path_p,
-	acl_type_t type,
-	acl_t acl)
+acl_set_file_mode(const char *path_p, acl_type_t type, acl_t acl)
 {
 	struct stat st;
 	mode_t mode;

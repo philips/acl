@@ -37,8 +37,7 @@ __acl_free_acl_obj(acl_obj *acl_obj_p)
 
 /* 23.4.12 */
 int
-acl_free(
-	void *obj_p)
+acl_free(void *obj_p)
 {
 	obj_prefix *int_p = ((obj_prefix *)obj_p)-1;
 	if (!obj_p || !int_p) {

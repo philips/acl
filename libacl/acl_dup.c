@@ -24,8 +24,7 @@
 
 /* 23.4.11 */
 acl_t
-acl_dup(
-	acl_t acl)
+acl_dup(acl_t acl)
 {
 	acl_entry_obj *entry_obj_p, *dup_entry_obj_p;
 	acl_obj *acl_obj_p = ext2int(acl, acl);

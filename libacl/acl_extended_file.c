@@ -28,8 +28,7 @@
 
 
 int
-acl_extended_file(
-	const char *path_p)
+acl_extended_file(const char *path_p)
 {
 	int base_size = sizeof(acl_ea_header) + 3 * sizeof(acl_ea_entry);
 	int retval;

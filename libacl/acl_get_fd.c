@@ -32,8 +32,7 @@
 
 /* 23.4.15 */
 acl_t
-acl_get_fd(
-	int fd)
+acl_get_fd(int fd)
 {
 	const size_t size_guess = acl_ea_size(16);
 	char *ext_acl_p = alloca(size_guess);

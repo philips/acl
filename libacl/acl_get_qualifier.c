@@ -24,8 +24,7 @@
 
 /* 23.4.18 */
 void *
-acl_get_qualifier(
-	acl_entry_t entry_d)
+acl_get_qualifier(acl_entry_t entry_d)
 {
 	acl_entry_obj *entry_obj_p = ext2int(acl_entry, entry_d);
 	qualifier_obj *qualifier_obj_p;

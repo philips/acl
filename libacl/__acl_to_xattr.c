@@ -28,9 +28,7 @@
 
 
 char *
-__acl_to_xattr(
-	const acl_obj *acl_obj_p,
-	size_t *size)
+__acl_to_xattr(const acl_obj *acl_obj_p, size_t *size)
 {
 	const acl_entry_obj *entry_obj_p;
 	acl_ea_header *ext_header_p;

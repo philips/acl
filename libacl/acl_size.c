@@ -24,8 +24,7 @@
 
 /* 23.4.26 */
 ssize_t
-acl_size(
-	acl_t acl)
+acl_size(acl_t acl)
 {
 	acl_obj *acl_obj_p = ext2int(acl, acl);
 	if (!acl_obj_p)

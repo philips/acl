@@ -24,9 +24,7 @@
 
 /* 23.4.17 */
 int
-acl_get_permset(
-	acl_entry_t entry_d,
-	acl_permset_t *permset_p)
+acl_get_permset(acl_entry_t entry_d, acl_permset_t *permset_p)
 {
 	acl_entry_obj *entry_obj_p = ext2int(acl_entry, entry_d);
 	if (!entry_obj_p)

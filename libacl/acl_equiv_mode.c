@@ -27,9 +27,7 @@
 
 
 int
-acl_equiv_mode(
-	acl_t acl,
-	mode_t *mode_p)
+acl_equiv_mode(acl_t acl, mode_t *mode_p)
 {
 	acl_obj *acl_obj_p = ext2int(acl, acl);
 	acl_entry_obj *entry_obj_p;

@@ -24,10 +24,7 @@
 
 /* 23.4.14 */
 int
-acl_get_entry(
-	acl_t acl,
-	int entry_id,
-	acl_entry_t *entry_p)
+acl_get_entry(acl_t acl, int entry_id, acl_entry_t *entry_p)
 {
 	acl_obj *acl_obj_p = ext2int(acl, acl);
 	if (!acl_obj_p)

@@ -60,28 +60,13 @@ struct string_obj_tag {
 #define sstr i.s_str
 
 /* object creation, destruction, conversion and validation */
-void *
-__new_obj_p(
-	int magic,
-	size_t size);
-void
-__free_obj_p(
-	obj_prefix *obj_p);
-obj_prefix *
-__check_obj_p(
-	obj_prefix *obj_p,
-	int magic);
+void *__new_obj_p(int magic, size_t size);
+void __free_obj_p(obj_prefix *obj_p);
+obj_prefix *__check_obj_p(obj_prefix *obj_p, int magic);
 #ifdef LIBACL_DEBUG
-obj_prefix *
-__ext2int_and_check(
-	void *ext_p,
-	int magic,
-	const char *typename);
+obj_prefix *__ext2int_and_check(void *ext_p, int magic, const char *typename);
 #else
-obj_prefix *
-__ext2int_and_check(
-	void *ext_p,
-	int magic);
+obj_prefix *__ext2int_and_check(void *ext_p, int magic);
 #endif
 
 #endif /* __LIBOBJ_H */

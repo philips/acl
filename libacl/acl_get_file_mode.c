@@ -31,8 +31,7 @@ Same as acl_get_file, but based on the file mode permission bits.
 */
 
 acl_t
-acl_get_file_mode(
-	const char *path_p)
+acl_get_file_mode(const char *path_p)
 {
 	struct stat st;
 

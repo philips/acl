@@ -41,9 +41,7 @@
 */
 
 int
-acl_check(
-	acl_t acl,
-	int *last)
+acl_check(acl_t acl, int *last)
 {
 	acl_obj *acl_obj_p = ext2int(acl, acl);
 	id_t qual = 0;

@@ -23,8 +23,7 @@
 
 
 int
-acl_entries(
-	acl_t acl)
+acl_entries(acl_t acl)
 {
 	acl_obj *acl_obj_p = ext2int(acl, acl);
 	if (!acl_obj_p)

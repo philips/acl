@@ -26,9 +26,7 @@
 
 
 acl_t
-__acl_from_xattr(
-	const char *ext_acl_p,
-	size_t size)
+__acl_from_xattr(const char *ext_acl_p, size_t size)
 {
 	acl_ea_header *ext_header_p = (acl_ea_header *)ext_acl_p;
 	acl_ea_entry *ext_entry_p = (acl_ea_entry *)(ext_header_p+1);

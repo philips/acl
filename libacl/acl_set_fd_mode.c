@@ -31,9 +31,7 @@ Same as acl_set_fd, but uses file mode permission bits.
 */
 
 int
-acl_set_fd_mode(
-	int fd,
-	acl_t acl)
+acl_set_fd_mode(int fd, acl_t acl)
 {
 	struct stat st;
 	mode_t mode;
