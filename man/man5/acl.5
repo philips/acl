@@ -187,13 +187,16 @@ access is denied.
 .Ed
 .It
 .Sy else if
-the effective group ID or any of the supplementary group IDs of the process match the qualifier of any entry of type ACL_GROUP,
+the effective group ID or any of the supplementary group IDs of the process
+match the qualifier of the entry of type ACL_GROUP_OBJ, or the qualifier of any
+entry of type ACL_GROUP, 
 .Sy then
 .Pp
 .in +4
 .Bd -filled
 .Sy if
-the ACL_MASK entry and any of the matching ACL_GROUP group entries contain
+the ACL_MASK entry and any of the matching ACL_GROUP_OBJ or ACL_GROUP entries
+contain
 the requested permissions, access is granted,
 .Pp
 .Sy else
