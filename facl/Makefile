@@ -45,6 +45,7 @@ SETFOBJ = $(SETFACL).o do_set.o parse.o sequence.o user_group.o walk_tree.o
 LLDLIBS = $(LIBACL)
 LTDEPENDENCIES = $(LIBACL)
 
+LDIRT   = $(GETFACL) $(SETFACL)
 LCFLAGS = -DPACKAGE=\"$(PKG_NAME)\" -DSTR_VERSION=\"$(PKG_VERSION)\" \
 	  -DLOCALEDIR=NULL
 
