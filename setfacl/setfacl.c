@@ -275,25 +275,48 @@ void help(void)
 }
 
 
+static int __errors;
+static seq_t __seq;
+
 char *next_line(FILE *file)
 {
-	static char line[PATH_MAX], *c;
-	if (!fgets(line, sizeof(line), file))
-		return NULL;
+	static char *line;
+	static size_t line_size;
+	char *c;
+	int eol = 0;
 
-	c = strrchr(line, '\0');
-	while (c > line && (*(c-1) == '\n' ||
-			   *(c-1) == '\r')) {
-		c--;
-		*c = '\0';
+	if (!line) {
+		if (high_water_alloc((void **)&line, &line_size, PATH_MAX)) {
+			perror(progname);
+			__errors++;
+			return NULL;
+		}
 	}
+	c = line;
+	do {
+		if (!fgets(c, line_size - (c - line), file))
+			return NULL;
+		c = strrchr(c, '\0');
+		while (c > line && (*(c-1) == '\n' || *(c-1) == '\r')) {
+			c--;
+			*c = '\0';
+			eol = 1;
+		}
+		if (feof(file))
+			break;
+		if (!eol) {
+			if (high_water_alloc((void **)&line, &line_size,
+					     2 * line_size)) {
+				perror(progname);
+				__errors++;
+				return NULL;
+			}
+			c = strrchr(line, '\0');
+		}
+	} while (!eol);
 	return line;
 }
 
-
-
-static int __errors;
-static seq_t __seq;
 int __do_set(const char *file, const struct stat *stat,
              int flag, struct FTW *ftw)
 {
