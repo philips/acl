@@ -74,16 +74,19 @@ MAKEDEPEND	= @makedepend@
 
 MSGFMT		= @msgfmt@
 MSGMERGE	= @msgmerge@
-XGETTEXT	= @xgettext@ --omit-header --language=C
+XGETTEXT	= @xgettext@ --omit-header --language=C --keyword=_
 
 RPM		= @rpm@
 RPMBUILD	= @rpmbuild@
 RPM_VERSION	= @rpm_version@
 
 ENABLE_SHARED = @enable_shared@
+ENABLE_GETTEXT = @enable_gettext@
 HAVE_ZIPPED_MANPAGES = @have_zipped_manpages@
 
+ifeq ($(PKG_PLATFORM),linux)
 PCFLAGS = -D_GNU_SOURCE -D_FILE_OFFSET_BITS=64
+endif
 
 GCFLAGS = $(OPTIMIZER) $(DEBUG) -funsigned-char -Wall -I$(TOPDIR)/include \
 	  -DVERSION=\"$(PKG_VERSION)\" -DLOCALEDIR=\"$(PKG_LOCALE_DIR)\"  \

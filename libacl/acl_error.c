@@ -23,8 +23,7 @@
 #include <errno.h>
 #include <acl/libacl.h>
 #include "libacl.h"
-
-#include <libintl.h>
+#include "config.h"
 
 
 const char *
@@ -32,13 +31,13 @@ acl_error(int code)
 {
 	switch(code) {
 		case ACL_MULTI_ERROR:
-			return gettext("Multiple entries");
+			return _("Multiple entries of same type");
 		case ACL_DUPLICATE_ERROR:
-			return gettext("Duplicate entries");
+			return _("Duplicate entries");
 		case ACL_MISS_ERROR:
-			return gettext("Missing or wrong entry");
+			return _("Missing or wrong entry");
 		case ACL_ENTRY_ERROR:
-			return gettext("Invalid entry type");
+			return _("Invalid entry type");
 		default:
 			return NULL;
 	}

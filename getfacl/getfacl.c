@@ -32,13 +32,11 @@
 #include <sys/stat.h>
 #include <dirent.h>
 #include <libgen.h>
-#include <ftw.h>
-#include "user_group.h"
-
 #include <getopt.h>
-
+#include <ftw.h>
 #include <locale.h>
-#include <libintl.h>
+#include "config.h"
+#include "user_group.h"
 
 #define POSIXLY_CORRECT_STR "POSIXLY_CORRECT"
 
@@ -448,7 +446,7 @@ int do_print(const char *path_p, const struct stat *st)
 	if (opt_strip_leading_slash) {
 		if (*path_p == '/') {
 			if (!absolute_warning) {
-				fprintf(stderr, gettext("%s: Removing leading "
+				fprintf(stderr, _("%s: Removing leading "
 					"'/' from absolute path names\n"),
 				        progname);
 				absolute_warning = 1;
@@ -515,18 +513,18 @@ fail:
 
 void help(void)
 {
-	printf(gettext("%s %s -- get file access control lists\n"),
+	printf(_("%s %s -- get file access control lists\n"),
 	       progname, VERSION);
-	printf(gettext("Usage: %s [-%s] file ...\n"),
+	printf(_("Usage: %s [-%s] file ...\n"),
 	         progname, cmd_line_options);
 #if !POSIXLY_CORRECT
 	if (posixly_correct) {
 #endif
-		printf(gettext(
+		printf(_(
 "  -d, --default           display the default access control list\n"));
 #if !POSIXLY_CORRECT
 	} else {
-		printf(gettext(
+		printf(_(
 "      --access            display the file access control list only\n"
 "  -d, --default           display the default access control list only\n"
 "      --omit-header       do not display the comment header\n"
@@ -541,7 +539,7 @@ void help(void)
 "      --absolute-names    don't strip leading '/' in pathnames\n"));
 	}
 #endif
-	printf(gettext(
+	printf(_(
 "      --version           print version and exit\n"
 "      --help              this help text\n"));
 }
@@ -616,7 +614,7 @@ int main(int argc, char *argv[])
 		cmd_line_options = POSIXLY_CMD_LINE_OPTIONS;
 #endif
 
-	setlocale(LC_MESSAGES, "");
+	setlocale(LC_CTYPE, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 
@@ -733,8 +731,7 @@ int main(int argc, char *argv[])
 				had_errors += walk_tree(line);
 			}
 			if (ferror(stdin)) {
-				fprintf(stderr, gettext(
-					"%s: Standard input: %s\n"),
+				fprintf(stderr, _("%s: Standard input: %s\n"),
 				        progname, strerror(errno));
 				had_errors++;
 			}
@@ -746,9 +743,9 @@ int main(int argc, char *argv[])
 	return had_errors ? 1 : 0;
 
 synopsis:
-	fprintf(stderr, gettext("Usage: %s [-%s] file ...\n"),
+	fprintf(stderr, _("Usage: %s [-%s] file ...\n"),
 	        progname, cmd_line_options);
-	fprintf(stderr, gettext("Try `%s --help' for more information.\n"),
+	fprintf(stderr, _("Try `%s --help' for more information.\n"),
 		progname);
 	return 2;
 }

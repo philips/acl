@@ -34,7 +34,7 @@ TOPDIR = ..
 include $(TOPDIR)/include/builddefs
 
 LINGUAS = de
-LSRCFILES = $(LINGUAS:%=%.po)
+LSRCFILES = $(LINGUAS:%=%.po) $(PKG_NAME).pot
 
 XGETTEXTFILES =	$(TOPDIR)/chacl/chacl.c \
 		$(TOPDIR)/setfacl/do_set.c \

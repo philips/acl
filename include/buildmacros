@@ -45,7 +45,7 @@ SRCFILES = Makefile $(HFILES) $(CFILES) $(LSRCFILES) $(LFILES) $(YFILES)
 
 DEPDIRT = dep dep.bak
 MANDIRT = *.[1-9].gz
-PODIRT = *.mopo *.mo *.pot
+PODIRT = *.tmpo *.mo
 CDIRT = $(OBJECTS) $(LTOBJECTS) $(LTCOMMAND) $(LTLIBRARY)
 DIRT = $(LDIRT) $(DEPDIRT) $(MANDIRT) $(PODIRT) $(CDIRT)
 
@@ -141,12 +141,14 @@ INSTALL_MAN = \
 		done; \
 	done
 
+ifeq ($(ENABLE_GETTEXT),yes)
 INSTALL_LINGUAS = \
 	@for l in $(LINGUAS); do \
 		ldir=$(PKG_LOCALE_DIR)/$$l/LC_MESSAGES; \
 		$(INSTALL) -m 755 -d $$ldir; \
 		$(INSTALL) -m 644 $$l.mo $$ldir/$(PKG_NAME).mo; \
 	done
+endif
 
 SUBDIRS_MAKERULE = \
 	@for d in $(SUBDIRS) ""; do \
