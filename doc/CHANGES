@@ -1,3 +1,18 @@
+2.0.0 (21 February 2001)
+* Reworked to use the new official system call API.
+* Sync up with the XFS project, the SGI folk now use this source.
+* Jumped to version 2 to allow XFS users to upgrade
+  (Rationale: the XFS ACL user tools were at version 1.1.X, and
+  packaging tools like rpm, dpkg, etc. must be presented with a
+  greater version number to allow an upgrade to proceed).
+* Added the chacl command to ease migration for existing XFS users,
+  and for compatibility with IRIX.
+* Added a flag to allow acl_print to produce a single-line ACL, in
+  addition to the multi-line format.
+* Extended attribute documentation has moved into the extended
+  attribute package from SGI ("attr"), this ACL package now deals
+  exclusively with ACLs.
+
 0.7.22
 * Create a shared version of libacl, instead of linking statically.
 * Added missing error reporting to getfacl do_print() function.     

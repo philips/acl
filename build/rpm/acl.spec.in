@@ -1,5 +1,5 @@
 Summary: Access control list utilities.
-Name: @pkg_name@-util
+Name: @pkg_name@
 Version: @pkg_version@
 Release: @pkg_release@
 Packager: @pkg_builder@
