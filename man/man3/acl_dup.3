@@ -1,0 +1,19 @@
+.TH ACL_DUP 3
+.SH NAME
+acl_dup \- make a copy of an ACL
+.SH SYNOPSIS
+.B #include <sys/acl.h>
+.PP
+.B acl_t acl_dup( acl_t acl);
+.SH DESCRIPTION
+Returns a pointer to an allocated ACL that is a copy of the ACL supplied
+as an argument.
+.SH RETURN VALUES
+Returns a pointer or null.
+.SH ERRORS
+.TP 16
+EINVAL
+\f2aclp\fP is null.
+.TP 16
+ENOMEM
+allocation of the \f2struct acl\fP failed.
