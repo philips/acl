@@ -188,8 +188,7 @@ access is denied.
 .It
 .Sy else if
 the effective group ID or any of the supplementary group IDs of the process
-match the qualifier of the entry of type ACL_GROUP_OBJ, or the qualifier of any
-entry of type ACL_GROUP, 
+match the file group or the qualifier of any entry of type ACL_GROUP, 
 .Sy then
 .Pp
 .in +4
@@ -343,12 +342,12 @@ with IEEE 1003.1 (\(lqPOSIX.1\(rq) will still function as expected on
 systems with ACLs. The IEEE 1003.1e draft 17 contains the rationale for
 choosing this interface in section B.23. 
 .Sh CHANGES TO THE FILE UTILITIES
-On a system that supports ACLs in its file utilities, the
+On a system that supports ACLs, the file utilities
 .Xr ls 1 ,
-.Xr cp 1
+.Xr cp 1 ,
 and
 .Xr mv 1
-commands change their behavior in the following way:
+change their behavior in the following way:
 .Bl -bullet
 .It
 For files that have a default ACL or an access ACL that contains more than
