@@ -37,6 +37,7 @@
 
 #include <sys/types.h>
 #include <acl.h>
+#include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
 #include <getopt.h>
