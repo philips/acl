@@ -35,6 +35,7 @@ include $(TOPDIR)/include/builddefs
 
 LTCOMMAND = setfacl
 CFILES = setfacl.c do_set.c sequence.c parse.c user_group.c
+HFILES = parse.h sequence.h user_group.h
 
 LCFLAGS = -DPKG_NAME=\"$(PKG_NAME)\" -DLOCALEDIR=\"$(gnulocaledir)\"
 LLDLIBS = -lattr $(LIBACL)

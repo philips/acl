@@ -41,7 +41,7 @@ LT_REVISION = 0
 LT_AGE = 0
 
 CFILES = $(POSIX_CFILES) $(LIBACL_CFILES) $(INTERNAL_CFILES)
-HFILES = libobj.h libacl.h
+HFILES = libobj.h libacl.h byteorder.h __acl_from_xattr.h __acl_to_xattr.h
 
 POSIX_CFILES = \
 	acl_add_perm.c acl_calc_mask.c acl_clear_perms.c acl_copy_entry.c \
