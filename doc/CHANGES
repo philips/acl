@@ -1,3 +1,6 @@
+2.2.26 (8 September 2004)
+* Fix email address in manual pages.
+
 2.2.25 (25 August 2004)
 * Fix processing of the X pseudo permission in setfacl: Must not
   modify the sequence of commands directly or else only the first
