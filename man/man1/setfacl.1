@@ -256,7 +256,7 @@ getfacl file1 | setfacl --set-file=- file2
 Copying the access ACL into the Default ACL
 .RS
 .fam C
-getfacl -a dir | setfacl -d -M- dir
+getfacl --access dir | setfacl -d -M- dir
 .fam T
 .RE
 .SH CONFORMANCE TO POSIX 1003.1e DRAFT STANDARD 17

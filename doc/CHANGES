@@ -1,3 +1,7 @@
+2.2.18 (30 September 2003)
+* Fix a documentation error in setfacl manual page, was refering to a
+  non-existent getfacl option in the example section.
+
 2.2.17 (29 August 2003)
 * Fix a bug in nftw worker routines' error handling code.
 
