@@ -105,16 +105,16 @@ struct __acl {
 	struct __acl_entry	x_entries[0];
 };
 
-extern int __acl_reorder_entry_obj_p(acl_entry_obj *acl_entry_obj_p);
-extern int __acl_reorder_obj_p(acl_obj *acl_obj_p);
+extern int __acl_reorder_entry_obj_p(acl_entry_obj *acl_entry_obj_p) hidden;
+extern int __acl_reorder_obj_p(acl_obj *acl_obj_p) hidden;
 
-extern acl_obj *__acl_init_obj(int count);
-extern acl_entry_obj *__acl_create_entry_obj(acl_obj *acl_obj_p);
-extern void __acl_free_acl_obj(acl_obj *acl_obj_p);
+extern acl_obj *__acl_init_obj(int count) hidden;
+extern acl_entry_obj *__acl_create_entry_obj(acl_obj *acl_obj_p) hidden;
+extern void __acl_free_acl_obj(acl_obj *acl_obj_p) hidden;
 
 extern char *__acl_to_any_text(acl_t acl, ssize_t *len_p,
 			       const char *prefix, char separator,
-			       const char *suffix, int options);
+			       const char *suffix, int options) hidden;
 
 #define FOREACH_ACL_ENTRY(entry_obj_p, acl_obj_p) \
 	for( (entry_obj_p) = (acl_obj_p)->anext; \

@@ -196,5 +196,7 @@ test -f `pwd`/../attr/libattr/libattr.la && libattr="`pwd`/../attr/libattr/libat
 test -f /usr/lib/libattr.la && libattr="/usr/lib/libattr.la"
 AC_SUBST(libattr)
 
+AC_FUNC_GCC_VISIBILITY
+
 dnl build definitions for use in Makefiles
 AC_OUTPUT(include/builddefs)

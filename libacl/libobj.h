@@ -3,6 +3,15 @@
 
 #include <stdlib.h>
 
+#include "config.h"
+
+/* Mark library internal functions as hidden */
+#if defined(HAVE_VISIBILITY_ATTRIBUTE)
+# define hidden __attribute__((visibility("hidden")))
+#else
+# define hidden /* hidden */
+#endif
+
 /* Ugly pointer manipulation */
 
 #ifdef LIBACL_DEBUG
@@ -68,14 +77,15 @@ struct string_obj_tag {
 #define sstr i.s_str
 
 /* object creation, destruction, conversion and validation */
-void *__new_var_obj_p(int magic, size_t size);
-void __new_obj_p_here(int magic, void *here);
-void __free_obj_p(obj_prefix *obj_p);
-obj_prefix *__check_obj_p(obj_prefix *obj_p, int magic);
+void *__new_var_obj_p(int magic, size_t size) hidden;
+void __new_obj_p_here(int magic, void *here) hidden;
+void __free_obj_p(obj_prefix *obj_p) hidden;
+obj_prefix *__check_obj_p(obj_prefix *obj_p, int magic) hidden;
 #ifdef LIBACL_DEBUG
-obj_prefix *__ext2int_and_check(void *ext_p, int magic, const char *typename);
+obj_prefix *__ext2int_and_check(void *ext_p, int magic,
+				const char *typename) hidden;
 #else
-obj_prefix *__ext2int_and_check(void *ext_p, int magic);
+obj_prefix *__ext2int_and_check(void *ext_p, int magic) hidden;
 #endif
 
 #endif /* __LIBOBJ_H */

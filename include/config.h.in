@@ -11,6 +11,9 @@
 /* The number of bytes in a short.  */
 #undef SIZEOF_SHORT
 
+/* Define if you have attribute((visibility(hidden))) in gcc. */
+#undef HAVE_VISIBILITY_ATTRIBUTE
+
 /* Define if you want gettext (I18N) support */
 #undef ENABLE_GETTEXT
 

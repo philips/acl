@@ -1,3 +1,8 @@
+2.2.5 (20 February 2003)
+* Merge symbol visibility patch from Andreas for hiding symbols
+  in libacl which we don't want exported, provided the compiler
+  supports that (added a new configure check too).
+
 2.2.4 (10 February 2003)
 * Merge several patches from Andreas - note that the library minor
   version number has been incremented (libacl.so.1.0.3 -> 1.0.4)
