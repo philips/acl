@@ -195,12 +195,34 @@ entry of type ACL_GROUP,
 .in +4
 .Bd -filled
 .Sy if
+the ACL contains an ACL_MASK entry,
+.Sy then
+.in +4
+.Bd -filled
+.Sy if
 the ACL_MASK entry and any of the matching ACL_GROUP_OBJ or ACL_GROUP entries
 contain
 the requested permissions, access is granted,
 .Pp
 .Sy else
 access is denied.
+.Pp
+.in -4
+.Ed
+.Sy else
+(Note: there cannot be any ACL_GROUP entries without an ACL_MASK entry)
+.in +4
+.Bd -filled
+.Sy if
+the ACL_GROUP_OBJ entry contains the requested permissions,
+access is granted,
+.Ed
+.Pp
+.Sy else
+access is denied.
+.Pp
+.in -4
+.Ed
 .in -4
 .Ed
 .It
