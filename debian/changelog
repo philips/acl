@@ -1,6 +1,7 @@
 acl (2.2.26-1) unstable; urgency=low
 
   * New upstream release
+  * acl.5 man page user/group typo fixed (closes: #272186)
 
  -- Nathan Scott <nathans@debian.org>  Fri, 10 Sep 2004 10:51:19 +1000
 
