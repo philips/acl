@@ -556,7 +556,7 @@ acl_delete_def_file (const char *path_p)
 	struct acl acl;
 
 	acl.acl_cnt = ACL_NOT_PRESENT;
-	if (acl_set (path_p, -1, 0, &acl) == -1)
+	if (acl_set (path_p, -1, 0, &acl) < 0)
 		return (-1);
 	else
 		return 0;
@@ -569,7 +569,6 @@ struct acl *
 acl_get_fd (int fd)
 {
 	struct acl *aclp = (struct acl *) malloc (sizeof (*aclp));
-        int err = 0;
 
 	if (aclp == NULL)
 	{
@@ -577,9 +576,8 @@ acl_get_fd (int fd)
 		return (aclp);
 	}
 
-	if ((err = acl_get (0, fd, aclp, 0)) < 0)
+	if (acl_get (0, fd, aclp, 0) < 0)
 	{
-		setoserror (-err);
 		free ((void *) aclp);
 		return (NULL);
 	}
@@ -621,7 +619,6 @@ acl_get_file (const char *path_p, acl_type_t type)
 
 	if (acl_get_error < 0)
 	{
-		setoserror (-acl_get_error);
 		free ((void *) aclp);
 		return (NULL);
 	}
@@ -635,7 +632,6 @@ acl_get_file (const char *path_p, acl_type_t type)
 int
 acl_set_fd (int fd, struct acl *aclp)
 {
-	int err=0;
 	if (acl_valid (aclp) == -1)
 	{
 		setoserror (EINVAL);
@@ -649,8 +645,7 @@ acl_set_fd (int fd, struct acl *aclp)
 		return (-1);
 	}
 
-	if ((err = acl_set (0, fd, aclp, (struct acl *) NULL)) < 0) {
-		setoserror (-err);
+	if (acl_set (0, fd, aclp, (struct acl *) NULL) < 0) {
 		return (-1);
 	}
 	else
@@ -695,7 +690,6 @@ acl_set_file (const char *path_p, acl_type_t type, struct acl *aclp)
 			return (-1);
 	}
 	if (acl_set_error < 0) {
-		setoserror (-acl_set_error);
 		return (-1);
 	}
 	else
@@ -875,6 +869,9 @@ acl_entry_sort (acl_t acl)
 
 #include <asm/unistd.h>
 
+/* Need to use the kernel system call numbering
+ * for the particular architecture.
+ */
 #if __i386__ 
 #  define HAVE_ACL_SYSCALL 1
 #  ifndef __NR__acl_get
@@ -883,7 +880,11 @@ acl_entry_sort (acl_t acl)
 #  ifndef __NR__acl_set
 #    define __NR__acl_set	252
 #  endif
+#else
+#  define HAVE_ACL_SYSCALL 0
+#endif
 
+#if HAVE_ACL_SYSCALL
 static _syscall4(int, _acl_get, 
 	const char *, path, 
 	int, fdes, 
@@ -895,8 +896,6 @@ static _syscall4(int, _acl_set,
 	int, fdes, 
 	struct acl *, acl, 
 	struct acl *, dacl);
-#else
-#  define HAVE_ACL_SYSCALL 0
 #endif
 
 int
