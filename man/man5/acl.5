@@ -88,8 +88,8 @@ that the ACL is a default ACL.  Default ACLs are associated only with
 directories, and supply the initial ACL for a file created in that
 directory. Note that file-creation mode masks do not affect the ACLs of
 files created as a result of using directory default ACLs (see \f2umask\fP(1)).
-ACLs are supplied using the \f2acl_get_file\fP(3c) and
-\f2acl_set_file\fP(3c) calls.
+ACLs are supplied using the \f2acl_get_file\fP(3) and
+\f2acl_set_file\fP(3) calls.
 .SH EXTERNAL REPRESENTATION
 ACLs are represented in a standard format for human readable input / output.
 Each ACL entry is specified as three colon separated fields.
@@ -100,15 +100,14 @@ The first field of an ACL entry is the entry type, which can be one of the follo
 "user", "group", "other", "mask", "u", "g", "o", "m".
 .P
 The second field is a user name, numeric UID, group name, or numeric GID, depending
-on the value of the first field.  (\fIacl_from_text\fP(3c) supports only
-the strings, not the numeric UID/GID values.)
+on the value of the first field.
 If the second field is empty, it implies
 that the ACL entry is for the owning user or group of the file.  Mask and
 other entries must have an empty second field.  The third field is
 the discretionary access permissions for this ACL entry.  This may be
 represented in two forms.  The first is the string "rwx" where each letter
 may be replaced by a "-" indicating no access of that type.
-The parsing of this string by \f2acl_from_text\fP(3c) requires that
+The parsing of this string by \f2acl_from_text\fP(3) requires that
 it be exactly as shown and not be reordered, e.g. rxw is not valid.
 .P
 Some programs allow a
