@@ -32,16 +32,22 @@
 #
 
 TOPDIR = ..
+
+LTLDFLAGS = -Wl,--version-script,$(TOPDIR)/exports
 include $(TOPDIR)/include/builddefs
 
 LTLIBRARY = libacl.la
 LTLIBS = -lattr
-LT_CURRENT = 1
-LT_REVISION = 4
-LT_AGE = 0
+LT_CURRENT = 2
+LT_REVISION = 0
+LT_AGE = 1
 
-CFILES = $(POSIX_CFILES) $(LIBACL_CFILES) $(INTERNAL_CFILES)
-HFILES = libobj.h libacl.h byteorder.h __acl_from_xattr.h __acl_to_xattr.h
+CFILES = $(POSIX_CFILES) $(LIBACL_CFILES) $(INTERNAL_CFILES) \
+	 perm_copy_fd.c perm_copy_file.c
+HFILES = libobj.h libacl.h byteorder.h __acl_from_xattr.h __acl_to_xattr.h \
+	 perm_copy.h
+
+LCFLAGS = -include perm_copy.h
 
 POSIX_CFILES = \
 	acl_add_perm.c acl_calc_mask.c acl_clear_perms.c acl_copy_entry.c \
@@ -59,7 +65,7 @@ LIBACL_CFILES = \
 
 INTERNAL_CFILES = \
 	__acl_to_any_text.c __acl_to_xattr.c __acl_from_xattr.c \
-	__acl_reorder_obj_p.c __libobj.c
+	__acl_reorder_obj_p.c __libobj.c __apply_mask_to_mode.c
 
 
 default: $(LTLIBRARY)

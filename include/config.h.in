@@ -1,3 +1,6 @@
+/* Define if you have the attr/error_context.h header */
+#undef HAVE_ATTR_ERROR_CONTEXT_H
+
 /* Define if you want Posix compliant getfacl and setfacl utilities
    without extensions */
 #undef POSIXLY_CORRECT

@@ -115,6 +115,7 @@ extern void __acl_free_acl_obj(acl_obj *acl_obj_p) hidden;
 extern char *__acl_to_any_text(acl_t acl, ssize_t *len_p,
 			       const char *prefix, char separator,
 			       const char *suffix, int options) hidden;
+extern int __apply_mask_to_mode(mode_t *mode, acl_t acl) hidden;
 
 #define FOREACH_ACL_ENTRY(entry_obj_p, acl_obj_p) \
 	for( (entry_obj_p) = (acl_obj_p)->anext; \

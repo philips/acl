@@ -177,17 +177,25 @@ done
 AC_SUBST(have_zipped_manpages)
 
 dnl checks for extended attributes header and library
-AC_CHECK_HEADERS(attr/xattr.h)
+AC_CHECK_HEADERS([attr/xattr.h attr/error_context.h])
 if test "$ac_cv_header_attr_xattr_h" != "yes"; then
 	echo
 	echo 'FATAL ERROR: attr/xattr.h does not exist.'
-	echo $pkg_name cannot be built without the attr-devel package.
+	echo 'Install the extended attributes (attr) development package.'
+	echo 'Alternatively, run "make install-lib" from the attr source.'
+	exit 1
+fi
+if test "$ac_cv_header_attr_error_context_h" != "yes"; then
+	echo
+	echo 'FATAL ERROR: attr/error_context.h does not exist.'
+	echo 'Upgrade the extended attributes (attr) development package.'
+	echo 'Alternatively, run "make install-dev" from the attr source.'
 	exit 1
 fi
 AC_CHECK_LIB(attr, getxattr,, [
 	echo
 	echo 'FATAL ERROR: could not find a valid Extended Attributes library.'
-	echo 'Install either the libattr (rpm) or the libattr1 (deb) package.'
+	echo 'Install the extended attributes (attr) development package.'
 	echo 'Alternatively, run "make install-lib" from the attr source.'
 	exit 1
 ])

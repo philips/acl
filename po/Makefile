@@ -40,7 +40,9 @@ XGETTEXTFILES =	$(TOPDIR)/chacl/chacl.c \
 		$(TOPDIR)/setfacl/do_set.c \
 		$(TOPDIR)/setfacl/setfacl.c \
 		$(TOPDIR)/getfacl/getfacl.c \
-		$(TOPDIR)/libacl/acl_error.c
+		$(TOPDIR)/libacl/acl_error.c \
+		$(TOPDIR)/libacl/perm_copy_fd.c \
+		$(TOPDIR)/libacl/perm_copy_file.c
 
 default: $(LINGUAS:%=%.mo)
 

@@ -51,6 +51,13 @@ extern int acl_entries(acl_t acl);
 extern const char *acl_error(int code);
 extern int acl_get_perm(acl_permset_t permset_d, acl_perm_t perm);
 
+/* Copying permissions between files */
+struct error_context;
+extern int perm_copy_file (const char *, const char *,
+			    struct error_context *);
+extern int perm_copy_fd (const char *, int, const char *, int,
+			  struct error_context *);
+
 #ifdef __cplusplus
 }
 #endif

@@ -1,3 +1,13 @@
+2.2.6 (26 February 2003)
+* Add symbol level versioning to libacl. This improves link time
+  consistency checks. The library versions are also honored by RPM, so
+  an RPM package built against say, libacl.so.1(ACL_1.1) won't link
+  against libacl.so.1(ACL_1.0), which was not checked before.
+* Added routines to libattr for copying extended attributes -
+  perm_copy_file and perm_copy_fd.
+* Increment the libacl version number, so that the presence of
+  those functions can be checked.
+
 2.2.5 (20 February 2003)
 * Merge symbol visibility patch from Andreas for hiding symbols
   in libacl which we don't want exported, provided the compiler
