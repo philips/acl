@@ -33,7 +33,7 @@
 TOPDIR = ..
 include $(TOPDIR)/include/builddefs
 
-LSRCFILES = extensions.txt libacl.txt TODO PORTING CHANGES LICENSE
+LSRCFILES = extensions.txt libacl.txt TODO PORTING CHANGES LICENSE INSTALL
 LDIRT = *.gz
 
 default: CHANGES.gz
