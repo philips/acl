@@ -4,19 +4,19 @@ chacl \- change the access control list of a file or directory
 .SH SYNOPSIS
 .B chacl acl pathname...
 .br
-.B chacl -b acl dacl pathname...
+.B chacl \-b acl dacl pathname...
 .br
-.B chacl -d dacl pathname...
+.B chacl \-d dacl pathname...
 .br
-.B chacl -R pathname...
+.B chacl \-R pathname...
 .br
-.B chacl -D pathname...
+.B chacl \-D pathname...
 .br
-.B chacl -B pathname...
+.B chacl \-B pathname...
 .br
-.B chacl -l pathname...
+.B chacl \-l pathname...
 .br
-.B chacl -r pathname...
+.B chacl \-r pathname...
 .br
 .SH DESCRIPTION
 .I chacl
@@ -54,7 +54,7 @@ indicating that the entry is a mask ACL entry.
 A null \f4name\fP in a user or group ACL entry indicates the file's
 owner or file's group.
 \f4perm\fP is the string "rwx" where each of the entries may be replaced
-by a "-" indicating no access of that type, e.g. "r-x", "--x", "---".
+by a "\-" indicating no access of that type, e.g. "r\-x", "\-\-x", "\-\-\-".
 .SH OPTIONS
 .TP
 .B \-b
@@ -104,14 +104,14 @@ To set the default and access ACLs on \f4newdir\f1 to be the
 same as on \f4olddir\f1, you could type:
 .PP
 .nf
-  \f4chacl -b `chacl -l olddir | \\
-      sed -e 's/.*\\[//' -e 's#/# #' -e 's/]$//'` newdir
+  \f4chacl \-b `chacl \-l olddir | \\
+      sed \-e 's/.*\\[//' \-e 's#/# #' \-e 's/]$//'` newdir
 \fP
 .fi
 .SH CAUTIONS
 .I chacl
 can replace the existing ACL.  To add or delete entries, you
-must first do \f4chacl -l\fP to get the existing ACL, and use the output
+must first do \f4chacl \-l\fP to get the existing ACL, and use the output
 to form the arguments to
 .IR chacl .
 .P

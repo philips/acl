@@ -278,7 +278,7 @@ write and search/execute permissions are represented by the
 and
 .Li x
 characters, in this order. Each of these characters is replaced by the
-.Li -
+.Li \-
 character to denote that a permission is absent in the ACL entry.
 When converting from the text form to the internal representation,
 permissions that are absent need not be specified.
@@ -354,7 +354,7 @@ For files that have a default ACL or an access ACL that contains more than
 the three required ACL entries, the
 .Xr ls 1
 utility in the long form produced by
-.Ic "ls -l"
+.Ic "ls \-l"
 displays a plus sign
 .No ( Li + )
 after the permission string.
@@ -388,7 +388,7 @@ utilities defined for Access Control Lists in POSIX.1e, and several
 extensions.  The implementation is fully compliant with POSIX.1e draft
 17; extensions are marked as such.
 The Access Control List manipulation functions are defined in
-the ACL library (libacl, -lacl). The POSIX compliant interfaces are
+the ACL library (libacl, \-lacl). The POSIX compliant interfaces are
 declared in the
 .Li <sys/acl.h>
 header.  Linux-specific extensions to these functions are declared in the
