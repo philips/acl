@@ -77,21 +77,29 @@ static char *
 get_token(
 	const char **text_p)
 {
-	char *token = NULL;
-	const char *ep;
+	char *token = NULL, *t;
+	const char *bp, *ep;
 
-	ep = *text_p;
-	SKIP_WS(ep);
+	bp = *text_p;
+	SKIP_WS(bp);
+	ep = bp;
 
 	while (*ep!='\0' && *ep!='\r' && *ep!='\n' && *ep!=':' && *ep!=',')
 		ep++;
-	if (ep == *text_p)
+	if (ep == bp)
 		goto after_token;
-	token = (char*)malloc(ep - *text_p + 1);
-	if (token == 0)
+	token = (char*)malloc(ep - bp + 1);
+	if (token == NULL)
 		goto after_token;
-	memcpy(token, *text_p, (ep - *text_p));
-	token[ep - *text_p] = '\0';
+	memcpy(token, bp, ep - bp);
+
+	/* Trim trailing whitespace */
+	t = token + (ep - bp - 1);
+	while (t >= token &&
+	       (*t==' ' || *t=='\t' || *t=='\n' || *t=='\r'))
+		t--;
+	*(t+1) = '\0';
+
 after_token:
 	if (*ep == ':')
 		ep++;
