@@ -115,46 +115,40 @@ CAP_FOWNER capability.)
 When a process requests access to a file, the following algorithm determines whether access is granted or not. The input to the algorithm is a set of requested permissions (read, write, execute).
 
 .SS (1) "Find a matching ACL entry"
-.IP \(bu 4
+.IP * 4
 If the user is the file owner, access is granted \fIonly\fR if the
 ACL_USER_OBJ entry contains the requested permissions.
-.IP \(bu 4
+.IP * 4
 If the ACL contains a named user (ACL_USER) entry that matches the user, then:
 .RS
-.\".IP \(bu 4
 .IP - 4
 If access is granted by that entry, continue with step \fB(2)\fR below.
-.\".IP \(bu 4
 .IP - 4
 Otherwise, access is denied.
 .RE
-.IP \(bu 4
+.IP * 4
 If the user is in the owning group of the file (ACL_GROUP_OBJ entry), or if the user is member of a named group (ACL_GROUP entries), then:
 .RS
-.\".IP \(bu 4
 .IP - 4
 If either the ACL_GROUP_OBJ entry or one of the ACL_GROUP entries contains the requested permissions, continue with step \fB(2)\fR below. (Permissions of multiple ACL entries are
 .I not
 accumulated.)
-.\".IP \(bu 4
 .IP - 4
 Otherwise, access is denied.
 .RE
-.IP \(bu 4
+.IP * 4
 If none of the above rules match, then
 .RS
-.\".IP \(bu 4
 .IP - 4
 If the ACL_OTHER entry contains the requested permissions, access is
 granted.
-.\".IP \(bu 4
 .IP - 4
 Otherwise, access is denied.
 .RE
 .SS (2) Check the access mask
-.IP \(bu 4
+.IP * 4
 If the access mask (ACL_MASK) contains the requested permissions, access is granted.
-.IP \(bu 4
+.IP * 4
 Otherwise, access is denied.
 .SH DEFAULT ACCESS CONTROL LISTS
 Directories may have a default ACL, in addition to the regular ACL. While the
@@ -171,23 +165,23 @@ Traditionally, the effective access rights to new files are determined by combin
 and the create permissions. The default ACL replaces the role of the
 .BR umask .
 The following steps are taken when a file is created inside a directory which has a default ACL:
-.IP \(bu 4
+.IP * 4
 The new file inherits the directory's default ACL as its access ACL.
-.IP \(bu 4
+.IP * 4
 The permissions of the new file's access ACL are modified in the following way:
 .RS
-.IP \(bu 4
+.IP - 4
 The ACL_USER entry is set to the union of the value determied by the default ACL and the user bits of the create permissions.
-.IP \(bu 4
+.IP - 4
 The ACL_OTHER entry is set to the union of the value determined by the default ACL and the other bits of the create permissions.
-.IP \(bu 4
+.IP - 4
 If the new file's ACL contains an ACL_MASK entry, the permission bits of the ACL_MASK entry are set to the group bits of the create permissions. If the new file's ACL does not contain an ACL_MASK entry, the permission bits of the ACL_GROUP_OBJ entry are set to the group bits of the create permissions.
 .RE
-.IP \(bu 4
+.IP * 4
 The user and other part of the new file's mode bits are set to the ACL_USER_OBJ and ACL_OTHER permission bits, respectively.
-.IP \(bu 4
+.IP * 4
 If the new file's ACL contains an ACL_MASK entry, the group bits of the new file's mode field are set to the ACL_MASK entry permission bits. If the new file's ACL does not contain an ACL_MASK entry, the group bits of the new file's mode field are set to the ACL_GROUP_OBJ entry permission bits.
-.IP \(bu 4
+.IP * 4
 If the new file is a directory, it inherits the parent directory's default ACL as its own default ACL.
 .PP
 For directories without a default ACL, the
@@ -223,9 +217,9 @@ userspace NFS daemon has not been patched yet.) The file mode permission
 sent are a subset of the real file mode permission bits. They are changed
 as follows:
 
-.IP \(bu 4
+.IP * 4
 The group file mode permission bits are set to the intersection of the ACL_GROUP_OBJ and the ACL_MASK ACL entry.
-.IP \(bu 4
+.IP * 4
 The others file mode permission bits are set to the intersection of all
 ACL entries excluding the ACL_USER_OBJ entry.
 .PP
@@ -251,11 +245,11 @@ utility is traditionally used to change the file mode permission bits.
 Changing the permission bits using
 .B chmod
 has the following effect on an ACL that is associated with a file:
-.IP \(bu 4
+.IP * 4
 The new user permission bits replace the permissions of the owner ACL entry.
-.IP \(bu 4
+.IP * 4
 The new group permission bits replace the permission bits of the mask ACL entry if a mask ACL entry exists. The new group permission bits replace the permission bits of the owning group ACL entry if no mask ACL entry exists.
-.IP \(bu 4
+.IP * 4
 The new others permission bits replace the permissions of the others ACL entry.
 .PP
 .fam T

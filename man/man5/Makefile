@@ -47,3 +47,13 @@ install : default
 	$(INSTALL) -m 755 -d $(MAN_DEST)
 	$(INSTALL_MAN)
 install-dev install-lib:
+
+html : $(MAN_PAGES:%=%.html)
+ps : $(MAN_PAGES:%=%.ps)
+
+%.$(MAN_SECTION).ps : %.$(MAN_SECTION)
+	groff -man -T ps $< > $@
+
+%.$(MAN_SECTION).html : %.$(MAN_SECTION)
+	groff -man -T html $< > $@
+
