@@ -22,7 +22,7 @@ struct __acl_permset_ext {
 };
 struct acl_permset_obj_tag {
 	obj_prefix		o_prefix;
-	struct __acl_permset_ext i __attribute__ ((packed));
+	struct __acl_permset_ext i;
 };
 
 #define sperm i.s_perm
@@ -38,7 +38,7 @@ struct __qualifier_ext {
 
 struct qualifier_obj_tag {
 	obj_prefix		o_prefix;
-	struct __qualifier_ext	i __attribute__ ((packed));
+	struct __qualifier_ext	i;
 };
 
 #define qid i.q_id
@@ -61,7 +61,7 @@ struct __acl_entry_ext {
 
 struct acl_entry_obj_tag {
 	obj_prefix              o_prefix;
-	struct __acl_entry_ext	i __attribute__ ((packed));
+	struct __acl_entry_ext	i;
 };
 	
 #define econtainer i.e_container
@@ -88,7 +88,7 @@ struct __acl_ext {
 };
 struct acl_obj_tag {
 	obj_prefix              o_prefix;
-	struct __acl_ext	i __attribute__ ((packed));
+	struct __acl_ext	i;
 };
 
 #define aprev i.a_prev

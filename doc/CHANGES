@@ -1,3 +1,8 @@
+2.0.16 (08 August 2002)
+* Fix an IA64 alignment issue affecting the libacl __acl_to_any_text
+  (internal) routine
+* Updated libacl version number from libacl.so.1.0.2 to libacl.so.1.0.3
+
 2.0.15 (08 July 2002)
 * Fix configure warning (autoconf 2.13) - namely:
 	"AC_TRY_RUN called without default to allow cross compiling"

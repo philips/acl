@@ -32,10 +32,9 @@
 /* prefix for all objects */
 /* [Note: p_magic is a long rather than int so that this structure */
 /* does not become padded by the compiler on 64-bit architectures] */
-/* [Note2: Try to pack structures instead, to avoid wasting RAM] */
 
 typedef struct {
-	int			p_magic;
+	long			p_magic;
 } obj_prefix;
 
 #define pmagic i.p_magic
@@ -58,7 +57,7 @@ struct __string_ext {
 };
 struct string_obj_tag {
 	obj_prefix		o_prefix;
-	struct __string_ext	i __attribute__ ((packed));
+	struct __string_ext	i;
 };
 
 #define sstr i.s_str
