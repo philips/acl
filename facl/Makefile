@@ -36,6 +36,7 @@ include $(TOPDIR)/include/builddefs
 GETFACL = getfacl
 SETFACL = setfacl
 
+HFILES	= parse.h sequence.h user_group.h walk_tree.h
 CFILES  = do_set.c parse.c sequence.c user_group.c walk_tree.c \
 	  $(GETFACL).c $(SETFACL).c
 
