@@ -1,3 +1,10 @@
+acl (1.0.2) unstable; urgency=low
+
+  * Updates to man pages.
+  * Minor rpm and deb packaging work.
+
+ -- Nathan Scott <nathans@debian.org>  Fri, 18 May 2001 15:47:54 +1000
+
 acl (1.0.0) unstable; urgency=low
 
   * Initial release.
