@@ -1,8 +1,9 @@
-acl (2.2.6-1) unstable; urgency=low
+acl (2.2.7-1) unstable; urgency=low
 
   * New upstream release
+  * Updated policy version to which this package conforms
 
- -- Nathan Scott <nathans@debian.org>  Wed, 26 Feb 2003 17:11:48 +1100
+ -- Nathan Scott <nathans@debian.org>  Thu, 27 Mar 2003 10:30:18 +1100
 
 acl (2.2.4-1) unstable; urgency=low
 

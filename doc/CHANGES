@@ -1,3 +1,8 @@
+2.2.7 (27 March 2003)
+* Cleanups to the build process, in particular the automatic rpm
+  package generation Makefile and spec file template.
+* Makepkgs script can now propagate failures back up from make.
+
 2.2.6 (26 February 2003)
 * Add symbol level versioning to libacl. This improves link time
   consistency checks. The library versions are also honored by RPM, so
