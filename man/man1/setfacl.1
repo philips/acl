@@ -244,14 +244,14 @@ option description).
 Replacing the ACL of a file
 .RS
 .fam C
-setfacl -s u::rw,g::r,o:-,g:staff:rw file
+setfacl -s u::rw-,g::r--,o::---,g:staff:rw-,m::rwx file
 .fam T
 .RE
 .PP
 Granting an additional user read access
 .RS
 .fam C
-setfacl -m u:lisa:r file
+setfacl -m u:lisa:r-- file
 .fam T
 .RE
 .\".PP
@@ -265,7 +265,7 @@ setfacl -m u:lisa:r file
 Revoking write access from all groups and all named users (using the effective rights mask)
 .RS
 .fam C
-setfacl -m m:rx file
+setfacl -m m:r-x file
 .fam T
 .RE
 .PP
