@@ -606,22 +606,6 @@ int walk_tree(const char *file)
 	return __errors;
 }
 
-char *next_line(FILE *file)
-{
-	static char line[PATH_MAX], *c;
-	if (!fgets(line, sizeof(line), file))
-		return NULL;
-
-	c = strrchr(line, '\0');
-	while (c > line && (*(c-1) == '\n' ||
-			   *(c-1) == '\r')) {
-		c--;
-		*c = '\0';
-	}
-	return line;
-}
-
-
 int main(int argc, char *argv[])
 {
 	int opt;
@@ -757,7 +741,7 @@ int main(int argc, char *argv[])
 
 				had_errors += walk_tree(line);
 			}
-			if (ferror(stdin)) {
+			if (!feof(stdin)) {
 				fprintf(stderr, _("%s: Standard input: %s\n"),
 				        progname, strerror(errno));
 				had_errors++;
