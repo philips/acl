@@ -1,3 +1,6 @@
+2.2.22 (06 January 2004)
+* Fix a permission bug in directory tree walking code.
+
 2.2.21 (10 November 2003)
 * Update Debian packaging conflict with Kerberos development package.
 

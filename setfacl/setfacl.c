@@ -298,13 +298,8 @@ static seq_t __seq;
 int __do_set(const char *file, const struct stat *stat,
              int flag, struct FTW *ftw)
 {
-	if (flag == FTW_DNR) {
-		/* Item is a directory which can't be read. */
-		fprintf(stderr, "%s: %s: %s\n",
-			progname, file, strerror(errno));
-		return 0;
-	}
-
+	int saved_errno = errno;
+	
 	/* Process the target of a symbolic link, and traverse the link,
 	   only if doing a logical walk, or if the symbolic link was
 	   specified on the command line. Always skip symbolic links if
@@ -316,6 +311,13 @@ int __do_set(const char *file, const struct stat *stat,
 
 	if (do_set(file, stat, __seq))
 		__errors++;
+
+	if (flag == FTW_DNR && opt_recursive) {
+		/* Item is a directory which can't be read. */
+		fprintf(stderr, "%s: %s: %s\n",
+			progname, file, strerror(saved_errno));
+		return 0;
+	}
 
 	/* We also get here in non-recursive mode. In that case,
 	   return something != 0 to abort nftw. */
