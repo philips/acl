@@ -37,12 +37,15 @@ ifeq ($(HAVE_BUILDDEFS), yes)
 include $(TOPDIR)/include/builddefs
 endif
 
+CONFIGURE = configure include/builddefs
 LSRCFILES = configure configure.in Makepkgs install-sh README VERSION
-LDIRT = config.* conftest* Logs/* built install.* install-dev.* *.gz
+
+LDIRT = config.log config.status config.cache confdefs.h conftest* \
+	Logs/* built .census install.* install-dev.* *.gz
 
 SUBDIRS = include libacl chacl man doc debian build
 
-default: configure
+default: $(CONFIGURE)
 ifeq ($(HAVE_BUILDDEFS), no)
 	$(MAKE) -C . $@
 else
@@ -55,10 +58,10 @@ else
 clean:	# if configure hasn't run, nothing to clean
 endif
 
-configure: configure.in include/builddefs.in VERSION
-	rm -f config.cache
+$(CONFIGURE):
 	autoconf
 	./configure
+	touch .census
 
 install: default
 	$(SUBDIRS_MAKERULE)
@@ -69,5 +72,5 @@ install-dev: default
 	$(SUBDIRS_MAKERULE)
 
 realclean distclean: clean
-	rm -f $(LDIRT) configure include/builddefs
+	rm -f $(LDIRT) $(CONFIGURE)
 	[ ! -d Logs ] || rmdir Logs
