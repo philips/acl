@@ -22,3 +22,5 @@
 # define textdomain(d)		do { } while (0)
 # define bindtextdomain(d,dir)	do { } while (0)
 #endif
+#include <locale.h>
+
