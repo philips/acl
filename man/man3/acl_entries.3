@@ -14,50 +14,53 @@
 .\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 .\" SUCH DAMAGE.
 .\"
-.TH ACL_ENTRIES 3 "Linux ACL Library" "March 2002" "Access Control Lists"
-.SH NAME
-acl_entries \- return the number of entries in an ACL
-.SH LIBRARY
+.Dd March 23, 2002
+.Dt ACL_ENTRIES 3
+.Os "Linux ACL"
+.Sh NAME
+.Nm acl_entries
+.Nd return the number of entries in an ACL
+.Sh LIBRARY
 Linux Access Control Lists library (libacl, \-lacl).
-.SH C SYNOPSIS
-.sp
-.nf
-.B #include <sys/types.h>
-.B #include <sys/acl.h>
-.sp
-.B "int acl_entries (acl_t \f2acl\f3);"
-.Op
-.SH DESCRIPTION
+.Sh SYNOPSIS
+.In sys/types.h
+.In acl/libacl.h
+.Ft int
+.Fn acl_entries "acl_t acl"
+.Sh DESCRIPTION
 The
-.B acl_entries
+.Fn acl_entries
 function returns the number of ACL entries that are contained in the ACL referred to by the argument
-.IR acl .
-.SH RETURN VALUE
+.Va acl .
+.Sh RETURN VALUE
 The
-.B acl_entries
+.Fn acl_entries
 function returns the number of entries in
-.I acl
-if successful; otherwise the value -1 is returned and the global variable
-.B errno
+.Va acl
+if successful; otherwise the value
+.Li -1
+is returned and the global variable
+.Va errno
 is set to indicate the error.
-.SH ERRORS
+.Sh ERRORS
 If any of the following conditions occur, the
-.B acl_entries
-function returns -1 and sets
-.B errno
+.Fn acl_entries
+function returns
+.Li -1
+and sets
+.Va errno
 to the corresponding value:
-.TP
-.SM
-\%[EINVAL]
+.Bl -tag -width Er
+.It Bq Er EINVAL
 The argument
-.I acl
+.Va acl
 is not a valid pointer to an ACL.
-.SH STANDARDS
+.El
+.Sh STANDARDS
 This is a non-portable, Linux specific extension to the ACL manipulation
 functions defined in IEEE Std 1003.1e draft 17 (\(lqPOSIX.1e\(rq, abandoned).
-.SH AUTHOR
+.Sh SEE ALSO
+.Xr acl 5
+.Sh AUTHOR
 Written by
-.I "Andreas Gruenbacher"
-<a.gruenbacher@computer.org>.
-.SH SEE ALSO
-.BR acl (5)
+.An "Andreas Gruenbacher" Aq a.gruenbacher@computer.org .

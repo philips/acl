@@ -14,100 +14,93 @@
 .\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 .\" SUCH DAMAGE.
 .\"
-.TH ACL_SET_QUALIFIER 3 "Linux ACL Library" "March 2002" "Access Control Lists"
-.SH NAME
-acl_set_qualifier \- set the qualifier of an ACL entry
-.SH LIBRARY
+.Dd March 23, 2002
+.Dt ACL_SET_QUALIFIER 3
+.Os "Linux ACL"
+.Sh NAME
+.Nm acl_set_qualifier
+.Nd set the qualifier of an ACL entry
+.Sh LIBRARY
 Linux Access Control Lists library (libacl, \-lacl).
-.SH SYNOPSIS
-.sp
-.nf
-.B #include <sys/types.h>
-.B #include <sys/acl.h>
-.sp
-.B "int acl_set_qualifier (acl_entry_t \f2entry_d\f3, "
-.B "                       const void *\f2qualifier_p\f3);"
-.Op
-.SH DESCRIPTION
+.Sh SYNOPSIS
+.In sys/types.h
+.In sys/acl.h
+.Ft int
+.Fn acl_set_qualifier "acl_entry_t entry_d" "const void *qualifier_p"
+.Sh DESCRIPTION
 The
-.B acl_set_qualifier
+.Fn acl_set_qualifier
 function sets the qualifier of the ACL entry indicated by the argument
-.I entry_d
+.Va entry_d
 to the value referred to by the argument
-.IR qualifier_p .
+.Va qualifier_p .
 If the value of the tag type in the ACL entry referred to by
-.I entry_d
+.Va entry_d
 is ACL_USER, then the value referred to by
-.I qualifier_p
+.Va qualifier_p
 shall be of type
-.BR uid_t .
+.Va uid_t .
 If the value of the tag type in the ACL entry referred to by
-.I entry_d
+.Va entry_d
 is ACL_GROUP, then the value referred to by
-.I qualifier_p
+.Va qualifier_p
 shall be of type
-.BR gid_t .
+.Va gid_t .
 If the value of the tag type in the ACL entry referred to by
-.I entry_d
+.Va entry_d
 is a tag type for which a qualifier is not supported, 
-.B acl_set_qualifier
+.Fn acl_set_qualifier
 returns an error.
-.PP
+.Pp
 Any ACL entry descriptors that refer to the entry referred to by
-.I entry_d
+.Va entry_d
 continue to refer to that entry. This function may cause memory to be
 allocated. The caller should free any releasable memory, when the ACL
 is no longer required, by calling
-.BR acl_free (3)
+.Fn acl_free
 with a pointer to the ACL as argument.
-.SH RETURN VALUE
-The value 0 is returned if successful; otherwise the value -1 is
-returned and the global variable errno is set to indicate the error.
-.SH ERRORS
+.Sh RETURN VALUE
+.Rv -std acl_set_qualifier
+.Sh ERRORS
 If any of the following conditions occur, the
-.B acl_set_qualifier
-function returns -1 and sets
-.B errno
+.Fn acl_set_qualifier
+function returns
+.Li -1
+and sets
+.Va errno
 to the corresponding value:
-.TP
-.SM
-\%[EINVAL]
+.Bl -tag -width Er
+.It Bq Er EINVAL
 The argument
-.I entry_d
+.Va entry_d
 is not a valid descriptor for an ACL entry.
-.TP
-.SM
-\%[EINVAL]
-The value of the tag type in the ACL entry referenced by the
-.I entry_d
-argument is neither ACL_USER nor ACL_GROUP.
-.TP
-.SM
-\%[EINVAL]
+.Pp
+The value of the tag type in the ACL entry referenced by the argument
+.Va entry_d
+is neither ACL_USER nor ACL_GROUP.
+.Pp
 The value pointed to by the argument
-.I qualifier_p
+.Va qualifier_p
 is not valid.
-.TP
-.SM
-\%[ENOMEM]
+.It Bq Er ENOMEM
 The
-.B acl_set_qualifier
+.Fn acl_set_qualifier
 function is unable to allocate the memory required for the ACL qualifier.
-.SH STANDARDS
+.El
+.Sh STANDARDS
 IEEE Std 1003.1e draft 17 (\(lqPOSIX.1e\(rq, abandoned)
-.SH AUTHOR
+.Sh SEE ALSO
+.Xr acl_create_entry 3 ,
+.Xr acl_free 3 ,
+.Xr acl_get_permset 3 ,
+.Xr acl_get_qualifier 3 ,
+.Xr acl_get_tag_type 3 ,
+.Xr acl_set_entry 3 ,
+.Xr acl_set_permset 3 ,
+.Xr acl_set_tag_type 3 ,
+.Xr acl 5
+.Sh AUTHOR
 Derived from the FreeBSD manual pages written by
-.IR "Robert N M Watson" ;
+.An "Robert N M Watson" Aq rwatson@FreeBSD.org ,
 and adapted for Linux by
-.I "Andreas Gruenbacher"
-<a.gruenbacher@computer.org>.
-.SH SEE ALSO
-.BR acl_create_entry (3),
-.BR acl_set_entry (3),
-.BR acl_get_qualifier (3),
-.BR acl_get_tag_type (3),
-.BR acl_set_tag_type (3),
-.BR acl_get_permset (3),
-.BR acl_set_permset (3),
-.BR acl_free (3),
-.BR acl (5)
+.An "Andreas Gruenbacher" Aq a.gruenbacher@computer.org .

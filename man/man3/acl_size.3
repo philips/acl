@@ -14,62 +14,65 @@
 .\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 .\" SUCH DAMAGE.
 .\"
-.TH ACL_SIZE 3 "Linux ACL Library" "March 2002" "Access Control Lists"
-.SH NAME
-acl_size \- get the size of the external representation of an ACL
-.SH LIBRARY
+.Dd March 23, 2002
+.Dt ACL_SIZE 3
+.Os "Linux ACL"
+.Sh NAME
+.Nm acl_size
+.Nd get the size of the external representation of an ACL
+.Sh LIBRARY
 Linux Access Control Lists library (libacl, \-lacl).
-.SH SYNOPSIS
-.sp
-.nf
-.B #include <sys/types.h>
-.B #include <sys/acl.h>
-.sp
-.B "ssize_t acl_size (acl_t \f2acl\f3);"
-.Op
-.SH DESCRIPTION
+.Sh SYNOPSIS
+.In sys/types.h
+.In sys/acl.h
+.Ft ssize_t
+.Fn acl_size "acl_t acl"
+.Sh DESCRIPTION
 The
-.B acl_size
+.Fn acl_size
 function return the size, in bytes, of the buffer required to hold the exportable, contiguous, persistent form of the ACL pointed to by the argument
-.IR acl ,
+.Va acl ,
 when converted by
-.BR acl_copy_ext (3).
-.PP
+.Fn acl_copy_ext .
+.Pp
 Any existing ACL entry descriptors that refer to entries in
-.I acl
+.Va acl
 continue to refer to the same entries. Any existing ACL pointers that refer
 to the ACL referred to by
-.I acl
+.Va acl
 continue to refer to the ACL. The order of ACL entries within
-.I acl
+.Va acl
 remains unchanged.
-.SH RETURN VALUE
+.Sh RETURN VALUE
 Upon successful completion, the
-.B acl_size
+.Fn acl_size
 function returns the size in bytes of the contiguous, persistent form of
-the ACL. Otherwise, a value of (ssize_t)-1 is returned and
-.B errno
+the ACL. Otherwise, a value of
+.Li (ssize_t)-1
+is returned and
+.Va errno
 is set to indicate the error.
-.SH ERRORS
+.Sh ERRORS
 If any of the following conditions occur, the
-.BR acl_size (3)
-function returns a value of (ssize_t)-1 and sets
-.B errno
+.Fn acl_size
+function returns a value of
+.Li (ssize_t)-1
+and sets
+.Va errno
 to the corresponding value:
-.TP
-.SM
-\%[EINVAL]
+.Bl -tag -width Er
+.It Bq Er EINVAL
 The argument
-.I acl
+.Va acl
 is not a valid pointer to an ACL.
-.SH STANDARDS
+.El
+.Sh STANDARDS
 IEEE Std 1003.1e draft 17 (\(lqPOSIX.1e\(rq, abandoned)
-.SH AUTHOR
+.Sh SEE ALSO
+.Xr acl_copy_ext 3 ,
+.Xr acl 5
+.Sh AUTHOR
 Derived from the FreeBSD manual pages written by
-.IR "Robert N M Watson" ;
+.An "Robert N M Watson" Aq rwatson@FreeBSD.org ,
 and adapted for Linux by
-.I "Andreas Gruenbacher"
-<a.gruenbacher@computer.org>.
-.SH SEE ALSO
-.BR acl_copy_ext (3),
-.BR acl (5)
+.An "Andreas Gruenbacher" Aq a.gruenbacher@computer.org .

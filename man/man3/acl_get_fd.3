@@ -14,67 +14,76 @@
 .\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 .\" SUCH DAMAGE.
 .\"
-.TH ACL_GET_FD 3 "Linux ACL Library" "March 2002" "Access Control Lists"
-.SH NAME
-acl_get_fd \- get an ACL by file descriptor
-.SH LIBRARY
+.Dd March 23, 2002
+.Dt ACL_GET_FD 3
+.Os "Linux ACL"
+.Sh NAME
+.Nm acl_get_fd
+.Nd get an ACL by file descriptor
+.Sh LIBRARY
 Linux Access Control Lists library (libacl, \-lacl).
-.SH C SYNOPSIS
-.sp
-.nf
-.B #include <sys/types.h>
-.B #include <sys/acl.h>
-.sp
-.B "acl_t acl_get_fd (const char *\f2fd\f3);"
-.Op
-.SH DESCRIPTION
+.Sh SYNOPSIS
+.In sys/types.h
+.In sys/acl.h
+.Ft acl_t
+.Fn acl_get_fd "int fd"
+.Sh DESCRIPTION
 The
-.B acl_get_fd
+.Fn acl_get_fd
 function retrieves the access ACL associated with the file referred to by
-.IR fd .
+.Va fd .
 The ACL is placed into working storage and
-.B acl_get_fd
+.Fn acl_get_fd
 returns a pointer to that storage.
-.PP
+.Pp
 In order to read an ACL from an object, a process must have read access to
 the object's attributes.
-.PP
+.Pp
 This function may cause memory to be allocated.  The caller should free any
 releasable memory, when the new ACL is no longer required, by calling
-.BR acl_free (3)
-with the (void*)acl_t returned by
-.B acl_get_fd
+.Xr acl_free 3
+with the
+.Va (void*)acl_t
+returned by
+.Fn acl_get_fd
 as an argument.
-.SH RETURN VALUE
+.Sh RETURN VALUE
 Upon successful completion, this function shall return a pointer to the
-working storage.  Otherwise, a value of (acl_t)NULL shall be returned, and
-.B errno
+working storage.  Otherwise, a value of
+.Li (acl_t)NULL
+shall be returned, and
+.Va errno
 shall be set to indicate the error.
-.SH ERRORS
+.Sh ERRORS
 If any of the following conditions occur, the
-.B acl_get_fd
-function returns a value of (acl_t)NULL and sets
-.B errno
+.Fn acl_get_fd
+function returns a value of
+.Li (acl_t)NULL
+and sets
+.Va errno
 to the corresponding value:
-.TP
-.SM
-\%[ENOMEM]
+.Bl -tag -width Er
+.It Bq Er EBADF
+The
+.Va fd
+argument is not a valid file descriptor.
+.It Bq Er ENOMEM
 The ACL working storage requires more memory than is allowed by the hardware or system-imposed memory management constraints.
-.TP
-.SM
-\%[ENOTSUP]
+.It Bq Er ENOTSUP
 The file system on which the file identified by
-.I fd
+.Va fd
 is located does not support ACLs, or ACLs are disabled.
-.SH STANDARDS
+.El
+.Sh STANDARDS
 IEEE Std 1003.1e draft 17 (\(lqPOSIX.1e\(rq, abandoned)
-.SH AUTHOR
+.Sh SEE ALSO
+.Xr acl_free 3 ,
+.Xr acl_get_entry 3 ,
+.Xr acl_get_file 3 ,
+.Xr acl_set_fd 3 ,
+.Xr acl 5
+.Sh AUTHOR
 Derived from the FreeBSD manual pages written by
-.IR "Robert N M Watson" ;
+.An "Robert N M Watson" Aq rwatson@FreeBSD.org ,
 and adapted for Linux by
-.I "Andreas Gruenbacher"
-<a.gruenbacher@computer.org>.
-.SH SEE ALSO
-.BR acl_get_file (3),
-.BR acl_set_file (3),
-.BR acl (5)
+.An "Andreas Gruenbacher" Aq a.gruenbacher@computer.org .

@@ -14,108 +14,105 @@
 .\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 .\" SUCH DAMAGE.
 .\"
-.TH ACL_GET_QUALIFIER 3 "Linux ACL Library" "March 2002" "Access Control Lists"
-.SH NAME
-acl_get_qualifier \- retrieve the qualifier from an ACL entry
-.SH LIBRARY
+.Dd March 23, 2002
+.Dt ACL_GET_QUALIFIER 3
+.Os "Linux ACL"
+.Sh NAME
+.Nm acl_get_qualifier
+.Nd retrieve the qualifier from an ACL entry
+.Sh LIBRARY
 Linux Access Control Lists library (libacl, \-lacl).
-.SH C SYNOPSIS
-.sp
-.nf
-.B #include <sys/types.h>
-.B #include <sys/acl.h>
-.sp
-.B "void * acl_get_qualifier (acl_entry_t \f2entry_d\f3);"
-.Op
-.SH DESCRIPTION
+.Sh SYNOPSIS
+.In sys/types.h
+.In sys/acl.h
+.Ft void *
+.Fn acl_get_qualifier "acl_entry_t entry_d"
+.Sh DESCRIPTION
 The
-.B acl_get_qualifier
+.Fn acl_get_qualifier
 function retrieves the qualifier from the ACL entry indicated by the argument
-.I entry_d
+.Va entry_d
 into working storage and returns a pointer to that storage.
-.PP
+.Pp
 If the value of the tag type in the ACL entry referred to by
-.I entry_d
+.Va entry_d
 is ACL_USER, then the value returned by
-.B acl_get_qualifier
+.Fn acl_get_qualifier
 is a pointer to type
-.BR uid_t .
+.Va uid_t .
 If the value of the tag type in the ACL entry referred to by
-.I entry_d
+.Va entry_d
 is ACL_GROUP, then the value returned by
-.B acl_get_qualifier
+.Fn acl_get_qualifier
 is a pointer to type
-.IR gid_t .
+.Va gid_t .
 If the tag type in the ACL entry referred to by
-.I entry_d
+.Va entry_d
 is a tag type for which a qualifier is not supported,
-.B acl_get_qualifier
-returns a value of NULL
+.Fn acl_get_qualifier
+returns a value of
+.Li (void *)NULL
 and the function fails. Subsequent operations using the returned pointer
-operate on an independent copy of the qualifier in working storage, and
-will not change the qualifier of the ACL entry.
-.PP
+operate on an independent copy of the qualifier in working storage, and will not change the qualifier of the ACL entry.
+.Pp
 This function may cause memory to be allocated. The caller should free any
 releasable memory, when the new qualifier is no longer required, by calling
-.B acl_free
+.Fn acl_free
 with the
-.B "void *"
+.Va void *
 value returned by
-.B acl_get_qualifier
+.Fn acl_get_qualifier
 as an argument.
-.PP
+.Pp
 The argument
-.I entry_d
+.Va entry_d
 and any other ACL entry descriptors that refer to entries within the ACL
 containing the entry referred to by
-.I entry_d
+.Va entry_d
 continue to refer to those entries. The order of all existing
 entries in the ACL containing the entry referred to by
-.I entry_d
+.Va entry_d
 remains unchanged.
-.SH RETURN VALUE
-Upon successful completion, the function returns a pointer to the tag
-qualifier that was retrieved into ACL working storage. Otherwise, a value
-of NULL is returned and
-.B errno
+.Sh RETURN VALUE
+Upon successful completion, the function returns a pointer to the tag qualifier that was retrieved into ACL working storage. Otherwise, a value of
+.Li (void *)NULL
+is returned and
+.Va errno
 is set to indicate the error.
-.SH ERRORS
+.Sh ERRORS
 If any of the following conditions occur, the
-.B acl_get_qualifier
-function returns (void *)NULL and sets
-.B errno
+.Fn acl_get_qualifier
+function returns
+.Li (void *)NULL
+and sets
+.Va errno
 to the corresponding value:
-.TP
-.SM
-\%[EINVAL]
+.Bl -tag -width Er
+.It Bq Er EINVAL
 The argument
-.I entry_d
+.Va entry_d
 is not a valid descriptor for an ACL entry.
-.TP
-.SM
-\%[EINVAL]
-The value of the tag type in the ACL entry referenced by the
-.I entry_d
-argument is neither ACL_USER nor ACL_GROUP.
-.TP
-.SM
-\%[ENOMEM]
+.Pp
+The value of the tag type in the ACL entry referenced by the argument
+.Va entry_d
+is neither ACL_USER nor ACL_GROUP.
+.It Bq Er ENOMEM
 The value to be returned requires more memory than is allowed by the hardware or system-imposed memory management constraints.
-.SH STANDARDS
+.El
+.Sh STANDARDS
 IEEE Std 1003.1e draft 17 (\(lqPOSIX.1e\(rq, abandoned)
-.SH AUTHOR
+.Sh SEE ALSO
+.Xr acl_create_entry 3 ,
+.Xr acl_free 3 ,
+.Xr acl_get_entry 3 ,
+.Xr acl_get_permset 3 ,
+.Xr acl_get_tag_type 3 ,
+.Xr acl_set_permset 3 ,
+.Xr acl_set_qualifier 3 ,
+.Xr acl_set_tag_type 3 ,
+.Xr acl 5
+.Sh AUTHOR
 Derived from the FreeBSD manual pages written by
-.IR "Robert N M Watson" ;
+.An "Robert N M Watson" Aq rwatson@FreeBSD.org ,
 and adapted for Linux by
-.I "Andreas Gruenbacher"
-<a.gruenbacher@computer.org>.
-.SH SEE ALSO
-.BR acl_create_entry (3),
-.BR acl_get_entry (3),
-.BR acl_set_qualifier (3),
-.BR acl_get_tag_type (3),
-.BR acl_set_tag_type (3),
-.BR acl_get_permset (3),
-.BR acl_set_permset (3),
-.BR acl_free (3),
-.BR acl (5)
+.An "Andreas Gruenbacher" Aq a.gruenbacher@computer.org .

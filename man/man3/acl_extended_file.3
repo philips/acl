@@ -14,73 +14,95 @@
 .\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 .\" SUCH DAMAGE.
 .\"
-.TH ACL_EXTENDED_FILE 3 "Linux ACL Library" "March 2002" "Access Control Lists"
-.SH NAME
-acl_extended_file \- test for information in ACLs by file name
-.SH LIBRARY
+.Dd March 23, 2002
+.Dt ACL_EXTENDED_FILE 3
+.Os "Linux ACL"
+.Sh NAME
+.Nm acl_extended_file
+.Nd test for information in ACLs by file name
+.Sh LIBRARY
 Linux Access Control Lists library (libacl, \-lacl).
-.SH C SYNOPSIS
-.sp
-.nf
-.B #include <sys/types.h>
-.B #include <sys/acl.h>
-.sp
-.B "int acl_extended_file (const char *\f2path_p\f3);"
-.Op
-.SH DESCRIPTION
+.Sh SYNOPSIS
+.In sys/types.h
+.In acl/libacl.h
+.Ft int
+.Fn acl_extended_file "const char *path_p"
+.Sh DESCRIPTION
 The
-.B acl_extended_file
-function returns 1 if the file or directory referred to by the argument
-.I path_p
+.Fn acl_extended_file
+function returns
+.Li 1
+if the file or directory referred to by the argument
+.Va path_p
 is associated with an extended access ACL, or if the directory referred to by
-.I path_p
-is associated with a default ACL. The function returns 0
+.Va path_p
+is associated with a default ACL. The function returns
+.Li 0
 if the file has neither an extended access ACL nor a default ACL.
-.PP
+.Pp
 An extended ACL is an ACL that contains entries other than the three
 required entries of tag types ACL_USER_OBJ, ACL_GROUP_OBJ and ACL_OTHER.
 If the result of the
-.B acl_extended_file
-function for a file object is 0,
+.Fn acl_extended_file
+function for a file object is
+.Li 0 ,
 then ACLs define no discretionary access rights other than those
 already defined by the traditional file permission bits.
-.PP
+.Pp
 Access to the file object may be further restricted by other
 mechanisms, such as Mandatory Access Control schemes. The
-.BR access (2)
+.Xr access 2
 system call can be used to check whether a given type of access to a file
 object would be granted.
-.SH RETURN VALUE
+.Sh RETURN VALUE
 If successful, the
-.B acl_extended_file
-function returns 1 if the file object referred to by
-.I path_p
-has an extended access ACL or a default ACL, and 0
+.Fn acl_extended_file
+function returns
+.Li 1
 if the file object referred to by
-.I path_p
+.Va path_p
+has an extended access ACL or a default ACL, and
+.Li 0
+if the file object referred to by
+.Va path_p
 has neither an extended access ACL nor a default ACL. Otherwise, the value
--1 is returned and the global variable
-.B errno
+.Li -1
+is returned and the global variable
+.Va errno
 is set to indicate the error.
-.SH ERRORS
+.Sh ERRORS
 If any of the following conditions occur, the
-.B acl_extended_file
-function returns -1 and sets
-.B errno
+.Fn acl_extended_file
+function returns
+.Li -1
+and sets
+.Va errno
 to the corresponding value:
-.TP
-.SM
-\%[ENOTSUP]
+.Bl -tag -width Er
+.It Bq Er EACCES
+Search permission is denied for a component of the path prefix.
+.It Bq Er ENAMETOOLONG
+The length of the argument
+.Va path_p
+is too long.
+.It Bq Er ENOENT
+The named object does not exist or the argument
+.Va path_p
+points to an empty string.
+.It Bq Er ENOTDIR
+A component of the path prefix is not a directory.
+.It Bq Er ENOTSUP
 The file system on which the file identified by
-.I path_p
+.Va path_p
 is located does not support ACLs, or ACLs are disabled.
-.SH STANDARDS
+.El
+.Sh STANDARDS
 This is a non-portable, Linux specific extension to the ACL manipulation
 functions defined in IEEE Std 1003.1e draft 17 (\(lqPOSIX.1e\(rq, abandoned).
-.SH AUTHOR
+.Sh SEE ALSO
+.Xr access 2 ,
+.Xr acl_get_file 3 ,
+.Xr acl 5
+.Sh AUTHOR
 Written by
-.I "Andreas Gruenbacher"
-<a.gruenbacher@computer.org>.
-.SH SEE ALSO
-.BR access (2),
-.BR acl (5)
+.An "Andreas Gruenbacher" Aq a.gruenbacher@computer.org .

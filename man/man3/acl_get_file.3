@@ -14,93 +14,107 @@
 .\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 .\" SUCH DAMAGE.
 .\"
-.TH ACL_GET_FILE 3 "Linux ACL Library" "March 2002" "Access Control Lists"
-.SH NAME
-acl_get_file \- get an ACL by filename
-.SH LIBRARY
+.Dd March 23, 2002
+.Dt ACL_GET_FILE 3
+.Os "Linux ACL"
+.Sh NAME
+.Nm acl_get_file
+.Nd get an ACL by filename
+.Sh LIBRARY
 Linux Access Control Lists library (libacl, \-lacl).
-.SH C SYNOPSIS
-.sp
-.nf
-.B #include <sys/types.h>
-.B #include <sys/acl.h>
-.sp
-.B "acl_t acl_get_file (const char *\f2path_p\f3, acl_type_t \f2type\f3);"
-.Op
-.SH DESCRIPTION
+.Sh SYNOPSIS
+.In sys/types.h
+.In sys/acl.h
+.Ft acl_t
+.Fn acl_get_file "const char *path_p" "acl_type_t type"
+.Sh DESCRIPTION
 The
-.B acl_get_file
+.Fn acl_get_file
 function retrieves the access ACL associated with a file or directory, or the default ACL associated with a directory. The pathname for the file or directory is pointed to by the argument
-.IR path_p .
+.Va path_p .
 The ACL is placed into working storage and
-.B acl_get_file
+.Fn acl_get_file
 returns a pointer to that storage.
-.PP
+.Pp
 In order to read an ACL from an object, a process must have read access to
 the object's attributes.
-.PP
+.Pp
 The value of the argument
-.I type
+.Va type
 is used to indicate whether the access ACL or the default ACL associated with
-.I path_p
+.Va path_p
 is returned. If
-.I type
+.Va type
 is ACL_TYPE_ACCESS, the access ACL of
-.I path_p
-is returned.
-If
-.I type
+.Va path_p
+is returned. If
+.Va type
 is ACL_TYPE_DEFAULT, the default ACL of
-.I path_p
-is returned.
-If
-.I type
+.Va path_p
+is returned. If
+.Va type
 is TYPE_DEFAULT and no default ACL is associated with
-.IR path_p ,
+.Va path_p ,
 then an ACL containing zero ACL entries is returned.
-.PP
+.Pp
 This function may cause memory to be allocated.  The caller should free any
 releasable memory, when the new ACL is no longer required, by calling
-.BR acl_free (3)
-with the (void*)acl_t returned by
-.B acl_get_file
+.Xr acl_free 3
+with the
+.Va (void*)acl_t
+returned by
+.Fn acl_get_file
 as an argument.
-.SH RETURN VALUE
+.Sh RETURN VALUE
 Upon successful completion, this function returns a pointer to the
-working storage.  Otherwise, a value of (acl_t)NULL is returned, and
-.B errno
+working storage.  Otherwise, a value of
+.Li (acl_t)NULL
+is returned, and
+.Va errno
 is set to indicate the error.
-.SH ERRORS
+.Sh ERRORS
 If any of the following conditions occur, the
-.B acl_get_file
-function returns a value of (acl_t)NULL and sets
-.B errno
+.Fn acl_get_file
+function returns a value of
+.Li (acl_t)NULL
+and sets
+.Va errno
 to the corresponding value:
-.TP
-.SM
-\%[EINVAL]
+.Bl -tag -width Er
+.It Bq Er EACCES
+Search permission is denied for a component of the path prefix or the
+object exists and the process does not have appropriate access rights.
+.It Bq Er EINVAL
 The argument
-.I type
+.Va type
 is not ACL_TYPE_ACCESS or ACL_TYPE_DEFAULT.
-.TP
-.SM
-\%[ENOMEM]
+.It Bq Er ENAMETOOLONG
+The length of the argument
+.Va path_p
+is too long.
+.It Bq Er ENOENT
+The named object does not exist or the argument
+.Va path_p
+points to an empty string.
+.It Bq Er ENOMEM
 The ACL working storage requires more memory than is allowed by the hardware or system-imposed memory management constraints.
-.TP
-.SM
-\%[ENOTSUP]
+.It Bq Er ENOTDIR
+A component of the path prefix is not a directory.
+.It Bq Er ENOTSUP
 The file system on which the file identified by
-.I path_p
+.Va path_p
 is located does not support ACLs, or ACLs are disabled.
-.SH STANDARDS
+.El
+.Sh STANDARDS
 IEEE Std 1003.1e draft 17 (\(lqPOSIX.1e\(rq, abandoned)
-.SH AUTHOR
+.Sh SEE ALSO
+.Xr acl_free 3 ,
+.Xr acl_get_entry 3 ,
+.Xr acl_get_fd 3 ,
+.Xr acl_set_file 3 ,
+.Xr acl 5
+.Sh AUTHOR
 Derived from the FreeBSD manual pages written by
-.IR "Robert N M Watson" ;
+.An "Robert N M Watson" Aq rwatson@FreeBSD.org ,
 and adapted for Linux by
-.I "Andreas Gruenbacher"
-<a.gruenbacher@computer.org>.
-.SH SEE ALSO
-.BR acl_get_fd (3),
-.BR acl_set_file (3),
-.BR acl (5)
+.An "Andreas Gruenbacher" Aq a.gruenbacher@computer.org .

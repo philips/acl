@@ -14,85 +14,91 @@
 .\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 .\" SUCH DAMAGE.
 .\"
-.TH ACL_FROM_TEXT 3 "Linux ACL Library" "March 2002" "Access Control Lists"
-.SH NAME
-acl_to_text \- convert an ACL to text
-.SH LIBRARY
+.Dd March 23, 2002
+.Dt ACL_FROM_TEXT 3
+.Os "Linux ACL"
+.Sh NAME
+.Nm acl_to_text
+.Nd convert an ACL to text
+.Sh LIBRARY
 Linux Access Control Lists library (libacl, \-lacl).
-.SH SYNOPSIS
-.sp
-.nf
-.B #include <sys/types.h>
-.B #include <sys/acl.h>
-.sp
-.B "char * acl_to_text (acl_t \f2acl\f3, ssize_t *\f2len_p\f3);"
-.Op
-.SH DESCRIPTION
+.Sh SYNOPSIS
+.In sys/types.h
+.In sys/acl.h
+.Ft char *
+.Fn acl_to_text "acl_t acl" "ssize_t *len_p"
+.Sh DESCRIPTION
 The
-.B acl_to_text
-function translates the ACL pointed to by the
-.I acl
-argument into a NULL terminated character string.  If the pointer
-.I len_p
-is not NULL,
+.Fn acl_to_text
+function translates the ACL pointed to by the argument
+.Va acl
+into a
+.Li NULL
+terminated character string.  If the pointer
+.Va len_p
+is not
+.Li NULL ,
 then the function returns the length of the string (not
-including the NULL terminator) in the location pointed to by
-.IR len_p .
+including the
+.Li NULL
+terminator) in the location pointed to by
+.Va len_p .
 The format of the text string returned by
-.B acl_to_text
+.Fn acl_to_text
 is the long text form defined in
-.BR acl (5).
+.Xr acl 5 .
 The ACL referred to by
-.I acl
+.Va acl
 is not changed.
-.PP
+.Pp
 This function allocates any memory necessary to contain the string and
 returns a pointer to the string.  The caller should free any releasable
 memory, when the new string is no longer required, by calling
-.BR acl_free (3)
-with the (void*)char returned by
-.B acl_to_text
+.Xr acl_free 3
+with the
+.Va (void*)char
+returned by
+.Fn acl_to_text
 as an argument.
-.SH RETURN VALUE
+.Sh RETURN VALUE
 Upon successful completion, this function returns a pointer to the
 long text form of the ACL.
-Otherwise, a value of NULL is returned, and
-.B errno
+Otherwise, a value of
+.Li (char *)NULL
+is returned, and
+.Va errno
 is set to indicate the error.
-.SH ERRORS
+.Sh ERRORS
 If any of the following conditions occur, the
-.B acl_to_text
-function returns a value of NULL and sets
-.B errno
+.Fn acl_to_text
+function returns a value of
+.Li (char *)NULL
+and sets
+.Va errno
 to the corresponding value:
-.TP
-.SM
-\%[EINVAL]
+.Bl -tag -width Er
+.It Bq Er EINVAL
 The argument
-.I acl
+.Va acl
 is not a valid pointer to an ACL.
-.TP
-.SM
-\%[EINVAL]
+.Pp
 The ACL referenced by
-.I acl
+.Va acl
 contains one or more improperly formed ACL entries, or for some other
 reason cannot be translated into a text form of an ACL.
-.TP
-.SM
-\%[ENOMEM]
+.It Bq Er ENOMEM
 The character string to be returned requires more memory than is allowed
 by the hardware or system-imposed memory management constraints.
-.SH STANDARDS
+.El
+.Sh STANDARDS
 IEEE Std 1003.1e draft 17 (\(lqPOSIX.1e\(rq, abandoned)
-.SH AUTHOR
+.Sh SEE ALSO
+.Xr acl_free 3 ,
+.Xw acl_from_text 3 ,
+.Xr acl_to_any_text 3 ,
+.Xr acl 5
+.Sh AUTHOR
 Derived from the FreeBSD manual pages written by
-.IR "Robert N M Watson" ;
+.An "Robert N M Watson" Aq rwatson@FreeBSD.org ,
 and adapted for Linux by
-.I "Andreas Gruenbacher"
-<a.gruenbacher@computer.org>.
-.SH SEE ALSO
-.BR acl_from_text (3),
-.BR acl_free (3),
-.BR acl_to_any_text (3),
-.BR acl (5)
+.An "Andreas Gruenbacher" Aq a.gruenbacher@computer.org .

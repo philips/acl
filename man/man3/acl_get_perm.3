@@ -14,73 +14,77 @@
 .\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 .\" SUCH DAMAGE.
 .\"
-.TH ACL_GET_PERM 3 "Linux ACL Library" "March 2002" "Access Control Lists"
-.SH NAME
-acl_get_perm \- test for a permission in an ACL permission set
-.SH LIBRARY
+.Dd March 23, 2002
+.Dt ACL_GET_PERM 3
+.Os "Linux ACL"
+.Sh NAME
+.Nm acl_get_perm
+.Nd test for a permission in an ACL permission set
+.Sh LIBRARY
 Linux Access Control Lists library (libacl, \-lacl).
-.SH C SYNOPSIS
-.sp
-.nf
-.B #include <sys/types.h>
-.B #include <sys/acl.h>
-.sp
-.B "int acl_get_perm (acl_permset_t \f2permset_d\f3, "
-.B "                  acl_perm_t \f2perm\f3);"
-.Op
-.SH DESCRIPTION
+.Sh SYNOPSIS
+.In sys/types.h
+.In acl/libacl.h
+.Ft int
+.Fn acl_get_perm "acl_permset_t permset_d" "acl_perm_t perm"
+.Sh DESCRIPTION
 The
-.B acl_get_perm
+.Fn acl_get_perm
 function tests if the permission specified by the argument
-.I perm
+.Va perm
 is contained in the ACL permission set pointed to by the argument
-.IR permset_d .
-.PP
+.Va permset_d .
+.Pp
 Any existing descriptors that refer to
-.I permset_d
+.Va permset_d
 continue to refer to that permission set.
-.SH RETURN VALUE
+.Sh RETURN VALUE
 If successful, the
-.B acl_get_perm
-function returns 1 if the permission specified by
-.I perm
+.Fn acl_get_perm
+function returns
+.Li 1
+if the permission specified by
+.Va perm
 is contained in the ACL permission set
-.IR permset_d ,
-and 0 if the permission is not contained in the permission set.
-Otherwise, the value -1 is returned and the global variable
-.B errno
+.Va permset_d ,
+and
+.Li 0
+if the permission is not contained in the permission set. Otherwise,
+the value
+.Li -1
+is returned and the global variable
+.Va errno
 is set to indicate the error.
-.SH ERRORS
+.Sh ERRORS
 If any of the following conditions occur, the
-.B acl_get_perm
-function returns -1 and sets
-.B errno
+.Fn acl_get_perm
+function returns
+.Li -1
+and sets
+.Va errno
 to the corresponding value:
-.TP
-.SM
-\%[EINVAL]
+.Bl -tag -width Er
+.It Bq Er EINVAL
 The argument
-.I permset_d
+.Va permset_d
 is not a valid descriptor for a permission set within an ACL entry.
-.TP
-.SM
-\%[EINVAL]
+.Pp
 The argument
-.I perm
+.Va perm
 is not a valid
-.I acl_perm_t
+.Va acl_perm_t
 value.
-.SH STANDARDS
+.El
+.Sh STANDARDS
 This is a non-portable, Linux specific extension to the ACL manipulation
 functions defined in IEEE Std 1003.1e draft 17 (\(lqPOSIX.1e\(rq, abandoned).
-.SH AUTHOR
+.Sh SEE ALSO
+.Xr acl_add_perm 3 ,
+.Xr acl_clear_perms 3 ,
+.Xr acl_delete_perm 3 ,
+.Xr acl_get_permset 3 ,
+.Xr acl_set_permset 3 ,
+.Xr acl 5
+.Sh AUTHOR
 Written by
-.I "Andreas Gruenbacher"
-<a.gruenbacher@computer.org>.
-.SH SEE ALSO
-.BR acl_add_perm (3),
-.BR acl_delete_perm (3),
-.BR acl_clear_perms (3),
-.BR acl_get_permset (3),
-.BR acl_set_permset (3),
-.BR acl (5)
+.An "Andreas Gruenbacher" Aq a.gruenbacher@computer.org .

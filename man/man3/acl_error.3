@@ -14,48 +14,51 @@
 .\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 .\" SUCH DAMAGE.
 .\"
-.TH ACL_CHECK 3 "Linux ACL Library" "March 2002" "Access Control Lists"
-.SH NAME
-acl_error \- convert an ACL error code to a text message
-.SH LIBRARY
+.Dd March 23, 2002
+.Dt ACL_CHECK 3
+.Os "Linux ACL"
+.Sh NAME
+.Nm acl_error
+.Nd convert an ACL error code to a text message
+.Sh LIBRARY
 Linux Access Control Lists library (libacl, \-lacl).
-.SH C SYNOPSIS
-.sp
-.nf
-.B #include <sys/types.h>
-.B #include <sys/acl.h>
-.sp
-.B "const char * acl_error (int \f2code\f3);"
-.Op
-.SH DESCRIPTION
+.Sh SYNOPSIS
+.In sys/types.h
+.In acl/libacl.h
+.Ft const char *
+.Fn acl_error "int code"
+.Sh DESCRIPTION
 The
-.B acl_error
+.Fn acl_error
 function converts an ACL error code such as returned by the
-.BR acl_check (3)
+.Fn acl_check
 function to a text message describing the error condition. In the
 \(lqPOSIX\(rq locale,
-.B acl_check
-returns the following descriptions for the error codes:
-.IP
-ACL_MULTI_ERROR (\(lqMultiple entries\(rq)
-.IP
-ACL_DUPLICATE_ERROR (\(lqDuplicate entries\(rq)
-.IP
-ACL_MISS_ERROR (\(lqMissing or wrong entry\(rq)
-.IP
-ACL_ENTRY_ERROR (\(lqInvalid entry type\(rq)
-.SH RETURN VALUE
+.Fn acl_check
+returns the following descriptions for the error codes.
+.Bl -tag -width ACL_DUPLICATE_ERROR.
+.It ACL_MULTI_ERROR
+\(lqMultiple entries\(rq
+.It ACL_DUPLICATE_ERROR
+\(lqDuplicate entries\(rq
+.It ACL_MISS_ERROR
+\(lqMissing or wrong entry\(rq
+.It ACL_ENTRY_ERROR
+\(lqInvalid entry type\(rq
+.El
+.Sh RETURN VALUE
 The
-.B acl_error
+.Fn acl_error
 function returns a text message if the error code is recognized, and a value of
-NULL otherwise.
-.SH STANDARDS
+.Li (const char *)NULL
+otherwise.
+.Sh STANDARDS
 This is a non-portable, Linux specific extension to the ACL manipulation
 functions defined in IEEE Std 1003.1e draft 17 (\(lqPOSIX.1e\(rq, abandoned).
-.SH AUTHOR
+.Sh SEE ALSO
+.Xr acl_check 3 ,
+.Xr acl_valid 3 ,
+.Xr acl 5
+.Sh AUTHOR
 Written by
-.I "Andreas Gruenbacher"
-<a.gruenbacher@computer.org>.
-.SH SEE ALSO
-.BR acl_valid (3),
-.BR acl (5)
+.An "Andreas Gruenbacher" Aq a.gruenbacher@computer.org .

@@ -14,65 +14,67 @@
 .\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 .\" SUCH DAMAGE.
 .\"
-.TH ACL_DUP 3 "Linux ACL Library" "March 2002" "Access Control Lists"
-.SH NAME
-acl_dup \- duplicate an ACL
-.SH LIBRARY
+.Dd March 23, 2002
+.Dt ACL_DUP 3
+.Os "Linux ACL"
+.Sh NAME
+.Nm acl_dup
+.Nd duplicate an ACL
+.Sh LIBRARY
 Linux Access Control Lists library (libacl, \-lacl).
-.SH C SYNOPSIS
-.sp
-.nf
-.B #include <sys/types.h>
-.B #include <sys/acl.h>
-.sp
-.B "acl_t acl_dup (acl_t \f2acl\f3);"
-.Op
-.SH DESCRIPTION
+.Sh SYNOPSIS
+.In sys/types.h
+.In sys/acl.h
+.Ft acl_t
+.Fn acl_dup "acl_t acl"
+.Sh DESCRIPTION
 The
-.B acl_dup
+.Fn acl_dup
 function returns a pointer to a copy of the ACL pointed to by
-.IR acl .
-.PP
+.Va acl .
+.Pp
 This function may cause memory to be allocated.  The caller should free any
 releasable memory, when the new ACL is no longer required, by calling
-.BR acl_free (3)
+.Xr acl_free 3
 with the
-.B (void*)acl_t
+.Va (void*)acl_t
 returned by
-.B acl_dup
+.Fn acl_dup
 as an argument.
-.SH RETURN VALUE
+.Sh RETURN VALUE
 Upon successful completion, this function returns a pointer to the
-working storage.  Otherwise, a value of (acl_t)NULL is returned, and
-.B errno
+working storage.  Otherwise, a value of
+.Li (acl_t)NULL
+is returned, and
+.Va errno
 is set to indicate the error.
-.SH ERRORS
+.Sh ERRORS
 If any of the following conditions occur, the
-.B acl_dup
-function returns a value of (acl_t)NULL and sets
-.B errno
+.Fn acl_dup
+function returns a value of
+.Li (acl_t)NULL
+and sets
+.Va errno
 to the corresponding value:
-.TP
-.SM
-\%[EINVAL]
+.Bl -tag -width Er
+.It Bq Er EINVAL
 The argument
-.I acl
+.Va acl
 is not a valid pointer to an ACL.
-.TP
-.SM
-\%[ENOMEM]
+.It Bq Er ENOMEM
 The
-.B acl_t
+.Va acl_t
 to be returned requires more memory than is allowed by the hardware or
 system-imposed memory management constraints.
-.SH STANDARDS
+.El
+.Sh STANDARDS
 IEEE Std 1003.1e draft 17 (\(lqPOSIX.1e\(rq, abandoned)
-.SH AUTHOR
+.Sh SEE ALSO
+.Xr acl_free 3 ,
+.Xr acl_get_entry 3 ,
+.Xr acl 5
+.Sh AUTHOR
 Derived from the FreeBSD manual pages written by
-.IR "Robert N M Watson" ;
+.An "Robert N M Watson" Aq rwatson@FreeBSD.org ,
 and adapted for Linux by
-.I "Andreas Gruenbacher"
-<a.gruenbacher@computer.org>.
-.SH SEE ALSO
-.BR acl_free (3),
-.BR acl (5)
+.An "Andreas Gruenbacher" Aq a.gruenbacher@computer.org .

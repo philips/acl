@@ -14,68 +14,66 @@
 .\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 .\" SUCH DAMAGE.
 .\"
-.TH ACL_DELETE_ENTRY 3 "Linux ACL Library" "March 2002" "Access Control Lists"
-.SH NAME
-acl_delete_entry \- delete an ACL entry
-.SH LIBRARY
+.Dd March 23, 2002
+.Dt ACL_DELETE_ENTRY 3
+.Os "Linux ACL"
+.Sh NAME
+.Nm acl_delete_entry
+.Nd delete an ACL entry
+.Sh LIBRARY
 Linux Access Control Lists library (libacl, \-lacl).
-.SH C SYNOPSIS
-.sp
-.nf
-.B #include <sys/types.h>
-.B #include <sys/acl.h>
-.sp
-.B "int acl_delete_entry (acl_t \f2acl\f3, acl_entry_t \f2entry_d\f3);"
-.Op
-.SH DESCRIPTION
+.Sh SYNOPSIS
+.In sys/types.h
+.In sys/acl.h
+.Ft int
+.Fn acl_delete_entry "acl_t acl" "acl_entry_t entry_d"
+.Sh DESCRIPTION
 The
-.B acl_delete_entry
+.Fn acl_delete_entry
 function removes the ACL entry indicated by the
-.I entry_d
+.Va entry_d
 descriptor from the ACL pointed to by
-.IR acl .
+.Va acl .
 Any existing ACL entry descriptors that refer to entries in
-.I acl
+.Va acl
 other than that referred to by
-.I entry_d
+.Va entry_d
 continue to refer to the same entries. The argument
-.I entry_d
+.Va entry_d
 and any other ACL entry descriptors that refer to the same ACL entry are
 undefined after this function completes. Any existing ACL pointers that
 refer to the ACL referred to by
-.I acl
+.Va acl
 continue to refer to the ACL.
-.SH RETURN VALUE
-The value 0 is returned if successful; otherwise the value -1 is
-returned and the global variable errno is set to indicate the error.
-.SH ERRORS
+.Sh RETURN VALUE
+.Rv -std acl_delete_entry
+.Sh ERRORS
 If any of the following conditions occur, the
-.B acl_delete_entry
-function returns -1 and sets
-.B errno
+.Fn acl_delete_entry
+function returns
+.Li -1
+and sets
+.Va errno
 to the corresponding value:
-.TP
-.SM
-\%[EINVAL]
+.Bl -tag -width Er
+.It Bq Er EINVAL
 The argument
-.I acl_p
+.Va acl_p
 is not a valid pointer to an ACL.
-.TP
-.SM
-\%[EINVAL]
+.Pp
 The argument
-.I entry_d
+.Va entry_d
 is not a valid pointer to an ACL entry.
-.SH STANDARDS
+.El
+.Sh STANDARDS
 IEEE Std 1003.1e draft 17 (\(lqPOSIX.1e\(rq, abandoned)
-.SH AUTHOR
+.Sh SEE ALSO
+.Xr acl_copy_entry 3 ,
+.Xr acl_create_entry 3 ,
+.Xr acl_get_entry 3 ,
+.Xr acl 5
+.Sh AUTHOR
 Derived from the FreeBSD manual pages written by
-.IR "Robert N M Watson" ;
+.An "Robert N M Watson" Aq rwatson@FreeBSD.org ,
 and adapted for Linux by
-.I "Andreas Gruenbacher"
-<a.gruenbacher@computer.org>.
-.SH SEE ALSO
-.BR acl_copy_entry (3),
-.BR acl_create_entry (3),
-.BR acl_get_entry (3),
-.BR acl (5)
+.An "Andreas Gruenbacher" Aq a.gruenbacher@computer.org .

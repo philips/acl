@@ -14,55 +14,62 @@
 .\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 .\" SUCH DAMAGE.
 .\"
-.TH ACL_FREE 3 "Linux ACL Library" "March 2002" "Access Control Lists"
-.SH NAME
-acl_free \- release memory allocated to an ACL data object
-.SH LIBRARY
+.Dd March 23, 2002
+.Dt ACL_FREE 3
+.Os "Linux ACL"
+.Sh NAME
+.Nm acl_free
+.Nd release memory allocated to an ACL data object
+.Sh LIBRARY
 Linux Access Control Lists library (libacl, \-lacl).
-.SH C SYNOPSIS
-.sp
-.nf
-.B #include <sys/types.h>
-.B #include <sys/acl.h>
-.sp
-.B "int acl_free (void *\f2obj_p\f3);"
-.Op
-.SH DESCRIPTION
+.Sh SYNOPSIS
+.In sys/types.h
+.In sys/acl.h
+.Ft int
+.Fn acl_free "void *obj_p"
+.Sh DESCRIPTION
 The
-.B acl_free
+.Fn acl_free
 function frees any releasable memory currently allocated by to the ACL data object identified by
-.IR obj_p .
+.Va obj_p .
 The argument
-.I obj_p
+.Va obj_p
 may identify an ACL, an ACL entry qualifier, or a pointer to a string
 allocated by the
-.B acl_to_text
+.Fn acl_to_text
 function.
-.\" .SH IMPLEMENTATION NOTES
+.\" .Sh IMPLEMENTATION NOTES
 .\" True64 prints a compile time warning for acl_free(text) if text was
 .\" produced by acl_to_text(). Bad!
-.SH RETURN VALUE
-The value 0 is returned if successful; otherwise the value -1 is
-returned and the global variable errno is set to indicate the error.
-.SH ERRORS
+.Sh RETURN VALUE
+.Rv -std acl_free
+.Sh ERRORS
 If any of the following conditions occur, the
-.B acl_free
-function returns the value -1 and sets
-.B errno
+.Fn acl_free
+function returns the value
+.Li -1
+and and sets
+.Va errno
 to the corresponding value:
-.TP
-.SM
-\%[EINVAL]
-The value of the
-.I obj_p
-argument is invalid.
-.SH STANDARDS
+.Bl -tag -width Er
+.It Bq Er EINVAL
+The value of the argument
+.Va obj_p
+is invalid.
+.El
+.Sh STANDARDS
 IEEE Std 1003.1e draft 17 (\(lqPOSIX.1e\(rq, abandoned)
-.SH AUTHOR
+.Sh SEE ALSO
+.Xr acl_copy_int 3 ,
+.Xr acl_create_entry 3 ,
+.Xr acl_dup 3 ,
+.Xr acl_from_text 3 ,
+.Xr acl_get_fd ,
+.Xr acl_get_file 3 ,
+.Xr acl_init 3 ,
+.Xr acl 5
+.Sh AUTHOR
 Derived from the FreeBSD manual pages written by
-.IR "Robert N M Watson" ;
+.An "Robert N M Watson" Aq rwatson@FreeBSD.org ,
 and adapted for Linux by
-.I "Andreas Gruenbacher"
-<a.gruenbacher@computer.org>.
-.SH SEE ALSO
-.BR acl (5)
+.An "Andreas Gruenbacher" Aq a.gruenbacher@computer.org .

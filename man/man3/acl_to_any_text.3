@@ -14,146 +14,150 @@
 .\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 .\" SUCH DAMAGE.
 .\"
-.TH ACL_TO_ANY_TEXT 3 "Linux ACL Library" "March 2002" "Access Control Lists"
-.SH NAME
-acl_to_any_text \- convert an ACL to text
-.SH LIBRARY
+.Dd March 25, 2002
+.Dt ACL_TO_ANY_TEXT 3
+.Os "Linux ACL"
+.Sh NAME
+.Nm acl_to_any_text
+.Nd convert an ACL to text
+.Sh LIBRARY
 Linux Access Control Lists library (libacl, \-lacl).
-.SH SYNOPSIS
-.sp
-.nf
-.B #include <sys/types.h>
-.B #include <sys/acl.h>
-.B #include <acl/libacl.h>
-.sp
-.B "char *acl_to_any_text (acl_t \f2acl\f3, const char *\f2prefix\f3, "
-.B "                       char \f2separator\f3, int \f2options\f3);"
-.Op
-.SH DESCRIPTION
+.Sh SYNOPSIS
+.In sys/types.h
+.In acl/libacl.h
+.Ft char *
+.Fo acl_to_any_text
+.Fa "acl_t acl"
+.Fa "const char *prefix"
+.Fa "char separator"
+.Fa "int options"
+.Fc
+.Sh DESCRIPTION
 The
-.B acl_to_any_text
+.Fn acl_to_any_text
 function translates the ACL pointed to by the argument
-.I acl
-into a NULL terminated character string. This character string
+.Va acl
+into a
+.Li NULL
+terminated character string. This character string
 is composed of the ACL entries contained in
-.IR acl ,
+.Va acl ,
 in the entry text format described on
-.BR acl (5).
+.Xr acl 5 .
 Entries are separated from each other by the
-.I separator
-character.
-If the argument
-.I prefix
-is not NULL,
+.Va separator
+character. If the argument
+.Va prefix
+is not
+.Li (const char *)NULL ,
 each entry is prefixed by this character string.
-.PP
+.Pp
 If the argument
-.I options
-is 0, ACL entries are converted using the entry tag type keywords
-.BR user ,
-.BR group ,
-.BR mask ,
+.Va options
+is
+.Li 0 ,
+ACL entries are converted using the entry tag type keywords
+.Li user , group , mask ,
 and
-.BR other .
+.Li other .
 User IDs and group IDs of ACL entries that contain such
 qualifiers are converted to their corresponding names; if an identifier
 has no corresponding name, a decimal number string is produced. The
 ACL text representation contains no additional comments.
-.PP
+
 A bitwise combinations of the following
-.I options
+.Va options
 can be used to modify the result:
-.TP
-.B TEXT_ABBREVIATE
+.Bl -tag
+.It TEXT_ABBREVIATE
 Instead of the full tag type keywords, single letter abbreviations are used.
 The abbreviation for
-.B user
+.Li user
 is
-.BR u ,
+.Li u ,
 the abbreviation for
-.B group
+.Li group
 is
-.BR g ,
+.Li g ,
 the abbreviation for
-.B mask
+.Li mask
 is
-.BR m ,
+.Li m ,
 and the abbreviation for
-.B other
+.Li other
 is
-.BR o .
-.TP
-.B TEXT_NUMERIC_IDS
+.Li o .
+.It TEXT_NUMERIC_IDS
 User IDs and group IDs are included as decimal numbers instead of names.
-.TP
-.B TEXT_SOME_EFFECTIVE
+.It TEXT_SOME_EFFECTIVE
 A comment containing the effective permissions of the ACL entry is
 included after ACL entries that contain permissions which are ineffective
 because they are masked by an ACL_MASK entry. The ACL entry and the comment
 are separated by a tab character.
-.TP
-.B TEXT_ALL_EFFECTIVE
+.It TEXT_ALL_EFFECTIVE
 A comment containing the effective permissions of the ACL entry is
 included after all ACL entries that are affected by an ACL_MASK entry.
 The comment is included even if the permissions contained in the ACL
 entry equal the effective permissions. The ACL entry and the comment are
 separated by a tab character.
-.TP
-.B TEXT_SMART_INDENT
+.It TEXT_SMART_INDENT
 This option is used in combination with the TEXT_SOME_EFFECTIVE or
 TEXT_ALL_EFFECTIVE option. The number of tab characters inserted between
 the ACL entry and the comment is increased so that the comment is
-aligned to at least column 32, if printed starting from column 0. A tab
-width of 8 characters is assumed.
-.PP
+aligned to the fourth tab stop position.
+A tab width of 8 characters is assumed.
+.El
+.Pp
 The ACL referred to by
-.I acl
+.Va acl
 is not changed.
-.PP
+.Pp
 This function allocates any memory necessary to contain the string and
 returns a pointer to the string.  The caller should free any releasable
 memory, when the new string is no longer required, by calling
-.BR acl_free (3)
-with the char* returned by
-.B acl_to_any_text
+.Fn acl_free
+with the
+.Va (void*)char
+returned by
+.Fn acl_to_any_text
 as an argument.
-.SH RETURN VALUE
+.Sh RETURN VALUE
 Upon successful completion, this function returns a pointer to the text
-representation of the ACL.  Otherwise, a value of NULL is returned, and
-.B errno
+representation of the ACL.  Otherwise, a value of
+.Li (char *)NULL
+is returned, and
+.Va errno
 is set to indicate the error.
-.SH ERRORS
+.Sh ERRORS
 If any of the following conditions occur, the
-.B acl_to_any_text
-function returns a value of NULL and sets
-.B errno
+.Fn acl_to_any_text
+function returns a value of
+.Li (char *)NULL
+and sets
+.Va errno
 to the corresponding value:
-.TP
-.SM
-\%[EINVAL]
+.Bl -tag -width Er
+.It Bq Er EINVAL
 The argument
-.I acl
+.Va acl
 is not a valid pointer to an ACL.
-.TP
-.SM
-\%[EINVAL]
+.Pp
 The ACL referenced by
-.I acl
+.Va acl
 contains one or more improperly formed ACL entries, or for some other
 reason cannot be translated into the text form of an ACL.
-.TP
-.SM
-\%[ENOMEM]
+.It Bq Er ENOMEM
 The character string to be returned requires more memory than is allowed
 by the hardware or system-imposed memory management constraints.
-.SH STANDARDS
+.El
+.Sh STANDARDS
 This is a non-portable, Linux specific extension to the ACL manipulation
 functions defined in IEEE Std 1003.1e draft 17 (\(lqPOSIX.1e\(rq, abandoned).
-.SH AUTHOR
+.Sh SEE ALSO
+.Xr acl_from_text 3 ,
+.Xr acl_to_text 3 ,
+.Xr acl_free 3 ,
+.Xr acl 5
+.Sh AUTHOR
 Written by
-.I "Andreas Gruenbacher"
-<a.gruenbacher@computer.org>.
-.SH SEE ALSO
-.BR acl_to_text (3),
-.BR acl_free (3),
-.BR acl (5)
+.An "Andreas Gruenbacher" Aq a.gruenbacher@computer.org .

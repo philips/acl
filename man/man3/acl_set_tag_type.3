@@ -14,67 +14,64 @@
 .\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 .\" SUCH DAMAGE.
 .\"
-.TH ACL_SET_TAG_TYPE 3 "Linux ACL Library" "March 2002" "Access Control Lists"
-.SH NAME
-acl_set_tag_type \- set the tag type of an ACL entry
-.SH LIBRARY
+.Dd March 23, 2002
+.Dt ACL_SET_TAG_TYPE 3
+.Os "Linux ACL"
+.Sh NAME
+.Nm acl_set_tag_type
+.Nd set the tag type of an ACL entry
+.Sh LIBRARY
 Linux Access Control Lists library (libacl, \-lacl).
-.SH SYNOPSIS
-.sp
-.nf
-.B #include <sys/types.h>
-.B #include <sys/acl.h>
-.sp
-.B "int acl_set_tag_type (acl_entry_t \f2entry_d\f3, "
-.B "                      acl_tag_t \f2tag_type\f3);"
-.Op
-.SH DESCRIPTION
+.Sh SYNOPSIS
+.In sys/types.h
+.In sys/acl.h
+.Ft int
+.Fn acl_set_tag_type "acl_entry_t entry_d" "acl_tag_t tag_type"
+.Sh DESCRIPTION
 The
-.B acl_set_tag_type
+.Fn acl_set_tag_type
 function sets the tag type of the ACL entry indicated by the argument
-.I entry_d
+.Va entry_d
 to the value of the argument
-.IR tag_type .
-.PP
+.Va tag_type .
+.Pp
 Any ACL entry descriptors that refer to the entry referred to by
-.I entry_d
+.Va entry_d
 continue to refer to that entry.
-.SH RETURN VALUE
-The value 0 is returned if successful; otherwise the value -1 is
-returned and the global variable errno is set to indicate the error.
-.SH ERRORS
+.Sh RETURN VALUE
+.Rv -std acl_set_tag_type
+.Sh ERRORS
 If any of the following conditions occur, the
-.B acl_set_tag_type
-function returns -1 and sets
-.B errno
+.Fn acl_set_tag_type
+function returns
+.Li -1
+and sets
+.Va errno
 to the corresponding value:
-.TP
-.SM
-\%[EINVAL]
+.Bl -tag -width Er
+.It Bq Er EINVAL
 The argument
-.I entry_d
+.Va entry_d
 is not a valid descriptor for an ACL entry.
-.TP
-.SM
-\%[EINVAL]
+.Pp
 The argument
-.I tag_type
+.Va tag_type
 is not a valid tag type.
-.SH STANDARDS
+.El
+.Sh STANDARDS
 IEEE Std 1003.1e draft 17 (\(lqPOSIX.1e\(rq, abandoned)
-.SH AUTHOR
+.Sh SEE ALSO
+.Xr acl_create_entry 3 ,
+.Xr acl_free 3 ,
+.Xr acl_get_permset 3 ,
+.Xr acl_get_qualifier 3 ,
+.Xr acl_get_tag_type 3 ,
+.Xr acl_set_entry 3 ,
+.Xr acl_set_permset 3 ,
+.Xr acl_set_qualifier 3 ,
+.Xr acl 5
+.Sh AUTHOR
 Derived from the FreeBSD manual pages written by
-.IR "Robert N M Watson" ;
+.An "Robert N M Watson" Aq rwatson@FreeBSD.org ,
 and adapted for Linux by
-.I "Andreas Gruenbacher"
-<a.gruenbacher@computer.org>.
-.SH SEE ALSO
-.BR acl_create_entry (3),
-.BR acl_set_entry (3),
-.BR acl_get_qualifier (3),
-.BR acl_set_qualifier (3),
-.BR acl_get_tag_type (3),
-.BR acl_get_permset (3),
-.BR acl_set_permset (3),
-.BR acl_free (3),
-.BR acl (5)
+.An "Andreas Gruenbacher" Aq a.gruenbacher@computer.org .

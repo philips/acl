@@ -14,83 +14,78 @@
 .\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 .\" SUCH DAMAGE.
 .\"
-.TH ACL_SET_PERMSET 3 "Linux ACL Library" "March 2002" "Access Control Lists"
-.SH NAME
-acl_set_permset \- set the permission set in an ACL entry
-.SH LIBRARY
+.Dd March 23, 2002
+.Dt ACL_SET_PERMSET 3
+.Os "Linux ACL"
+.Sh NAME
+.Nm acl_set_permset
+.Nd set the permission set in an ACL entry
+.Sh LIBRARY
 Linux Access Control Lists library (libacl, \-lacl).
-.SH SYNOPSIS
-.sp
-.nf
-.B #include <sys/types.h>
-.B #include <sys/acl.h>
-.sp
-.B "int acl_set_permset (acl_entry_t \f2entry_d\f3, "
-.B "                     acl_permset_t \f2permset_d\f3);"
-.Op
-.SH DESCRIPTION
+.Sh SYNOPSIS
+.In sys/types.h
+.In sys/acl.h
+.Ft int
+.Fn acl_set_permset "acl_entry_t entry_d" "acl_permset_t permset_d"
+.Sh DESCRIPTION
 The
-.B acl_set_permset
+.Fn acl_set_permset
 function sets the permission set of the ACL entry indicated by the argument
-.I entry_d 
+.Va entry_d 
 to the permissions contained in the argument
-.IR permset_d .
-.PP
+.Va permset_d .
+.Pp
 Any ACL entry descriptors that refer to the entry containing the permission
 set referred to by
-.I permset_d
+.Va permset_d
 shall continue to refer to those entries. Any ACL entry descriptors that
 refer to the entry referred to by
-.I entry_d
+.Va entry_d
 shall continue to refer to that entry.
-.SH RETURN VALUE
-The value 0 is returned if successful; otherwise the value -1 is
-returned and the global variable errno is set to indicate the error.
-.SH ERRORS
+.Sh RETURN VALUE
+.Rv -std acl_set_permset
+.Sh ERRORS
 If any of the following conditions occur, the
-.B acl_set_permset
-function returns -1 and sets
-.B errno
+.Fn acl_set_permset
+function returns
+.Li -1
+and sets
+.Va errno
 to the corresponding value:
-.TP
-.SM
-\%[EINVAL]
+.Bl -tag -width Er
+.It Bq Er EINVAL
 The argument
-.I entry_d
+.Va entry_d
 is not a valid descriptor for an ACL entry.
-.TP
-.SM
-\%[EINVAL]
+.Pp
 The argument
-.I permset_d
+.Va permset_d
 is not a valid descriptor for a permission set within an ACL entry.
-.TP
-.SM
-\%[EINVAL]
+.Pp
 .\" <AG>
 .\" The following condition seems strange.
 .\" </AG>
 The argument
-.I permset_d
+.Va permset_d
 contains values which are not valid
-.B acl_permset_t
+.Va acl_permset_t
 values.
-.SH STANDARDS
+.El
+.Sh STANDARDS
 IEEE Std 1003.1e draft 17 (\(lqPOSIX.1e\(rq, abandoned)
-.SH AUTHOR
+.Sh SEE ALSO
+.Xr acl_add_perm 3 ,
+.Xr acl_clear_perms 3 ,
+.Xr acl_delete_perm 3 ,
+.Xr acl_get_perm 3 ,
+.Xr acl_get_permset 3 ,
+.Xr acl_get_qualifier 3 ,
+.Xr acl_get_tag_type 3 ,
+.Xr acl_set_qualifier 3 ,
+.Xr acl_set_tag_type 3 ,
+.Xr acl 5
+.Sh AUTHOR
 Derived from the FreeBSD manual pages written by
-.IR "Robert N M Watson" ;
+.An "Robert N M Watson" Aq rwatson@FreeBSD.org ,
 and adapted for Linux by
-.I "Andreas Gruenbacher"
-<a.gruenbacher@computer.org>.
-.SH SEE ALSO
-.BR acl_get_perm (3),
-.BR acl_add_perm (3),
-.BR acl_delete_perm (3),
-.BR acl_clear_perms (3),
-.BR acl_get_permset (3),
-.BR acl_get_qualifier (3),
-.BR acl_set_qualifier (3),
-.BR acl_get_tag_type (3),
-.BR acl_set_tag_type (3),
-.BR acl (5)
+.An "Andreas Gruenbacher" Aq a.gruenbacher@computer.org .

@@ -14,64 +14,62 @@
 .\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 .\" SUCH DAMAGE.
 .\"
-.TH ACL_COPY_ENTRY 3 "Linux ACL Library" "March 2002" "Access Control Lists"
-.SH NAME
-acl_copy_entry \- copy an ACL entry
-.SH LIBRARY
+.Dd March 23, 2002
+.Dt ACL_COPY_ENTRY 3
+.Os "Linux ACL"
+.Sh NAME
+.Nm acl_copy_entry
+.Nd copy an ACL entry
+.Sh LIBRARY
 Linux Access Control Lists library (libacl, \-lacl).
-.SH C SYNOPSIS
-.sp
-.nf
-.B #include <sys/types.h>
-.B #include <sys/acl.h>
-.sp
-.B "int acl_copy_entry (acl_entry_t \f2dest_d\f3, acl_entry_t \f2src_d\f3);"
-.Op
-.SH DESCRIPTION
+.Sh SYNOPSIS
+.In sys/types.h
+.In sys/acl.h
+.Ft int
+.Fn acl_copy_entry "acl_entry_t dest_d" "acl_entry_t src_d"
+.Sh DESCRIPTION
 The
-.B acl_copy_entry
+.Fn acl_copy_entry
 function copies the contents of the ACL entry indicated by the
-.I src_d
+.Va src_d
 descriptor to the existing ACL entry indicated by the
-.I dest_d
-descriptor.
-The
-.I src_d
+.Va dest_d
+descriptor. The
+.Va src_d
 and
-.I dest_d
+.Va dest_d
 descriptors may refer to entries in different ACLs.
-.SH RETURN VALUE
-The value 0 is returned if successful; otherwise the value -1 is
-returned and the global variable errno is set to indicate the error.
-.SH ERRORS
+.Sh RETURN VALUE
+.Rv -std acl_copy_entry
+.Sh ERRORS
 If any of the following conditions occur, the
-.B acl_copy_entry
-function returns -1 and sets
-.B errno
+.Fn acl_copy_entry
+function returns
+.Li -1
+and sets
+.Va errno
 to the corresponding value:
-.TP
-.SM
-\%[EINVAL]
+.Bl -tag -width Er
+.It Bq Er EINVAL
 The argument
-.I src_d
+.Va src_d
 or
-.I dest_d
+.Va dest_d
 is not a valid descriptor for an ACL entry.
-.TP
-.SM
-\%[EINVAL]
+.Pp
 The arguments
-.I src_d
+.Va src_d
 and
-.I dest_d
+.Va dest_d
 reference the same ACL entry.
-.SH STANDARDS
+.El
+.Sh STANDARDS
 IEEE Std 1003.1e draft 17 (\(lqPOSIX.1e\(rq, abandoned)
-.SH AUTHOR
+.Sh SEE ALSO
+.Xr acl_get_entry 3 ,
+.Xr acl 5
+.Sh AUTHOR
 Derived from the FreeBSD manual pages written by
-.IR "Robert N M Watson" ;
+.An "Robert N M Watson" Aq rwatson@FreeBSD.org ,
 and adapted for Linux by
-.I "Andreas Gruenbacher"
-<a.gruenbacher@computer.org>.
-.SH SEE ALSO
-.BR acl (5)
+.An "Andreas Gruenbacher" Aq a.gruenbacher@computer.org .
