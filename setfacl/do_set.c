@@ -449,7 +449,8 @@ do_set(
 					goto fail;
 				} else if (chmod(path_p, mode) != 0)
 					goto fail;
-			}
+			} else
+				goto fail;
 		}
 	}
 	if (default_acl) {
