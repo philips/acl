@@ -2,11 +2,11 @@ Summary: Access control list utilities.
 Name: @pkg_name@
 Version: @pkg_version@
 Release: @pkg_release@
-Packager: @pkg_builder@
+Packager: Silicon Graphics, Inc. <http://www.sgi.com/>
 BuildRoot: @build_root@
 Source: @pkg_name@-@pkg_version@.src.tar.gz
-Copyright: GPL
-Vendor: Andreas Gruenbacher <a.gruenbacher@computer.org>
+License: GPL
+Vendor: Silicon Graphics, Inc.
 Group: System Environment/Base
 URL: http://acl.bestbits.at/
 
