@@ -13,7 +13,7 @@ Description: Access control list utilities
  manipulating access control lists.
 
 Package: libacl1-dev
-Section: devel
+Section: libdevel
 Priority: extra
 Depends: libc6-dev, acl (>= 2.0.0)
 Provides: acl-dev
