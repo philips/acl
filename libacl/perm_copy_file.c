@@ -159,6 +159,9 @@ int
 perm_copy_file (const char *src_path, const char *dst_path,
 		 struct error_context *ctx)
 {
+#if defined(HAVE_ACL_GET_FILE) && defined(HAVE_ACL_SET_FILE)
+	acl_t acl;
+#endif
 	struct stat st;
 	int ret = 0;
 
@@ -170,9 +173,8 @@ perm_copy_file (const char *src_path, const char *dst_path,
 		return -1;
 	}
 #if defined(HAVE_ACL_GET_FILE) && defined(HAVE_ACL_SET_FILE)
-	{
 	/* POSIX 1003.1e draft 17 (abandoned) specific version.  */
-	acl_t acl = acl_get_file (src_path, ACL_TYPE_ACCESS);
+	acl = acl_get_file (src_path, ACL_TYPE_ACCESS);
 	if (acl == NULL) {
 		ret = -1;
 		if (errno == ENOSYS || errno == ENOTSUP)
@@ -224,7 +226,6 @@ perm_copy_file (const char *src_path, const char *dst_path,
 		(void) acl_free(acl);
 	}
 	return ret;
-	}
 #else
 	/* POSIX.1 version. */
 	ret = chmod (dst_path, st.st_mode);

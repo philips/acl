@@ -146,6 +146,9 @@ perm_copy_fd (const char *src_path, int src_fd,
 	       const char *dst_path, int dst_fd,
 	       struct error_context *ctx)
 {
+#if defined(HAVE_ACL_GET_FD) && defined(HAVE_ACL_SET_FD)
+	acl_t acl;
+#endif
 	struct stat st;
 	int ret = 0;
 
@@ -157,9 +160,8 @@ perm_copy_fd (const char *src_path, int src_fd,
 		return -1;
 	}
 #if defined(HAVE_ACL_GET_FD) && defined(HAVE_ACL_SET_FD)
-	{
 	/* POSIX 1003.1e draft 17 (abandoned) specific version.  */
-	acl_t acl = acl_get_fd (src_fd);
+	acl = acl_get_fd (src_fd);
 	if (acl == NULL) {
 		ret = -1;
 		if (errno == ENOSYS || errno == ENOTSUP)
@@ -187,7 +189,6 @@ perm_copy_fd (const char *src_path, int src_fd,
 	}
 	(void) acl_free (acl);
 	return ret;
-	}
 #else
 	/* POSIX.1 version. */
 	ret = fchmod (dst_fd, st.st_mode);
