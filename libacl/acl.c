@@ -993,9 +993,16 @@ acl_get_permset (acl_entry_t entry_d, acl_permset_t *permset_p)
 	return 0; 
 }
 
+/*
+ * Extract ae_id and dynamically allocate memory for it.
+ * This is so that a call to acl_free() on the returned 
+ * qualifier will work as the Posix standard suggests.
+ */
 void *
 acl_get_qualifier (acl_entry_t entry_d)
 {
+	uid_t *retval;
+
 	if(entry_d == NULL){
 		setoserror(EINVAL);
 		return NULL;
@@ -1007,7 +1014,13 @@ acl_get_qualifier (acl_entry_t entry_d)
 		 return NULL;
 	}
 	
-	return &entry_d->ae_id;
+	retval = malloc(sizeof(uid_t));
+	if (retval == NULL) {
+		setoserror(ENOMEM);
+		return NULL;
+	}
+	*retval = entry_d->ae_id;
+	return retval;
 }
 
 int

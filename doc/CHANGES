@@ -1,3 +1,11 @@
+acl-1.0.7 (20 June 2001)
+	- Change acl_get_qualifier() to dynamically allocate
+	  the returned qualifier so that acl_free() can be
+	  used to free the qualifier as decreed in the
+	  withdrawn Posix standard.
+	  This change was suggested by Juergen Hasch when
+	  using code with Samba.
+
 acl-1.0.6 (13 June 2001)
 	- Move acl/acl.h --to--> sys/acl.h which makes
 	  it satisfy the Posix ACL standard.
