@@ -564,7 +564,7 @@ static int __errors;
 int __do_print(const char *file, const struct stat *stat,
                int flag, struct FTW *ftw)
 {
-	if (flag & FTW_DNR) {
+	if (flag == FTW_DNR) {
 		/* Item is a directory which can't be read. */
 		fprintf(stderr, "%s: %s: %s\n",
 			progname, file, strerror(errno));
