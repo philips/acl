@@ -35,7 +35,7 @@ user_name(uid_t uid, int numeric)
 	if (passwd != NULL)
 		return passwd->pw_name;
 	ret = snprintf(uid_str, sizeof(uid_str), "%ld", (long)uid);
-	if (ret < 1 || ret >= sizeof(uid_str))
+	if (ret < 1 || (size_t)ret >= sizeof(uid_str))
 		return "?";
 	return uid_str;
 }
@@ -51,7 +51,7 @@ group_name(gid_t gid, int numeric)
 	if (group != NULL)
 		return group->gr_name;
 	ret = snprintf(gid_str, sizeof(gid_str), "%ld", (long)gid);
-	if (ret < 1 || ret >= sizeof(gid_str))
+	if (ret < 1 || (size_t)ret >= sizeof(gid_str))
 		return "?";
 	return gid_str;
 }
