@@ -1,3 +1,10 @@
+acl (2.0.10-1) unstable; urgency=low
+
+  * New upstream bugfix release
+  * Add accidentally removed dependency of libacl on libattr
+
+ -- Nathan Scott <nathans@debian.org>  Mon, 22 Apr 2002 15:12:21 +1000
+
 acl (2.0.9-1) unstable; urgency=low
 
   * New upstream bugfix release (affects 64 bit platforms only)
