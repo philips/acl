@@ -76,6 +76,8 @@ acl_check (acl_t acl, int *last)
 			if (ace->ae_id < qual || ace->ae_id == ACL_UNDEFINED_ID)
 				FAIL_CHECK (ACL_DUPLICATE_ERROR);
 			qual = ace->ae_id + 1;
+			needs_mask = 1;
+			break;
 
 		case ACL_GROUP_OBJ:
 			if (state == ACL_USER) {
