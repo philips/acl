@@ -159,16 +159,16 @@ msgid "%s: %s in line %d of standard input\n"
 msgstr "%s: %s in Zeile %d der Standardeingabe\n"
 
 #, c-format
-msgid "%s: %s: Resulting ACL `%s': %s at entry %d\n"
-msgstr "%s: %s: Resultierende ACL `%s': %s bei Eintrag %d\n"
+msgid "%s: %s: Malformed ACL `%s': %s at entry %d\n"
+msgstr "%s: %s: Ungültige ACL `%s': %s bei Eintrag %d\n"
 
 #, c-format
-msgid "%s: %s: Resulting default ACL `%s': %s at entry %d\n"
-msgstr "%s: %s: Resultierende Default-ACL `%s': %s bei Eintrag %d\n"
+msgid "%s: %s: Malformed default ACL `%s': %s at entry %d\n"
+msgstr "%s: %s: Ungültige Default-ACL `%s': %s bei Eintrag %d\n"
 
 #, c-format
-msgid "%s: %s: Only directories can have a default ACL\n"
-msgstr "%s: %s: Nur Verzeichnisse können eine Default-ACL haben\n"
+msgid "%s: %s: Only directories can have default ACLs\n"
+msgstr "%s: %s: Nur Verzeichnisse können Default-ACLs haben\n"
 
 msgid "Multiple entries"
 msgstr "Mehrfache Einträge"

@@ -66,8 +66,9 @@ msgid "Usage: %s %s\n"
 msgstr ""
 
 msgid ""
-"  -s, --set=acl           set the ACL of file(s), replacing the current ACL\n"
-"  -S, --set-file=file     read ACL entries to set from file\n"
+"      --set=acl           set the ACL of file(s), replacing the current ACL\n"
+"      --set-file=file     read ACL entries to set from file\n"
+"      --mask              do recalculate the effective rights mask\n"
 msgstr ""
 
 msgid ""
@@ -77,9 +78,6 @@ msgid ""
 "  -X, --remove-file=file  read ACL entries to remove from file\n"
 "  -b, --remove-all        remove all extended ACL entries\n"
 "  -k, --remove-default    remove the default ACL\n"
-msgstr ""
-
-msgid "      --mask              do recalculate the effective rights mask\n"
 msgstr ""
 
 msgid ""
@@ -119,15 +117,15 @@ msgid "%s: %s in line %d of standard input\n"
 msgstr ""
 
 #, c-format
-msgid "%s: %s: Resulting ACL `%s': %s at entry %d\n"
+msgid "%s: %s: Malformed ACL `%s': %s at entry %d\n"
 msgstr ""
 
 #, c-format
-msgid "%s: %s: Resulting default ACL `%s': %s at entry %d\n"
+msgid "%s: %s: Malformed default ACL `%s': %s at entry %d\n"
 msgstr ""
 
 #, c-format
-msgid "%s: %s: Only directories can have a default ACL\n"
+msgid "%s: %s: Only directories can have default ACLs\n"
 msgstr ""
 
 msgid "Multiple entries"

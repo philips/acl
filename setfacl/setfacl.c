@@ -49,8 +49,8 @@ do_set(
 
 /* '-' stands for `process non-option arguments in loop' */
 #if !POSIXLY_CORRECT
-#  define CMD_LINE_OPTIONS "-:bknds:S:m:M:x:X:RLP"
-#  define CMD_LINE_SPEC "[-bkndRLP] { -s|-S|-m|-M|-x|-X ... } file ..."
+#  define CMD_LINE_OPTIONS "-:bkndm:M:x:X:RLP"
+#  define CMD_LINE_SPEC "[-bkndRLP] { -m|-M|-x|-X ... } file ..."
 #endif
 #define POSIXLY_CMD_LINE_OPTIONS "-:bkndm:M:x:X:"
 #define POSIXLY_CMD_LINE_SPEC "[-bknd] {-m|-M|-x|-X ... } file ..."
@@ -230,13 +230,6 @@ void help(void)
 		progname, VERSION);
 	printf(_("Usage: %s %s\n"),
 		progname, cmd_line_spec);
-#if !POSIXLY_CORRECT
-	if (!posixly_correct) {
-		printf(_(
-"  -s, --set=acl           set the ACL of file(s), replacing the current ACL\n"
-"  -S, --set-file=file     read ACL entries to set from file\n"));
-	}
-#endif
 	printf(_(
 "  -m, --modify=acl        modify the current ACL(s) of file(s)\n"
 "  -M, --modify-file=file  read ACL entries to modify from file\n"
@@ -247,6 +240,8 @@ void help(void)
 #if !POSIXLY_CORRECT
 	if (!posixly_correct) {
 		printf(_(
+"      --set=acl           set the ACL of file(s), replacing the current ACL\n"
+"      --set-file=file     read ACL entries to set from file\n"
 "      --mask              do recalculate the effective rights mask\n"));
 	}
 #endif

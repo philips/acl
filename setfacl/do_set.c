@@ -379,7 +379,7 @@ do_set(
 			goto fail;
 		if (error > 0) {
 			acl_text = acl_to_any_text(acl, NULL, ',', 0);
-			fprintf(stderr, _("%s: %s: Resulting ACL `%s': "
+			fprintf(stderr, _("%s: %s: Malformed ACL `%s': "
 			        "%s at entry %d\n"), progname, path_p,
 				acl_text, acl_error(error), which_entry+1);
 			acl_free(acl_text);
@@ -406,7 +406,7 @@ do_set(
 			goto fail;
 		if (error > 0) {
 			acl_text = acl_to_any_text(default_acl, NULL, ',', 0);
-			fprintf(stderr, _("%s: %s: Resulting default ACL "
+			fprintf(stderr, _("%s: %s: Malformed default ACL "
 			                  "`%s': %s at entry %d\n"),
 				progname, path_p, acl_text,
 				acl_error(error), which_entry+1);
@@ -416,7 +416,7 @@ do_set(
 		}
 	}
 
-	/* Only directores can have a default ACL */
+	/* Only directores can have default ACLs */
 	if (default_acl && !S_ISDIR(st->st_mode) && opt_recursive) {
 		/* In recursive mode, ignore default ACLs for files */
 		acl_free(default_acl);
@@ -469,7 +469,7 @@ do_set(
 		} else {
 			if (acl_entries(default_acl) != 0) {
 				fprintf(stderr, _("%s: %s: Only directories "
-				                  "can have a default ACL\n"),
+				                  "can have default ACLs\n"),
 					progname, path_p);
 				errors++;
 				goto cleanup;
