@@ -98,13 +98,13 @@ mask::rwx
 other::---
 
 $ setfacl --test -x u: g
-setfacl: g: Resulting ACL `user:root:---,user:joe:rw-,group::r-x,mask::rwx,other::---': Missing or wrong entry at entry 1
+setfacl: g: Malformed ACL `user:root:---,user:joe:rw-,group::r-x,mask::rwx,other::---': Missing or wrong entry at entry 1
 $ setfacl --test -x u:x
 setfacl: Option -x: Invalid argument near character 3
 $ setfacl -m d:u:root:rwx g
-setfacl: g: Only directories can have a default ACL
+setfacl: g: Only directories can have default ACLs
 $ setfacl -x m g
-setfacl: g: Resulting ACL `user::rwx,user:root:---,user:joe:rw-,group::r-x,other::---': Missing or wrong entry at entry 5
+setfacl: g: Malformed ACL `user::rwx,user:root:---,user:joe:rw-,group::r-x,other::---': Missing or wrong entry at entry 5
 !setfacl --test -m d:u:joe:rwx setfacl
 !setfacl --test -n -m d:u:joe:rwx setfacl
 $ rm g

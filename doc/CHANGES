@@ -1,7 +1,8 @@
 * Remove the -s and -S short options from setfacl, since it confuses
   many users (--set and -set-file still exist). 
+* Update the setfacl(1) manual page.
 * Improve the wording of some error messages, and update the pot/po
-  files.
+  files. Also update the setfacl.test script.
 
 2.0.19 (04 September 2002)
 * Correct the description of the access check algorithm in acl(5).
