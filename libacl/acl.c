@@ -883,9 +883,6 @@ acl_entry_sort (acl_t acl)
 #  ifndef __NR__acl_set
 #    define __NR__acl_set	252
 #  endif
-#else
-#  define HAVE_ACL_SYSCALL 0
-#endif
 
 static _syscall4(int, _acl_get, 
 	const char *, path, 
@@ -898,6 +895,9 @@ static _syscall4(int, _acl_set,
 	int, fdes, 
 	struct acl *, acl, 
 	struct acl *, dacl);
+#else
+#  define HAVE_ACL_SYSCALL 0
+#endif
 
 int
 acl_get(const char *path, int fdes, struct acl *acl, struct acl *dacl)
