@@ -1,3 +1,6 @@
+2.2.16 (27 August 2003)
+* Fix issues in the libmisc quote routine (from Ben Escoto).
+
 2.2.15 (08 August 2003)
 * Somehow the SEGV fix from 2.2.14 got lost, reinstate it.
 
