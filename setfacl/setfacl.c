@@ -283,6 +283,13 @@ static seq_t __seq;
 int __do_set(const char *file, const struct stat *stat,
              int flag, struct FTW *ftw)
 {
+	if (flag & FTW_DNR) {
+		/* Item is a directory which can't be read. */
+		fprintf(stderr, "%s: %s: %s\n",
+			progname, file, strerror(errno));
+		return 0;
+	}
+
 	/* Process the target of a symbolic link, and traverse the link,
 	   only if doing a logical walk, or if the symbolic link was
 	   specified on the command line. Always skip symbolic links if
