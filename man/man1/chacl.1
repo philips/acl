@@ -76,9 +76,9 @@ to form the arguments to \f4chacl\fP.
 .P
 
 Changing the permission bits of a file will change the file access ACL settings 
-(see \f4chmod\fP(1)). Similarly file-creation mode masks can effect 
-the access ACL settings of files created using directory default ACLs 
-(see \f4umask\fP(1)).
+(see \f4chmod\fP(1)). However, file-creation mode masks (\f4umask\fP(1)) will
+not affect the access ACL settings of files created using directory 
+default ACLs. 
 .P
 ACLs are filesystem extended attributes and are not typically archived 
 or restored using conventional archiving utilities.

@@ -86,7 +86,7 @@ the ACL is to be used in making access control decisions for the file
 or directory with which it is associated.  \f2ACL_TYPE_DEFAULT\fP (1) indicates
 that the ACL is a default ACL.  Default ACLs are associated only with
 directories, and supply the initial ACL for a file created in that
-directory. Note that file-creation mode masks may effect the ACLs of
+directory. Note that file-creation mode masks do not affect the ACLs of
 files created as a result of using directory default ACLs (see \f2umask\fP(1)).
 ACLs are supplied using the \f2acl_get_file\fP(3c) and
 \f2acl_set_file\fP(3c) calls.
