@@ -1,8 +1,10 @@
-acl (2.2.18-1) unstable; urgency=low
+acl (2.2.20-1) unstable; urgency=low
 
-  * New upstream release (closes: #213244)
+  * New upstream release
+  * Fix incorrect man page entry (closes: #213244)
+  * Fix GNU/Hurd build issues, thanks to Robert Millan (closes: #215153)
 
- -- Nathan Scott <nathans@debian.org>  Tue, 30 Sep 2003 09:55:59 +1000
+ -- Nathan Scott <nathans@debian.org>  Mon, 13 Oct 2003 13:07:43 +1000
 
 acl (2.2.15-1) unstable; urgency=low
 
