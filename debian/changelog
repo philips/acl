@@ -1,3 +1,10 @@
+acl (2.2.29-1) unstable; urgency=low
+
+  * New upstream release
+  * Replace use of _POSIX_PATH_MAX with PATH_MAX (closes: #292819)
+
+ -- Nathan Scott <nathans@debian.org>  Mon, 31 Jan 2005 20:13:02 +1100
+
 acl (2.2.28-1) unstable; urgency=low
 
   * New upstream release
