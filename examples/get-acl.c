@@ -68,11 +68,11 @@ int main(int argc, char *argv[])
 				printf("default:%s\n", token);
 				token = strtok(NULL, "\n");
 			}
+			acl_free(default_acl_text);
 		}
 		printf("\n");
 
 		acl_free(acl_text);
-		acl_free(default_acl_text);
 	}
 	return ret;
 }

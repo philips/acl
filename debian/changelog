@@ -1,3 +1,9 @@
+acl (2.2.24-1) unstable; urgency=low
+
+  * New upstream release
+
+ -- Nathan Scott <nathans@debian.org>  Mon, 17 May 2004 11:57:47 +1000
+
 acl (2.2.23-1) unstable; urgency=low
 
   * New upstream release

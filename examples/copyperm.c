@@ -10,14 +10,14 @@
 #include <acl/libacl.h>
 
 void
-error(struct error_context *ctx, int err, const char *fmt, ...)
+error(struct error_context *ctx, const char *fmt, ...)
 {
 	va_list ap;
 
 	va_start(ap, fmt);
 	if (vfprintf(stderr, fmt, ap))
 		fprintf(stderr, ": ");
-	fprintf(stderr, "%s\n", strerror(err));
+	fprintf(stderr, "%s\n", strerror(errno));
 	va_end(ap);
 }
 
