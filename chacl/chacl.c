@@ -90,6 +90,7 @@ main(int argc, char *argv[])
 	program = basename(argv[0]);
 
 	setlocale(LC_CTYPE, "");
+	setlocale(LC_MESSAGES, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 

@@ -364,6 +364,7 @@ int main(int argc, char *argv[])
 #endif
 
 	setlocale(LC_CTYPE, "");
+	setlocale(LC_MESSAGES, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 
