@@ -169,7 +169,7 @@ dnl doc directory
 pkg_doc_dir=${prefix}/share/doc/${pkg_name}
 AC_SUBST(pkg_doc_dir)
 
-dnl ...
+dnl checks for extended attributes header and library
 AC_CHECK_HEADERS(attr/xattr.h)
 if test "$ac_cv_header_attr_xattr_h" != "yes"; then
 	echo
@@ -177,6 +177,16 @@ if test "$ac_cv_header_attr_xattr_h" != "yes"; then
 	echo $pkg_name cannot be built without the attr-devel package.
 	exit 1
 fi
+AC_CHECK_LIB(attr, getxattr,, [
+	echo
+	echo 'FATAL ERROR: could not find a valid Extended Attributes library.'
+	echo 'Install either the libattr (rpm) or the libattr1 (deb) package.'
+	echo 'Alternatively, run "make install-lib" from the attr source.'
+	exit 1
+])
+libattr="-lattr"
+test -f /usr/lib/libattr.la && libattr="/usr/lib/libattr.la"
+AC_SUBST(libattr)
 
 dnl machine characteristics
 AC_C_BIGENDIAN

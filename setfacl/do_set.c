@@ -33,7 +33,6 @@
 #include <unistd.h>
 #include <dirent.h>
 #include <ftw.h>
-#include "user_group.h"
 #include "sequence.h"
 #include "parse.h"
 

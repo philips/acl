@@ -108,9 +108,8 @@ void free_list(struct name_list *names)
 struct name_list *get_list(const struct stat *st, acl_t acl)
 {
 	struct name_list *first = NULL, *last = NULL;
-	const char *name;
 	acl_entry_t ent;
-	int len, ret = 0;
+	int ret = 0;
 
 	if (acl != NULL)
 		ret = acl_get_entry(acl, ACL_FIRST_ENTRY, &ent);
@@ -118,7 +117,9 @@ struct name_list *get_list(const struct stat *st, acl_t acl)
 		return NULL;
 	while (ret > 0) {
 		acl_tag_t e_type;
-		id_t *id_p;
+		const id_t *id_p;
+		const char *name = "";
+		int len;
 
 		acl_get_tag_type(ent, &e_type);
 		switch(e_type) {
@@ -127,7 +128,6 @@ struct name_list *get_list(const struct stat *st, acl_t acl)
 				break;
 
 			case ACL_USER:
-				name = NULL;
 				id_p = acl_get_qualifier(ent);
 				if (id_p != NULL)
 					name = user_name(*id_p);
@@ -138,17 +138,11 @@ struct name_list *get_list(const struct stat *st, acl_t acl)
 				break;
 
 			case ACL_GROUP:
-				name = NULL;
 				id_p = acl_get_qualifier(ent);
 				if (id_p != NULL)
 					name = group_name(*id_p);
 				break;
-
-			default:
-				name = NULL;
 		}
-		if (name == NULL)
-			name = "";
 		len = strlen(name);
 		if (last == NULL) {
 			first = last = (struct name_list *)
@@ -421,7 +415,6 @@ acl_get_file_mode(const char *path_p)
 
 int do_print(const char *path_p, const struct stat *st)
 {
-	const char *str;
 	const char *default_prefix = NULL;
 	acl_t acl = NULL, default_acl = NULL;
 	int error = 0;
@@ -472,17 +465,10 @@ int do_print(const char *path_p, const struct stat *st)
 		if (do_show(stdout, path_p, st, acl, default_acl) != 0)
 			goto fail;
 	} else {
-		if (opt_comments) {
-			printf("# file: %s\n", path_p);
-			if ((str = user_name(st->st_uid)) != NULL)
-				printf("# owner: %s\n", str);
-			else
-				printf("# owner: %d\n", (int)st->st_uid);
-			if ((str = group_name(st->st_gid)) != NULL)
-				printf("# group: %s\n", str);
-			else
-				printf("# group: %d\n", (int)st->st_gid);
-		}
+		if (opt_comments)
+			printf("# file: %s\n# owner: %s\n# group: %s\n",
+			       path_p, user_name(st->st_uid),
+			       group_name(st->st_gid));
 
 		if (acl != NULL) {
 			char *acl_text = acl_to_any_text(acl, NULL, '\n',

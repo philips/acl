@@ -21,6 +21,7 @@
 */
 
 #include <stdlib.h>
+#include <stdio.h>
 #include "user_group.h"
 
 
@@ -29,11 +30,15 @@ user_name(
 	uid_t uid)
 {
 	struct passwd *passwd = getpwuid(uid);
+	static char uid_str[12];
+	int ret;
 
 	if (passwd != NULL)
 		return passwd->pw_name;
-	else
-		return NULL;
+	ret = snprintf(uid_str, sizeof(uid_str), "%ld", (long)uid);
+	if (ret < 1 || ret >= sizeof(uid_str))
+		return "?";
+	return uid_str;
 }
 
 
@@ -42,10 +47,14 @@ group_name(
 	gid_t gid)
 {
 	struct group *group = getgrgid(gid);
+	static char gid_str[12];
+	int ret;
 
 	if (group != NULL)
 		return group->gr_name;
-	else
-		return NULL;
+	ret = snprintf(gid_str, sizeof(gid_str), "%ld", (long)gid);
+	if (ret < 1 || ret >= sizeof(gid_str))
+		return "?";
+	return gid_str;
 }
 

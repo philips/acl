@@ -1,3 +1,9 @@
+2.0.7 (10 April 2002)
+* Fix a bug in the --tabular format of getfacl where user/group names
+  without a symbolic name did not get printed
+* Remove setfacl/user_group.[ch] as these are no longer used
+* Added configure check for libattr -- uses libtool archive if found
+
 2.0.6 (08 April 2002)
 * Fix a bug that causes setfacl not to report error messages if
   acl-set_file() fails (the bug was introduced in version 2.0.3).

@@ -35,7 +35,7 @@ TOPDIR = ..
 include $(TOPDIR)/include/builddefs
 
 LTLIBRARY = libacl.la
-LTLIBS = -lattr
+LTLIBS = $(LIBATTR)
 LT_CURRENT = 1
 LT_REVISION = 0
 LT_AGE = 0
