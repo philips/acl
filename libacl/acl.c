@@ -871,6 +871,7 @@ acl_entry_sort (acl_t acl)
 
 /* Need to use the kernel system call numbering
  * for the particular architecture.
+ * Assumes ia32 library not used on ia64.
  */
 #if __i386__ 
 #  define HAVE_ACL_SYSCALL 1
@@ -879,6 +880,14 @@ acl_entry_sort (acl_t acl)
 #  endif
 #  ifndef __NR__acl_set
 #    define __NR__acl_set	252
+#  endif
+#elif __ia64__
+#  define HAVE_ACL_SYSCALL 1
+#  ifndef __NR__acl_get
+#    define __NR__acl_get	1216
+#  endif
+#  ifndef __NR__acl_set
+#    define __NR__acl_set	1217
 #  endif
 #else
 #  define HAVE_ACL_SYSCALL 0
@@ -902,11 +911,11 @@ int
 acl_get(const char *path, int fdes, struct acl *acl, struct acl *dacl)
 {
 #if HAVE_ACL_SYSCALL
-    return _acl_get(path, fdes, acl, dacl);
+	return _acl_get(path, fdes, acl, dacl);
 #else
-    fprintf(stderr, "libacl: acl_get system call not defined "
-                    "for this architecture\n");
-    return 0;
+	fprintf(stderr, "libacl: acl_get system call not defined "
+			"for this architecture\n");
+	return 0;
 #endif
 }
 
@@ -914,10 +923,10 @@ int
 acl_set(const char *path, int fdes, struct acl *acl, struct acl *dacl)
 {
 #if HAVE_ACL_SYSCALL
-    return _acl_set(path, fdes, acl, dacl);
+	return _acl_set(path, fdes, acl, dacl);
 #else
-    fprintf(stderr, "libacl: acl_set system call not defined "
-                    "for this architecture\n");
-    return 0;
+	fprintf(stderr, "libacl: acl_set system call not defined "
+			"for this architecture\n");
+	return 0;
 #endif
 }
