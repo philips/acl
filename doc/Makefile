@@ -33,8 +33,7 @@
 TOPDIR = ..
 include $(TOPDIR)/include/builddefs
 
-LSRCFILES = extensions.txt libacl.txt
-#INSTALL PORTING CHANGES COPYING
+LSRCFILES = extensions.txt libacl.txt TODO PORTING CHANGES LICENSE
 LDIRT = *.gz
 
 default: CHANGES.gz
@@ -50,7 +49,7 @@ install: default
 ifeq ($(PKG_DISTRIBUTION), debian)
 	$(INSTALL) -S CHANGES.gz $(PKG_DOC_DIR)/changelog.gz
 else
-	$(INSTALL) -m 644 COPYING $(PKG_DOC_DIR)
+	$(INSTALL) -m 644 LICENSE $(PKG_DOC_DIR)
 endif
 
 install-dev install-lib:

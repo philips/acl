@@ -33,16 +33,24 @@
 TOPDIR = ..
 include $(TOPDIR)/include/builddefs
 
-HFILES = sys/acl.h acl/libacl.h
-LSRCFILES = builddefs.in buildrules acl_ea.h config.h.in
+SYSDIR = sys
+LIBDIR = acl
 
-default install install-lib:
+HFILES = acl.h libacl.h acl_ea.h
+LSRCFILES = builddefs.in buildrules config.h.in
+LDIRT = $(SYSDIR) $(LIBDIR)
+
+default:
+	rm -f $(SYSDIR) $(LIBDIR)
+	$(LN_S) . $(SYSDIR)
+	$(LN_S) . $(LIBDIR)
 
 include $(BUILDRULES)
 
 install-dev: default
 	$(INSTALL) -m 755 -d $(PKG_INC_DIR)
-	$(INSTALL) -m 755 -d $(PKG_INC_DIR)/sys
-	$(INSTALL) -m 755 -d $(PKG_INC_DIR)/acl
-	$(INSTALL) -m 644 sys/acl.h $(PKG_INC_DIR)/sys/acl.h
-	$(INSTALL) -m 644 acl/libacl.h $(PKG_INC_DIR)/acl/libacl.h
+	$(INSTALL) -m 755 -d $(PKG_INC_DIR)/$(SYSDIR)
+	$(INSTALL) -m 644 acl.h $(PKG_INC_DIR)/$(SYSDIR)/acl.h
+	$(INSTALL) -m 755 -d $(PKG_INC_DIR)/$(LIBDIR)
+	$(INSTALL) -m 644 libacl.h $(PKG_INC_DIR)/$(LIBDIR)/libacl.h
+install install-lib:

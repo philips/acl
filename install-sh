@@ -355,13 +355,11 @@ else
 	    shift
 	done
 
-	echo DIR=$dir list=\"$list\"
+	# echo DIR=$dir list=\"$list\"
 	for f in $list
 	do
 	    $CP $f $dir
 	    status=$?
-            # from/file.x -> $dir/file.x,  not $dir/from/file.x
-            f=`basename $f`
 	    if [ $status -eq 0 ]
 	    then
 		$CHMOD $FILEMODE $dir/$f

@@ -1,5 +1,5 @@
 dnl unpacking check - this file must exist
-AC_INIT(include/sys/acl.h)
+AC_INIT(include/acl.h)
 AC_CONFIG_HEADER(include/config.h)
 
 pkg_name="acl"

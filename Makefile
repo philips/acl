@@ -43,7 +43,9 @@ LSRCFILES = configure configure.in Makepkgs install-sh README VERSION
 LDIRT = config.log .dep config.status config.cache confdefs.h conftest* \
 	Logs/* built .census install.* install-dev.* install-lib.* *.gz
 
-SUBDIRS = include man build libacl getfacl setfacl
+# TODO - get "po" (internationalisation stuff) into SUBDIRS below;
+# Ideally, incorporate into include/buildrules (& use in attr too).
+SUBDIRS = include libacl getfacl setfacl chacl man build test doc
 
 default: $(CONFIGURE)
 ifeq ($(HAVE_BUILDDEFS), no)
