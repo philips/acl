@@ -1,0 +1,150 @@
+.\" Access Control Lists manual pages
+.\"
+.\" (C) 2002 Andreas Gruenbacher, <a.gruenbacher@computer.org>
+.\"
+.\" THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS'' AND
+.\" ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+.\" IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+.\" ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE
+.\" FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+.\" DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+.\" OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+.\" HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+.\" LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+.\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+.\" SUCH DAMAGE.
+.\"
+.TH ACL_SET_FILE 3 "Linux ACL Library" "March 2002" "Access Control Lists"
+.SH NAME
+acl_set_file \- set an ACL by filename
+.SH LIBRARY
+Linux Access Control Lists library (libacl, \-lacl).
+.SH SYNOPSIS
+.sp
+.nf
+.B #include <sys/types.h>
+.B #include <sys/acl.h>
+.sp
+.B "int acl_set_file (const char *\f2path_p\f3, "
+.B "                  acl_type_t \f2type\f3, acl_t \f2acl\f3);"
+.Op
+.SH DESCRIPTION
+The
+.B acl_set_file
+function associates an access ACL with a file or directory, or
+associates a default ACL with a directory. The pathname for the file or
+directory is pointed to by the argument
+.IR path_p .
+.PP
+The effective user ID of the process must match the owner of the file or
+directory or the process must have the CAP_FOWNER capability for the
+request to succeed.
+.PP
+The value of the argument
+.I type
+is used to indicate whether the access ACL or the default ACL associated
+with
+.I path_p
+is being set. If the
+.I type
+parameter is ACL_TYPE_ACCESS, the access ACL of
+.I path_p
+shall be set.
+If the
+.I type
+parameter is ACL_TYPE_DEFAULT, the default ACL of
+.I path_p
+shall be set.
+If the argument
+.I type
+specifies a type of ACL that cannot be associated with
+.IR path_p ,
+then the function will fail.
+.PP
+The
+.I acl
+parameter must reference a valid ACL according to the rules described on the
+.BR acl_valid (3)
+manual page if the
+.I type
+parameter is ACL_TYPE_ACCESS, and must either reference a valid ACL or an ACL with zero ACL entries if the
+.I type
+parameter is ACL_TYPE_DEFAULT. If the
+.I acl
+parameter references an empty ACL, then the
+.B acl_set_file
+function removes any default ACL associated with the directory referred to
+by the
+.I path_p
+parameter.
+.SH RETURN VALUE
+The value 0 is returned if successful; otherwise the value -1 is
+returned and the global variable errno is set to indicate the error.
+.SH ERRORS
+If any of the following conditions occur, the
+.B acl_set_file
+function returns -1 and sets
+.B errno
+to the corresponding value:
+.TP
+.SM
+\%[EINVAL]
+The argument
+.I acl
+does not point to a valid ACL.
+.PP
+The ACL has more entries than the file referred to by
+.I path_p
+can obtain.
+.PP
+The
+.I type
+parameter is ACL_TYPE_DEFAULT, but the file referred to by
+.I path_p
+is not a directory.
+.TP
+.SM
+\%[ENOSPC]
+The directory or file system that would contain the new ACL cannot be extended or the file system is out of file allocation resources.
+.TP
+.SM
+\%[EPERM]
+The process does not have appropriate privilege to perform the operation to set the ACL.
+.TP
+.SM
+\%[EROFS]
+This function requires modification of a file system which is currently read-only.
+.TP
+.SM
+\%[ENOTSUP]
+The file identified by
+.I path_p 
+cannot be associated with the ACL because the file system on which the file
+is located does not support this.
+.SH STANDARDS
+IEEE Std 1003.1e draft 17 (\(lqPOSIX.1e\(rq, abandoned)
+.PP
+The behavior of
+.B acl_set_file
+when the
+.I acl
+parameter refers to an empty ACL and the
+.I type
+parameter is ACL_TYPE_DEFAULT is an extension in the Linux implementation, in order that all values returned by
+.BR acl_get_file (3)
+can be passed to
+.BR acl_set_file .
+The POSIX.1e function for removing a default ACL is
+.BR acl_delete_def_file .
+.SH AUTHOR
+Derived from the FreeBSD manual pages written by
+.IR "Robert N M Watson" ;
+and adapted for Linux by
+.I "Andreas Gruenbacher"
+<a.gruenbacher@computer.org>.
+.SH SEE ALSO
+.BR acl_delete_def_file (3),
+.BR acl_get_file (3),
+.BR acl_set_fd (3),
+.BR acl_valid (3),
+.BR acl (5)

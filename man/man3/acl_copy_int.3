@@ -14,9 +14,9 @@
 .\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 .\" SUCH DAMAGE.
 .\"
-.TH ACL_VALID 3 "Linux ACL Library" "March 2002" "Access Control Lists"
+.TH ACL_COPY_INT 3 "Linux ACL Library" "March 2002" "Access Control Lists"
 .SH NAME
-acl_valid \- validate an ACL
+acl_copy_int \- copy an ACL from external to internal representation
 .SH LIBRARY
 Linux Access Control Lists library (libacl, \-lacl).
 .SH C SYNOPSIS
@@ -25,52 +25,45 @@ Linux Access Control Lists library (libacl, \-lacl).
 .B #include <sys/types.h>
 .B #include <sys/acl.h>
 .sp
-.B "int acl_valid (acl_t \f2acl\f3);"
+.B "acl_t acl_copy_int (const void *\f2buf_p\f3);"
 .Op
 .SH DESCRIPTION
 The
-.B acl_valid
-function checks the ACL referred to by the argument
-.I acl
-for validity.
+.B acl_copy_int
+function copies an exportable, contiguous, persistent form of an ACL, pointed to by
+.IR buf_p ,
+to the internal representation.
 .PP
-The three required entries ACL_USER_OBJ, ACL_GROUP_OBJ, and ACL_OTHER
-must exist exactly once in the ACL. If the ACL contains any ACL_USER or
-ACL_GROUP entries, then an ACL_MASK entry is also required. The ACL
-may contain at most one ACL_MASK entry.
-.PP
-The user identifiers must be unique among all entries of type ACL_USER.
-The group identifiers must be unique among all entries of type ACL_GROUP.
+This function may cause memory to be allocated.  The caller should free any
+releasable memory, when the new ACL is no longer required, by calling
+.BR acl_free (3)
+with the (void*)acl_t returned by
+.B acl_copy_int
+as an argument.
 .SH RETURN VALUE
-The value 0 is returned if successful; otherwise the value -1 is
-returned and the global variable errno is set to indicate the error.
+Upon successful completion,
+the
+.B acl_copy_int
+function returns a pointer that references the ACL in working storage.
+Otherwise, a value of (acl_t)NULL is returned, and
+.B errno
+is set to indicate the error.
 .SH ERRORS
 If any of the following conditions occur, the
-.B acl_valid
-function returns -1 and sets
+.B acl_copy_int
+function returns a value of (acl_t)NULL and sets
 .B errno
 to the corresponding value:
 .TP
 .SM
 \%[EINVAL]
-The argument
-.I acl
-is not a valid pointer to an ACL.
+The buffer pointed to by the
+.I buf_p
+argument does not contain a valid external form ACL.
 .TP
 .SM
-\%[EINVAL]
-The argument
-.I acl
-does not point to a valid ACL.
-.TP
-.SM
-\%[EINVAL]
-One or more of the required ACL entries is not present in
-.IR acl .
-.TP
-.SM
-\%[EINVAL]
-The ACL contains entries that are not unique.
+\%[ENOMEM]
+The ACL working storage requires more memory than is allowed by the hardware or system-imposed memory management constraints.
 .SH STANDARDS
 IEEE Std 1003.1e draft 17 (\(lqPOSIX.1e\(rq, abandoned)
 .SH AUTHOR
@@ -80,4 +73,6 @@ and adapted for Linux by
 .I "Andreas Gruenbacher"
 <a.gruenbacher@computer.org>.
 .SH SEE ALSO
+.BR acl_copy_ext (3),
+.BR acl_free (3),
 .BR acl (5)

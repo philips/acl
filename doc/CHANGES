@@ -1,5 +1,18 @@
-[cvs]
-* Fix up acl_to_text compliance with POSIX draft (from Andreas).
+2.0.5 (26 March 2002)
+* Fix up acl_to_text compliance with POSIX draft.
+* Add the new acl(5) manual page.
+* Add a manual section 3 directory and Makefile.
+* Add the libacl manual pages.
+* Rename the existing acl_to_any_text function to __acl_to_any_text, and
+  add a new acl_to_any_text function that only contains parameters that
+  are actually useful.  Make acl_to_text and acl_to_any_text invoke
+  __acl_to_any_text internally.  Update all uses of acl_to_any_text in
+  getfacl/getfacl.c, setfacl/do_set.c, and chacl/chacl.c.
+* Move the acl_size function form the LIBACL_CFILES to the POSIX_CFILES
+  section (it is a POSIX function)
+* Rearrange libacl routines so that several non-POSIX routines which
+  were being exported are no longer exported (eg. acl_entry_to_any_str,
+  acl_get_file_mode, acl_get_fd_mode, acl_set_file_mode, acl_set_fd_mode).
 
 2.0.4 (12 March 2002)
 * Man page updates from Andreas

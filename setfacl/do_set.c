@@ -113,10 +113,9 @@ print_test(
 {
 	char *acl_text, *default_acl_text;
 
-	acl_text = acl_to_any_text(acl, NULL,
-		 "", ',', "", TEXT_ABBREVIATE);
-	default_acl_text = acl_to_any_text(default_acl, NULL,
-		 "d:", ',', "", TEXT_ABBREVIATE);
+	acl_text = acl_to_any_text(acl, NULL, ',', TEXT_ABBREVIATE);
+	default_acl_text =
+		acl_to_any_text(default_acl, "d:", ',', TEXT_ABBREVIATE);
 	fprintf(file, "%s: %s,%s\n", path_p,
 		acl_text ? acl_text : "*",
 		default_acl_text ? default_acl_text : "*");
@@ -377,9 +376,7 @@ do_set(
 		if (error < 0)
 			goto fail;
 		if (error > 0) {
-			acl_text = acl_to_any_text(
-				acl, NULL, NULL, ',',
-				NULL, TEXT_NO_EFFECTIVE);
+			acl_text = acl_to_any_text(acl, NULL, ',', 0);
 			fprintf(stderr, _("%s: %s: Resulting ACL `%s': "
 			        "%s at entry %d\n"), progname, path_p,
 				acl_text, acl_error(error), which_entry+1);
@@ -406,9 +403,7 @@ do_set(
 		if (error < 0)
 			goto fail;
 		if (error > 0) {
-			acl_text = acl_to_any_text(
-				default_acl, NULL, NULL, ',',
-				NULL, TEXT_NO_EFFECTIVE);
+			acl_text = acl_to_any_text(default_acl, NULL, ',', 0);
 			fprintf(stderr, _("%s: %s: Resulting default ACL "
 			                  "`%s': %s at entry %d\n"),
 				progname, path_p, acl_text,
@@ -445,29 +440,28 @@ do_set(
 	}
 	if (acl) {
 		if (acl_set_file(path_p, ACL_TYPE_ACCESS, acl) != 0) {
-			if (errno != ENOSYS && errno != ENOTSUP)
-				goto fail;
-			if (acl_set_file_mode(path_p, ACL_TYPE_ACCESS,
-				              acl) != 0)
-				goto fail;
+			if (errno == ENOSYS || errno == ENOTSUP) {
+				int saved_errno = errno;
+				mode_t mode;
+
+				if (acl_equiv_mode(acl, &mode) != 0) {
+					errno = saved_errno;
+					goto fail;
+				} else if (chmod(path_p, mode) != 0)
+					goto fail;
+			}
 		}
 	}
 	if (default_acl) {
 		if (S_ISDIR(st->st_mode)) {
 			if (acl_entries(default_acl) == 0) {
-				if (acl_delete_def_file(path_p) != 0)
+				if (acl_delete_def_file(path_p) != 0 &&
+				    errno != ENOSYS && errno != ENOTSUP)
 					goto fail;
 			} else {
 				if (acl_set_file(path_p, ACL_TYPE_DEFAULT,
-						 default_acl) != 0) {
-					if (errno != ENOSYS &&
-					    errno != ENOTSUP)
-						goto fail;
-					if (acl_set_file_mode(path_p,
-						              ACL_TYPE_DEFAULT,
-						              default_acl) != 0)
-						goto fail;
-				}
+						 default_acl) != 0)
+					goto fail;
 			}
 		} else {
 			if (acl_entries(default_acl) != 0) {

@@ -405,6 +405,20 @@ int do_show(FILE *stream, const char *path_p, const struct stat *st,
 	return 0;
 }
 
+/*
+ * Create an ACL from the file permission bits
+ * of the file PATH_P.
+ */
+static acl_t
+acl_get_file_mode(const char *path_p)
+{
+	struct stat st;
+
+	if (stat(path_p, &st) != 0)
+		return NULL;
+	return acl_from_mode(st.st_mode);
+}
+
 int do_print(const char *path_p, const struct stat *st)
 {
 	const char *str;
@@ -471,8 +485,8 @@ int do_print(const char *path_p, const struct stat *st)
 		}
 
 		if (acl != NULL) {
-			char *acl_text = acl_to_any_text(acl, NULL,
-				 "", '\n', "", print_options);
+			char *acl_text = acl_to_any_text(acl, NULL, '\n',
+							 print_options);
 			if (!acl_text)
 				goto fail;
 			if (puts(acl_text) < 0) {
@@ -482,8 +496,9 @@ int do_print(const char *path_p, const struct stat *st)
 			acl_free(acl_text);
 		}
 		if (default_acl != NULL) {
-			char *acl_text = acl_to_any_text(default_acl, NULL,
-				default_prefix, '\n', "", print_options);
+			char *acl_text = acl_to_any_text(default_acl, 
+							 default_prefix, '\n',
+							 print_options);
 			if (!acl_text)
 				goto fail;
 			if (puts(acl_text) < 0) {

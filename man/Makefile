@@ -33,7 +33,7 @@
 TOPDIR = ..
 include $(TOPDIR)/include/builddefs
 
-SUBDIRS = man1 man5
+SUBDIRS = man1 man3 man5
 
 default install install-dev install-lib html ps: $(SUBDIRS)
 	$(SUBDIRS_MAKERULE)

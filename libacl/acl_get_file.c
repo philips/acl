@@ -19,6 +19,8 @@
   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 
+#include <sys/types.h>
+#include <sys/stat.h>
 #include <unistd.h>
 #include <stdio.h>
 #include <attr/xattr.h>
@@ -67,9 +69,14 @@ acl_get_file(const char *path_p, acl_type_t type)
 		acl_t acl = __acl_from_xattr(ext_acl_p, retval);
 		return acl;
 	} else if (retval == 0 || errno == ENOATTR) {
-		if (type == ACL_TYPE_ACCESS)
-			return acl_get_file_mode(path_p);
-		else
+		if (type == ACL_TYPE_ACCESS) {
+			struct stat st;
+
+			if (stat(path_p, &st) == 0)
+				return acl_from_mode(st.st_mode);
+			else
+				return NULL;
+		} else
 			return acl_init(0);
 	} else
 		return NULL;

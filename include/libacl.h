@@ -40,16 +40,12 @@ extern "C" {
 #define ACL_MISS_ERROR		(0x3000)     /* missing required entry */
 #define ACL_ENTRY_ERROR		(0x4000)     /* wrong entry type */
 
-extern char *acl_to_any_text(acl_t acl, ssize_t *len_p, const char *prefix,
-			     char separator, const char *suffix, int options);
+extern char *acl_to_any_text(acl_t acl, const char *prefix,
+			     char separator, int options);
 extern int acl_cmp(acl_t acl1, acl_t acl2);
 extern int acl_check(acl_t acl, int *last);
 extern acl_t acl_from_mode(mode_t mode);
 extern int acl_equiv_mode(acl_t acl, mode_t *mode_p);
-extern acl_t acl_get_file_mode(const char *path_p);
-extern acl_t acl_get_fd_mode(int fd);
-extern int acl_set_file_mode(const char *path_p, acl_type_t type, acl_t acl);
-extern int acl_set_fd_mode(int fd, acl_t acl);
 int acl_extended_file(const char *path_p);
 int acl_extended_fd(int fd);
 extern int acl_entries(acl_t acl);

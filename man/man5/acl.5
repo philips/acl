@@ -1,263 +1,472 @@
+.\" Access Control Lists manual pages
 .\"
-.\" Access Control Lists
+.\" (C) 2002 Andreas Gruenbacher, <a.gruenbacher@computer.org>
 .\"
-.\" Documentation for the Linux implementation
-.\" (C) Andreas Gruenbacher, 1999
+.\" THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS'' AND
+.\" ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+.\" IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+.\" ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE
+.\" FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+.\" DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+.\" OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+.\" HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+.\" LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+.\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+.\" SUCH DAMAGE.
 .\"
-.TH ACL 5 "Access Control Lists" "Sep 1999" "Access Control Lists"
+.TH ACL 5 "Access Control Lists" "March 2002" "Access Control Lists"
 .SH NAME
-acl - Access Control Lists
+acl \- Access Control Lists
 .SH DESCRIPTION
-This document describes Posix-style access control lists as implemented under
-Linux. Access control lists (ACLs) are used to define access to files
-and directories. 
-
-In portable programs, the Posix 1003.1e Draft Standard 17 library
-functions should be used for mainpulating ACL. On most platforms, the
-ACL entry manipulation functions are not available, so relying only on
-the ACL manipulation and format conversion functions (ACL to and from
-text format) is more portable.  The library functions are declared in
-the
-.I sys/acl.h
-header file.
-
-.SH ACCESS CONTROL LIST ENTRIES
-An access control list contains a number of entries of various types. Each entry stands for permissions granted to a user, or to a group of users.
+This manual page describes POSIX Access Control Lists, which are used to
+define more fine-grained discretionary access rights for files and
+directories.
+.SH ACL TYPES
+Every object can be thought of as having associated with it an ACL that
+governs the discretionary access to that object; this ACL is referred to
+as an access ACL. In addition, a directory may have an associated ACL
+that governs the initial access ACL for objects created within that
+directory; this ACL is referred to as a default ACL.
+.SH ACL ENTRIES
+An ACL consists of a set of ACL entries. An ACL entry specifies the
+access permissions on the associated object for an individual user or a
+group of users as a combination of read, write and search/execute
+permissions.
 .PP
-An ACL may contain entries with the following entry tag types.
+An ACL entry contains an entry tag type, an optional entry tag
+qualifier, and a set of permissions.
+We use the term qualifier to denote the entry tag qualifier of an ACL entry.
 .PP
-.RS
-.fam C
-.nf
-ACL_USER_OBJ         (owner)
-ACL_USER             (named user)
-ACL_GROUP_OBJ        (owning group)
-ACL_GROUP            (named group)
-ACL_MASK             (effective rights mask)
-ACL_OTHER            (other users)
-.fi
-.fam T
-.RE
+The qualifier denotes the identifier of a user or a group, for entries
+with tag types of ACL_USER or ACL_GROUP, respectively. Entries with tag
+types other than ACL_USER or ACL_GROUP have no defined qualifiers.
+.PP
+The following entry tag types are defined:
+.TP
+.B ACL_USER_OBJ
+The ACL_USER_OBJ entry denotes access rights for the file owner.
+.TP
+.B ACL_USER
+ACL_USER entries denote access rights for users identified by
+the entry's qualifier.
+.TP
+.B ACL_GROUP_OBJ
+The ACL_GROUP_OBJ entry denotes access rights for the file group.
+.TP
+.B ACL_GROUP
+ACL_USER entries denote access rights for groups identified by
+the entry's qualifier.
+.TP
+.B ACL_MASK
+The ACL_MASK entry denotes the maximum access rights that can be granted
+by entries of type ACL_USER, ACL_GROUP_OBJ, or ACL_GROUP.
+.TP
+.B ACL_OTHER
+The ACL_OTHER entry denotes access rights for processes
+that do not match any other entry in the ACL.
+.PP
+When an access check is performed, the ACL_USER_OBJ and ACL_USER entries
+are tested against the effective user ID. The effective group ID, as
+well as all supplementary group IDs are tested against the ACL_GROUP_OBJ
+and ACL_GROUP entries.
+.SH VALID ACLs
+A valid ACL contains exactly one entry with each of the ACL_USER_OBJ,
+ACL_GROUP_OBJ, and ACL_OTHER tag types. Entries with ACL_USER and
+ACL_GROUP tag types may appear zero or more times in an ACL. An ACL that
+contains entries of ACL_USER or ACL_GROUP tag types must contain
+exactly one entry of the ACL_MASK tag type. If an ACL contains no
+entries of ACL_USER or ACL_GROUP tag types, the ACL_MASK entry is
+optional.
+.PP
+All user ID qualifiers must be unique among all entries of
+ACL_USER tag type, and all group IDs must be unique among all entries of
+ACL_GROUP tag type.
+.\"minimal vs. extended ACLs
 .PP
 The
-ACL_USER_OBJ, ACL_GROUP_OBJ, and ACL_OTHER entries
-correspond to the traditional file mode permission bits. There is
-exactly one each of these entries in a valid ACL.
+.BR acl_get_file (3)
+function returns an ACL with zero ACL entries as the default ACL of a
+directory, if the directory is not associated with a default ACL. The
+.BR acl_set_file (3)
+function also accepts an ACL with zero ACL entries as a valid default ACL for
+directories, denoting that the directory shall not be associated with a
+default ACL. This is equivalent to using the
+.BR acl_delete_def_file (3)
+function.
+.SH CORRESPONDENCE BETWEEN ACL ENTRIES AND FILE PERMISSION BITS
+The permissions defined by ACLs are a superset of the permissions
+specified by the file permission bits. The permissions defined for
+the file owner correspond to the permissions of the ACL_USER_OBJ entry.
+The permissions defined for the file group correspond to the permissions
+of the ACL_GROUP_OBJ entry, if the ACL has no ACL_MASK entry. If the ACL
+has an ACL_MASK entry, then the permissions defined for the file group
+correspond to the permissions of the ACL_MASK entry. The permissions
+defined for the other class correspond to the permissions of the
+ACL_OTHER_OBJ entry.
 .PP
-ACL_USER and ACL_GROUP
-entries define explicit rights for users and groups, respectively. For
-entries of these two types,
-.I a_id[0]
-is set to the ID of the user or group in question. Whenever there are
-any entries of the last two types in the ACL, an ACL_MASK
-entry is also required.
-
-An ACL_MASK entry limits the effective rights granted
-to named users or groups. The efective rights granted are those
-that are both granted by the user's or group's entry, and by the ACL_MASK entry. The ACL_MASK entry does not apply to the ACL_USER_OBJ and ACL_OTHER entries.
+Modification of the file permission bits results in the modification of
+the permissions in the associated ACL entries. Modification of the
+permissions in the ACL entries results in the modification of the file
+permission bits.
+.SH OBJECT CREATION AND DEFAULT ACLs
+The access ACL of a file object is initialized when the object is
+created with any of the
+.BR creat (2),
+.BR mkdir (2),
+.BR mknod (2),
+.BR mkfifo (2),
+or
+.BR open (2)
+functions.
+If a default ACL is associated with a directory, the
+.I mode
+parameter to the functions creating file objects and the default ACL of
+the directory are used to determine the ACL of the new object:
+.IP 1. 4
+The new object inherits the default ACL of the containing directory
+as its access ACL.
+.IP 2. 4
+The access ACL entries corresponding to the file permission bits are
+modified so that they contain no permissions that are not
+contained in the permissions specified by the
+.I mode
+parameter.
 .PP
-The lowest three bits of 
-.I a_perm
-define the rights granted to the user the entry applies to, just like
-the bits in the traditional file mode. This results in a value between 0 and 7
-(from 0 standing for no access to 7 standing for read, write, and execute access). For accessing these bits, the constants ACL_READ, ACL_WRITE and ACL_EXECUTE should be used.
+If no default ACL is associated with a directory, the
+.I mode
+parameter to the functions creating file objects and the file creation
+mask (see
+.BR umask (2))
+are used to determine the ACL of the new object:
+.IP 1. 4
+The new object is assigned an access ACL containing entries of tag types
+ACL_USER_OBJ, ACL_GROUP_OBJ, and ACL_MASK. The permissions of these
+entries are set to the permissions specified by the file creation mask.
+.IP 2. 4
+The access ACL entries corresponding to the file permission bits are
+modified so that they contain no permissions that are not
+contained in the permissions specified by the
+.I mode
+parameter.
+.SH ACCESS CHECK ALGORITHM
+A process may request read, write, or execute/search access to a file object
+protected by an ACL. The access check algorithm determines whether access to
+the object will be granted.
+.IP 1. 4
+.B If
+the effective user ID of the process matches the user ID of the file object owner,
+.B then
+.IP
+.in +4
+.B if
+the ACL_USER_OBJ entry contains the requested permissions, access is granted;
+.in -4
+.IP
+.in +4
+.B else
+access is denied.
+.in -4
+.IP 2. 4
+.B "else if"
+the effective user ID of the process matches the qualifier of any entry
+of type ACL_USER,
+.B then
+.IP
+.in +4
+.B if
+the matching ACL_USER entry and the ACL_MASK entry contain the requested
+permissions, access is granted,
+.in -4
+.IP
+.in +4
+.B else
+access is denied.
+.in -4
+.IP 3. 4
+.B "else if"
+the effective group ID or any of the supplementary group IDs of the
+process match the qualifier of any entry of type ACL_GROUP,
+.B then
+.IP
+.in +4
+.B if
+the ACL_MASK entry and any of the matching ACL_GROUP group entries contain
+the requested permissions, access is granted,
+.in -4
+.IP
+.in +4
+.B else
+access is denied.
+.in -4
+.IP 4. 4
+.B "else if"
+the ACL_OTHER entry contains the requested permissions, access is granted.
+.IP 5. 4
+.B else
+access is denied.
+.\".IP 5. 4
+.\"Checking whether the requested access modes are granted by the matched entry.
 
-.SH VALID ACCESS CONTROL LISTS
-Each valid ACL has as a minimum the three required base entries
-ACL_USER_OBJ, ACL_GROUP_OBJ, and ACL_OTHER. These entries correspond
-to the traditional Posix permission bits. There must be exactly one each
-of these three entries. The permission mask `rw-r-----' corresponds to the
-following entries:
-.sp
-.RS
-.fam C
+.SH ACL TEXT FORMS
+A long and a short text form for representing ACLs is defined. In both forms, ACL entries are represented as three colon separated fields: an ACL entry tag type, an ACL entry qualifier, and the discretionary access permissions. The first field contains one of the following entry tag type keywords:
+.TP
+.B user
+specifies the access granted to either the file owner (entry tag
+type ACL_USER_OBJ) or a specified user (entry tag type ACL_USER).
+.TP
+.B group
+specifies the access granted to either the file group (entry tag
+type ACL_GROUP_OBJ) or a specified group (entry tag type ACL_GROUP).
+.TP
+.B mask
+specifies the maximum access which can be granted by any ACL
+entry except the
+.B user
+entry for the file owner and the
+.B other
+entry (entry tag type ACL_MASK).
+.TP
+.B other
+specifies the access granted to any process that does not match any
+.B user
+or
+.B group
+ACL entries (entry tag type ACL_OTHER).
+.PP
+The second field contains the user or group identifier of the user or
+group associated with the ACL entry for entries of entry tag type ACL_USER
+or ACL_GROUP, and is empty for all other entries. A user identifier can
+be a user name or a user ID number in decimal form. A group identifier can
+be a group name or a group ID number in decimal form.
+.PP
+The third field contains the discretionary access permissions. The read,
+write and search/execute permissions are represented by the
+.BR r ,
+.BR w ,
+and
+.B x
+characters, in this order. Each of these characters is replaced by the
+hyphen character (\c
+.BR \- )
+to denote that a permission is absent in the ACL entry.
+When converting from the text form to the internal representation,
+permissions that are absent need not be specified.
+.PP
+White space is permitted at the beginning and end of each ACL entry, and
+immediately before and after a field separator (the colon character).
+.SS LONG TEXT FORM
+The long text form contains one ACL entry per line.
+In addition, the hash character (\c
+.BR # )
+may start a comment that extends until the end of the line. If an
+ACL_USER, ACL_GROUP_OBJ or ACL_GROUP ACL entry contains permissions that
+are not also contained in the ACL_MASK entry, the entry is followed by a
+number sign, the string \(lqeffective:\(rq, and the effective access
+permissions defined by that entry. This is an example of the long text
+form:
 .nf
-	u::rw- (ACL_USER_OBJ entry)
-	g::r-- (ACL_GROUP_OBJ entry)
-	o::--- (ACL_OTHER entry)
+.sp .8v
+.in +6
+user::rw-
+user:lisa:rw-         #effective:r--
+group::r--
+group:toolies:rw-     #effective:r--
+mask::r--
+other::r--
+.in -6
 .fi
-.fam T
-.RE
-.PP
-An ACL must also contain exactly one ACL_MASK entry, if it contains
-additional ACL_USER or ACL_GROUP entries. For each user or group, there
-must be at most one ACL_USER or ACL_GROUP entry per access control list. An ACL may also contain an ACL_MASK entry if no ACL_USER or ACL_GROUP entries exist.
-.sp
-.RS
-.fam C
+.IP
+.SS SHORT TEXT FORM
+The short text form is a sequence of ACL entries separated by commas,
+and is used for input. Comments are not supported. Entry tag type
+keywords may either appear in their full unabbreviated form, or in their
+single letter abbreviated form. The abbreviation for
+.B user
+is
+.BR u ,
+the abbreviation for
+.B group
+is
+.BR g ,
+the abbreviation for
+.B mask
+is
+.BR m ,
+and the abbreviation for
+.B other
+is
+.BR o .
+The permissions may contain at most one each of the following characters
+in any order:
+.BR r ,
+.BR w ,
+.BR x .
+These are examples of the short text form:
 .nf
-	u:joe:rw- (ACL_USER entry)
-	g:webteam:rw- (ACL_GROUP entry)
-	m::rw- (ACL_MASK entry)
+.sp .8v
+.in +6
+u::rw-,u:lisa:rw-,g::r--,g:toolies:rw-,m::r--,o::r--
+g:toolies:rw,u:lisa:rw,u::wr,g::r,o::r,m::r
+.in -6
 .fi
-.fam T
-.RE
-.PP
-.SS THE ACL_MASK ENTRY
-The purpose of the ACL_MASK entry is to limit
-the effective rights granted to groups and named users in
-the ACL. The effective rights granted to a user or a group with an ACL_USER
-or an ACL_GROUP entry are those which are listed in both the ACL_USER
-or ACL_GROUP entry
-.I and
-the ACL_MASK entry. The ACL_USER_OBJ and ACL_OTHER entries
-are not affected by the ACL_MASK entry.
 
-.SH PERMISSIONS
-The permissions required for manipulating ACLs of an inode are similar
-to the permissions required for manipulating the file mode. Processes
-with search access to a file are granted the right to read ACLs. Only the
-file owner and processes capable of CAP_FOWNER are granted the right to
-modify ACLs. (On current Linux systems, root is the only user with the
-CAP_FOWNER capability.)
-
-.SH DETERMINING ACCESS
-When a process requests access to a file, the following algorithm determines whether access is granted or not. The input to the algorithm is a set of requested permissions (read, write, execute).
-
-.SS (1) "Find a matching ACL entry"
-.IP * 4
-If the user is the file owner, access is granted \fIonly\fR if the
-ACL_USER_OBJ entry contains the requested permissions.
-.IP * 4
-If the ACL contains a named user (ACL_USER) entry that matches the user, then:
-.RS
-.IP - 4
-If access is granted by that entry, continue with step \fB(2)\fR below.
-.IP - 4
-Otherwise, access is denied.
-.RE
-.IP * 4
-If the user is in the owning group of the file (ACL_GROUP_OBJ entry), or if the user is member of a named group (ACL_GROUP entries), then:
-.RS
-.IP - 4
-If either the ACL_GROUP_OBJ entry or one of the ACL_GROUP entries contains the requested permissions, continue with step \fB(2)\fR below. (Permissions of multiple ACL entries are
-.I not
-accumulated.)
-.IP - 4
-Otherwise, access is denied.
-.RE
-.IP * 4
-If none of the above rules match, then
-.RS
-.IP - 4
-If the ACL_OTHER entry contains the requested permissions, access is
-granted.
-.IP - 4
-Otherwise, access is denied.
-.RE
-.SS (2) Check the access mask
-.IP * 4
-If the access mask (ACL_MASK) contains the requested permissions, access is granted.
-.IP * 4
-Otherwise, access is denied.
-.SH DEFAULT ACCESS CONTROL LISTS
-Directories may have a default ACL, in addition to the regular ACL. While the
-purpose of the regular ACL is to control access to a file or directory,
-the purpose of the default ACL is to control access to files which are
-created inside the directory.
-.PP
-When a file is created,
-a create permissions are specified that determines the maximum access rights to
-the file. This usually is 0666 of files, and 0777 for directories.
-.PP
-Traditionally, the effective access rights to new files are determined by combining the
-.B umask
-and the create permissions. The default ACL replaces the role of the
-.BR umask .
-The following steps are taken when a file is created inside a directory which has a default ACL:
-.IP * 4
-The new file inherits the directory's default ACL as its access ACL.
-.IP * 4
-The permissions of the new file's access ACL are modified in the following way:
-.RS
-.IP - 4
-The ACL_USER entry is set to the union of the value determied by the default ACL and the user bits of the create permissions.
-.IP - 4
-The ACL_OTHER entry is set to the union of the value determined by the default ACL and the other bits of the create permissions.
-.IP - 4
-If the new file's ACL contains an ACL_MASK entry, the permission bits of the ACL_MASK entry are set to the group bits of the create permissions. If the new file's ACL does not contain an ACL_MASK entry, the permission bits of the ACL_GROUP_OBJ entry are set to the group bits of the create permissions.
-.RE
-.IP * 4
-The user and other part of the new file's mode bits are set to the ACL_USER_OBJ and ACL_OTHER permission bits, respectively.
-.IP * 4
-If the new file's ACL contains an ACL_MASK entry, the group bits of the new file's mode field are set to the ACL_MASK entry permission bits. If the new file's ACL does not contain an ACL_MASK entry, the group bits of the new file's mode field are set to the ACL_GROUP_OBJ entry permission bits.
-.IP * 4
-If the new file is a directory, it inherits the parent directory's default ACL as its own default ACL.
-.PP
-For directories without a default ACL, the
-.B umask
-is used to determine effective permissions (see
-.BR umask (2)).
-.PP
-.SH FILE MODE PERMISSION BITS TO ACL ENTRY MAPPING
-.fam C
-.nf
-          user    group   other
-    ----+-------+-------+-------+
-        | r w x | r w x | r w x |
-    ----+-------+-------+-------+
-            ^       ^       ^
-            |       |       +-- maps to ACL_OTHER
-            |       +-- maps to ACL_GROUP_OBJ or ACL_MASK
-            +-- maps to ACL_USER_OBJ
-.fi
-.fam T
-.PP
-.SH NFSv2, NFSv3 AND ACCESS CONTROL LISTS
-The NFS protocol in version 2 performs some access control decisions at
-the client, based on the file mode permission bits. It serves the user
-cached file contents if it thinks access would be granted. This logic
-is no longer correct if access control lists are in effect. Both false
-positives and denials might result.
-
-As a workaround, the file mode permission bits are modified before
-sending them to NFSv2 clients. This ensures NFS clients don't grant
-extra permissions. (Only the kernel NFS daemon does that right now; the
-userspace NFS daemon has not been patched yet.) The file mode permission
-sent are a subset of the real file mode permission bits. They are changed
-as follows:
-
-.IP * 4
-The group file mode permission bits are set to the intersection of the ACL_GROUP_OBJ and the ACL_MASK ACL entry.
-.IP * 4
-The others file mode permission bits are set to the intersection of all
-ACL entries excluding the ACL_USER_OBJ entry.
-.PP
-A consequence of these changes is that extended permissions granted by ACLs are not available over NFSv2 mounts.
-
-Up to at least 2.2.18 and 2.4.2 kernels, the NFSv3 implementation does
-not implement the ACCESS remote procedure call. Therefore, NFSv3 currently
-suffers the same problems as NFSv2. The same workaround is employed right
-now.
-
+.SH RATIONALE
+IEEE 1003.1e draft 17 defines Access Control Lists that include entries
+of tag type ACL_MASK, and defines a mapping between file permission bits
+that is not constant. The standard working group defined this relatively
+complex interface in order to ensure that applications that are compliant
+with IEEE 1003.1 (\(lqPOSIX.1\(rq) will still function as expected on
+systems with ACLs. The IEEE 1003.1e draft 17 contains the rationale for
+choosing this interface in section B.23. 
 .SH CHANGES TO THE FILE UTILITIES
-The
+On a system that supports ACLs, the file utilities
+.BR ls (1),
+.BR cp (1)
+and
+.BR mv (1)
+change their behavior in the following ways:
+.IP \- 4
+For files that have a default ACL or an access ACL that contains more than
+the three required ACL entries, the
 .BR ls (1)
-utility displays a plus sign (`+') after the permission string of entries with an extended ACL (i.e., entries where the permission string shows only part of the effective permissions).
-.PP
+utility in the long form produced by
+.B "ls \-l"
+displays a plus sign (\c
+.BR + )
+after the permission string.
+.IP \- 4
+If the
+.B \-p
+flag is specified, the
+.BR cp (1)
+utility also preserves ACLs.
+If this is not possible, a warning is produced.
+.IP \- 4
 The
-.BR cp "(1) and " mv (1)
-utilities preserve ACLs if possible. If files are copied or moved between fileystems that do not support ACLs, only the file mode permission bits are preserved, and a warning is written to standard error.
+.BR mv (1)
+utility always preserves ACLs. If this is not possible, a warning is produced.
 .PP
-The
+The effect of the
 .BR chmod (1)
-utility is traditionally used to change the file mode permission bits.
-Changing the permission bits using
-.B chmod
-has the following effect on an ACL that is associated with a file:
-.IP * 4
-The new user permission bits replace the permissions of the owner ACL entry.
-.IP * 4
-The new group permission bits replace the permission bits of the mask ACL entry if a mask ACL entry exists. The new group permission bits replace the permission bits of the owning group ACL entry if no mask ACL entry exists.
-.IP * 4
-The new others permission bits replace the permissions of the others ACL entry.
+utility, and of the
+.BR chmod (2)
+system call, on the access ACL is described in the section
+``CORRESPONDENCE BETWEEN ACL ENTRIES AND FILE PERMISSION BITS''.
+.SH STANDARDS
+The IEEE 1003.1e draft 17 (\(lqPOSIX.1e\(rq) document describes several
+security extensions to the IEEE 1003.1 standard. While the work on
+1003.1e has been abandoned, many UNIX style systems implement parts of
+POSIX.1e draft 17, or of earlier drafts.
 .PP
-.fam T
-.SH AUTHOR
-Andreas Gruenbacher,
-.RI < a.gruenbacher@computer.org >.
-
-Please send your bug reports, suggested features and comments to the
-above address.
+Linux Access Control Lists implement the full set of functions and
+utilities defined for Access Control Lists in POSIX.1e, and several
+extensions.  The implementation is fully compliant with POSIX.1e draft
+17; extensions are marked as such.
+The Access Control List manipulation functions are defined in
+the ACL library (libacl, \-lacl). The POSIX compliant interfaces are
+declared in the
+.Li <sys/acl.h>
+header.
+Linux-specific extensions to these functions are declared in the
+.Li <acl/libacl.h>
+header.
 .SH SEE ALSO
-getfacl(1), setfacl(1), chmod(1), umask(1), ls(1)
+.BR chmod (1),
+.BR creat (2),
+.BR getfacl (1),
+.BR ls (1),
+.BR mkdir (2),
+.BR mkfifo (2),
+.BR mknod (2),
+.BR open (2),
+.BR setfacl (1),
+.BR stat (2),
+.BR umask (1)
+.SS POSIX 1003.1e DRAFT 17
+.BR "http://www.guug.de/~winni/posix.1e/download.html"
+.SS POSIX 1003.1e FUNCTIONS BY CATEGORY
+.TP
+.B "ACL storage management"
+.BR acl_dup (3),
+.BR acl_free (3),
+.BR acl_init (3)
+.TP
+.B "ACL entry manipulation"
+.BR acl_copy_entry (3),
+.BR acl_create_entry (3),
+.BR acl_delete_entry (3),
+.BR acl_get_entry (3),
+.BR acl_valid (3)
+.IP
+.BR acl_add_perm (3),
+.BR acl_calc_mask (3),
+.BR acl_clear_perms (3),
+.BR acl_delete_perm (3),
+.BR acl_get_permset (3),
+.BR acl_set_permset (3)
+.IP
+.BR acl_get_qualifier (3),
+.BR acl_get_tag_type (3),
+.BR acl_set_qualifier (3),
+.BR acl_set_tag_type (3)
+.TP
+.B "ACL manipulation on an object"
+.BR acl_delete_def_file (3),
+.BR acl_get_fd (3),
+.BR acl_get_file (3),
+.BR acl_set_fd (3),
+.BR acl_set_file (3)
+.TP
+.B "ACL format translation"
+.BR acl_copy_entry (3),
+.BR acl_copy_ext (3),
+.BR acl_from_text (3),
+.BR acl_to_text (3),
+.BR acl_size (3)
+.SS POSIX 1003.1e FUNCTIONS BY AVAILABILITY
+The first group of functions is supported on most systems with POSIX-like
+access control lists, while the second group is supported on fewer systems.
+For applications that will be ported the second group is best avoided.
+.PP
+.BR acl_delete_def_file (3),
+.BR acl_dup (3),
+.BR acl_free (3),
+.BR acl_from_text (3),
+.BR acl_get_fd (3),
+.BR acl_get_file (3),
+.BR acl_init (3),
+.BR acl_set_fd (3),
+.BR acl_set_file (3),
+.BR acl_to_text (3),
+.BR acl_valid (3)
+.PP
+.BR acl_add_perm (3),
+.BR acl_calc_mask (3),
+.BR acl_clear_perms (3),
+.BR acl_copy_entry (3),
+.BR acl_copy_ext (3),
+.BR acl_copy_int (3),
+.BR acl_create_entry (3),
+.BR acl_delete_entry (3),
+.BR acl_delete_perm (3),
+.BR acl_get_entry (3),
+.BR acl_get_permset (3),
+.BR acl_get_qualifier (3),
+.BR acl_get_tag_type (3),
+.BR acl_set_permset (3),
+.BR acl_set_qualifier (3),
+.BR acl_set_tag_type (3),
+.BR acl_size (3)
+.SS LINUX EXTENSIONS
+The following are non-portable extensions available on Linux systems.
+.PP
+.BR acl_check (3),
+.BR acl_cmp (3),
+.BR acl_entries (3),
+.BR acl_equiv_mode (3),
+.BR acl_error (3),
+.BR acl_extended_fd (3),
+.BR acl_extended_file (3),
+.BR acl_from_mode (3),
+.BR acl_get_perm (3),
+.BR acl_to_any_text (3)

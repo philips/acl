@@ -1,0 +1,121 @@
+.\" Access Control Lists manual pages
+.\"
+.\" (C) 2002 Andreas Gruenbacher, <a.gruenbacher@computer.org>
+.\"
+.\" THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS'' AND
+.\" ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+.\" IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+.\" ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE
+.\" FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+.\" DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+.\" OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+.\" HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+.\" LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+.\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+.\" SUCH DAMAGE.
+.\"
+.TH ACL_GET_QUALIFIER 3 "Linux ACL Library" "March 2002" "Access Control Lists"
+.SH NAME
+acl_get_qualifier \- retrieve the qualifier from an ACL entry
+.SH LIBRARY
+Linux Access Control Lists library (libacl, \-lacl).
+.SH C SYNOPSIS
+.sp
+.nf
+.B #include <sys/types.h>
+.B #include <sys/acl.h>
+.sp
+.B "void * acl_get_qualifier (acl_entry_t \f2entry_d\f3);"
+.Op
+.SH DESCRIPTION
+The
+.B acl_get_qualifier
+function retrieves the qualifier from the ACL entry indicated by the argument
+.I entry_d
+into working storage and returns a pointer to that storage.
+.PP
+If the value of the tag type in the ACL entry referred to by
+.I entry_d
+is ACL_USER, then the value returned by
+.B acl_get_qualifier
+is a pointer to type
+.BR uid_t .
+If the value of the tag type in the ACL entry referred to by
+.I entry_d
+is ACL_GROUP, then the value returned by
+.B acl_get_qualifier
+is a pointer to type
+.IR gid_t .
+If the tag type in the ACL entry referred to by
+.I entry_d
+is a tag type for which a qualifier is not supported,
+.B acl_get_qualifier
+returns a value of NULL
+and the function fails. Subsequent operations using the returned pointer
+operate on an independent copy of the qualifier in working storage, and
+will not change the qualifier of the ACL entry.
+.PP
+This function may cause memory to be allocated. The caller should free any
+releasable memory, when the new qualifier is no longer required, by calling
+.B acl_free
+with the
+.B "void *"
+value returned by
+.B acl_get_qualifier
+as an argument.
+.PP
+The argument
+.I entry_d
+and any other ACL entry descriptors that refer to entries within the ACL
+containing the entry referred to by
+.I entry_d
+continue to refer to those entries. The order of all existing
+entries in the ACL containing the entry referred to by
+.I entry_d
+remains unchanged.
+.SH RETURN VALUE
+Upon successful completion, the function returns a pointer to the tag
+qualifier that was retrieved into ACL working storage. Otherwise, a value
+of NULL is returned and
+.B errno
+is set to indicate the error.
+.SH ERRORS
+If any of the following conditions occur, the
+.B acl_get_qualifier
+function returns (void *)NULL and sets
+.B errno
+to the corresponding value:
+.TP
+.SM
+\%[EINVAL]
+The argument
+.I entry_d
+is not a valid descriptor for an ACL entry.
+.TP
+.SM
+\%[EINVAL]
+The value of the tag type in the ACL entry referenced by the
+.I entry_d
+argument is neither ACL_USER nor ACL_GROUP.
+.TP
+.SM
+\%[ENOMEM]
+The value to be returned requires more memory than is allowed by the hardware or system-imposed memory management constraints.
+.SH STANDARDS
+IEEE Std 1003.1e draft 17 (\(lqPOSIX.1e\(rq, abandoned)
+.SH AUTHOR
+Derived from the FreeBSD manual pages written by
+.IR "Robert N M Watson" ;
+and adapted for Linux by
+.I "Andreas Gruenbacher"
+<a.gruenbacher@computer.org>.
+.SH SEE ALSO
+.BR acl_create_entry (3),
+.BR acl_get_entry (3),
+.BR acl_set_qualifier (3),
+.BR acl_get_tag_type (3),
+.BR acl_set_tag_type (3),
+.BR acl_get_permset (3),
+.BR acl_set_permset (3),
+.BR acl_free (3),
+.BR acl (5)

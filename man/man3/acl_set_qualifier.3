@@ -1,0 +1,113 @@
+.\" Access Control Lists manual pages
+.\"
+.\" (C) 2002 Andreas Gruenbacher, <a.gruenbacher@computer.org>
+.\"
+.\" THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS'' AND
+.\" ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+.\" IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+.\" ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE
+.\" FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+.\" DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+.\" OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+.\" HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+.\" LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+.\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+.\" SUCH DAMAGE.
+.\"
+.TH ACL_SET_QUALIFIER 3 "Linux ACL Library" "March 2002" "Access Control Lists"
+.SH NAME
+acl_set_qualifier \- set the qualifier of an ACL entry
+.SH LIBRARY
+Linux Access Control Lists library (libacl, \-lacl).
+.SH SYNOPSIS
+.sp
+.nf
+.B #include <sys/types.h>
+.B #include <sys/acl.h>
+.sp
+.B "int acl_set_qualifier (acl_entry_t \f2entry_d\f3, "
+.B "                       const void *\f2qualifier_p\f3);"
+.Op
+.SH DESCRIPTION
+The
+.B acl_set_qualifier
+function sets the qualifier of the ACL entry indicated by the argument
+.I entry_d
+to the value referred to by the argument
+.IR qualifier_p .
+If the value of the tag type in the ACL entry referred to by
+.I entry_d
+is ACL_USER, then the value referred to by
+.I qualifier_p
+shall be of type
+.BR uid_t .
+If the value of the tag type in the ACL entry referred to by
+.I entry_d
+is ACL_GROUP, then the value referred to by
+.I qualifier_p
+shall be of type
+.BR gid_t .
+If the value of the tag type in the ACL entry referred to by
+.I entry_d
+is a tag type for which a qualifier is not supported, 
+.B acl_set_qualifier
+returns an error.
+.PP
+Any ACL entry descriptors that refer to the entry referred to by
+.I entry_d
+continue to refer to that entry. This function may cause memory to be
+allocated. The caller should free any releasable memory, when the ACL
+is no longer required, by calling
+.BR acl_free (3)
+with a pointer to the ACL as argument.
+.SH RETURN VALUE
+The value 0 is returned if successful; otherwise the value -1 is
+returned and the global variable errno is set to indicate the error.
+.SH ERRORS
+If any of the following conditions occur, the
+.B acl_set_qualifier
+function returns -1 and sets
+.B errno
+to the corresponding value:
+.TP
+.SM
+\%[EINVAL]
+The argument
+.I entry_d
+is not a valid descriptor for an ACL entry.
+.TP
+.SM
+\%[EINVAL]
+The value of the tag type in the ACL entry referenced by the
+.I entry_d
+argument is neither ACL_USER nor ACL_GROUP.
+.TP
+.SM
+\%[EINVAL]
+The value pointed to by the argument
+.I qualifier_p
+is not valid.
+.TP
+.SM
+\%[ENOMEM]
+The
+.B acl_set_qualifier
+function is unable to allocate the memory required for the ACL qualifier.
+.SH STANDARDS
+IEEE Std 1003.1e draft 17 (\(lqPOSIX.1e\(rq, abandoned)
+.SH AUTHOR
+Derived from the FreeBSD manual pages written by
+.IR "Robert N M Watson" ;
+and adapted for Linux by
+.I "Andreas Gruenbacher"
+<a.gruenbacher@computer.org>.
+.SH SEE ALSO
+.BR acl_create_entry (3),
+.BR acl_set_entry (3),
+.BR acl_get_qualifier (3),
+.BR acl_get_tag_type (3),
+.BR acl_set_tag_type (3),
+.BR acl_get_permset (3),
+.BR acl_set_permset (3),
+.BR acl_free (3),
+.BR acl (5)

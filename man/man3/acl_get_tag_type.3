@@ -14,9 +14,9 @@
 .\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 .\" SUCH DAMAGE.
 .\"
-.TH ACL_VALID 3 "Linux ACL Library" "March 2002" "Access Control Lists"
+.TH ACL_GET_TAG_TYPE 3 "Linux ACL Library" "March 2002" "Access Control Lists"
 .SH NAME
-acl_valid \- validate an ACL
+acl_get_tag_type \- get the tag type of an ACL entry
 .SH LIBRARY
 Linux Access Control Lists library (libacl, \-lacl).
 .SH C SYNOPSIS
@@ -25,28 +25,28 @@ Linux Access Control Lists library (libacl, \-lacl).
 .B #include <sys/types.h>
 .B #include <sys/acl.h>
 .sp
-.B "int acl_valid (acl_t \f2acl\f3);"
+.B "int acl_get_tag_type (acl_entry_t \f2entry_d\f3, "
+.B "                      acl_tag_t *\f2tag_type_p\f3);"
 .Op
 .SH DESCRIPTION
 The
-.B acl_valid
-function checks the ACL referred to by the argument
-.I acl
-for validity.
+.B acl_get_tag_type
+function assigns to the value pointed to by
+.I tag_type_p
+the tag type for the ACL entry indicated by the argument
+.IR entry_d .
 .PP
-The three required entries ACL_USER_OBJ, ACL_GROUP_OBJ, and ACL_OTHER
-must exist exactly once in the ACL. If the ACL contains any ACL_USER or
-ACL_GROUP entries, then an ACL_MASK entry is also required. The ACL
-may contain at most one ACL_MASK entry.
-.PP
-The user identifiers must be unique among all entries of type ACL_USER.
-The group identifiers must be unique among all entries of type ACL_GROUP.
+The argument
+.I entry_d
+and any other ACL entry descriptors that refer to entries in the same
+ACL continue to refer to those entries. The order of all existing
+entries in the ACL remain unchanged.
 .SH RETURN VALUE
 The value 0 is returned if successful; otherwise the value -1 is
 returned and the global variable errno is set to indicate the error.
 .SH ERRORS
 If any of the following conditions occur, the
-.B acl_valid
+.B acl_get_tag_type
 function returns -1 and sets
 .B errno
 to the corresponding value:
@@ -54,23 +54,8 @@ to the corresponding value:
 .SM
 \%[EINVAL]
 The argument
-.I acl
-is not a valid pointer to an ACL.
-.TP
-.SM
-\%[EINVAL]
-The argument
-.I acl
-does not point to a valid ACL.
-.TP
-.SM
-\%[EINVAL]
-One or more of the required ACL entries is not present in
-.IR acl .
-.TP
-.SM
-\%[EINVAL]
-The ACL contains entries that are not unique.
+.I entry_d
+is not a valid descriptor for an ACL entry.
 .SH STANDARDS
 IEEE Std 1003.1e draft 17 (\(lqPOSIX.1e\(rq, abandoned)
 .SH AUTHOR
@@ -80,4 +65,12 @@ and adapted for Linux by
 .I "Andreas Gruenbacher"
 <a.gruenbacher@computer.org>.
 .SH SEE ALSO
+.BR acl_create_entry (3),
+.BR acl_get_entry (3),
+.BR acl_get_qualifier (3),
+.BR acl_set_qualifier (3),
+.BR acl_set_tag_type (3),
+.BR acl_get_permset (3),
+.BR acl_set_pe)mset (3),
+.BR acl_free (3),
 .BR acl (5)

@@ -14,9 +14,9 @@
 .\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 .\" SUCH DAMAGE.
 .\"
-.TH ACL_VALID 3 "Linux ACL Library" "March 2002" "Access Control Lists"
+.TH ACL_ENTRIES 3 "Linux ACL Library" "March 2002" "Access Control Lists"
 .SH NAME
-acl_valid \- validate an ACL
+acl_entries \- return the number of entries in an ACL
 .SH LIBRARY
 Linux Access Control Lists library (libacl, \-lacl).
 .SH C SYNOPSIS
@@ -25,28 +25,24 @@ Linux Access Control Lists library (libacl, \-lacl).
 .B #include <sys/types.h>
 .B #include <sys/acl.h>
 .sp
-.B "int acl_valid (acl_t \f2acl\f3);"
+.B "int acl_entries (acl_t \f2acl\f3);"
 .Op
 .SH DESCRIPTION
 The
-.B acl_valid
-function checks the ACL referred to by the argument
-.I acl
-for validity.
-.PP
-The three required entries ACL_USER_OBJ, ACL_GROUP_OBJ, and ACL_OTHER
-must exist exactly once in the ACL. If the ACL contains any ACL_USER or
-ACL_GROUP entries, then an ACL_MASK entry is also required. The ACL
-may contain at most one ACL_MASK entry.
-.PP
-The user identifiers must be unique among all entries of type ACL_USER.
-The group identifiers must be unique among all entries of type ACL_GROUP.
+.B acl_entries
+function returns the number of ACL entries that are contained in the ACL referred to by the argument
+.IR acl .
 .SH RETURN VALUE
-The value 0 is returned if successful; otherwise the value -1 is
-returned and the global variable errno is set to indicate the error.
+The
+.B acl_entries
+function returns the number of entries in
+.I acl
+if successful; otherwise the value -1 is returned and the global variable
+.B errno
+is set to indicate the error.
 .SH ERRORS
 If any of the following conditions occur, the
-.B acl_valid
+.B acl_entries
 function returns -1 and sets
 .B errno
 to the corresponding value:
@@ -56,27 +52,11 @@ to the corresponding value:
 The argument
 .I acl
 is not a valid pointer to an ACL.
-.TP
-.SM
-\%[EINVAL]
-The argument
-.I acl
-does not point to a valid ACL.
-.TP
-.SM
-\%[EINVAL]
-One or more of the required ACL entries is not present in
-.IR acl .
-.TP
-.SM
-\%[EINVAL]
-The ACL contains entries that are not unique.
 .SH STANDARDS
-IEEE Std 1003.1e draft 17 (\(lqPOSIX.1e\(rq, abandoned)
+This is a non-portable, Linux specific extension to the ACL manipulation
+functions defined in IEEE Std 1003.1e draft 17 (\(lqPOSIX.1e\(rq, abandoned).
 .SH AUTHOR
-Derived from the FreeBSD manual pages written by
-.IR "Robert N M Watson" ;
-and adapted for Linux by
+Written by
 .I "Andreas Gruenbacher"
 <a.gruenbacher@computer.org>.
 .SH SEE ALSO

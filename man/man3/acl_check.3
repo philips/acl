@@ -14,9 +14,9 @@
 .\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 .\" SUCH DAMAGE.
 .\"
-.TH ACL_VALID 3 "Linux ACL Library" "March 2002" "Access Control Lists"
+.TH ACL_CHECK 3 "Linux ACL Library" "March 2002" "Access Control Lists"
 .SH NAME
-acl_valid \- validate an ACL
+acl_check \- check an ACL for validity
 .SH LIBRARY
 Linux Access Control Lists library (libacl, \-lacl).
 .SH C SYNOPSIS
@@ -25,11 +25,11 @@ Linux Access Control Lists library (libacl, \-lacl).
 .B #include <sys/types.h>
 .B #include <sys/acl.h>
 .sp
-.B "int acl_valid (acl_t \f2acl\f3);"
+.B "int acl_check (acl_t \f2acl\f3, int *\f2last\f3);"
 .Op
 .SH DESCRIPTION
 The
-.B acl_valid
+.B acl_check
 function checks the ACL referred to by the argument
 .I acl
 for validity.
@@ -41,12 +41,55 @@ may contain at most one ACL_MASK entry.
 .PP
 The user identifiers must be unique among all entries of type ACL_USER.
 The group identifiers must be unique among all entries of type ACL_GROUP.
+.PP
+If the ACL referred to by
+.I acl
+is invalid,
+.B acl_check
+returns a positive error code that indicates which type of error was detected.
+The following symbolic error codes are defined:
+.TP
+.B ACL_MULTI_ERROR
+The ACL contains multiple entries that have a tag type
+that may occur at most once.
+.TP
+.B ACL_DUPLICATE_ERROR
+The ACL contains multiple ACL_USER entries with the same user ID, or
+multiple ACL_GROUP entries with the same group ID.
+.TP
+.B ACL_MISS_ERROR
+A required entry is missing.
+.TP
+.B ACL_ENTRY_ERROR
+The ACL contains an invalid entry tag type.
+.PP
+The
+.BR acl_error (3)
+function can be used to translate error codes to text messages.
+.PP
+In addition, if the pointer
+.I last
+is not NULL,
+.B acl_check
+assigns the number of the ACL entry at which the error was detected to
+the value pointed to by
+.IR last .
+Entries are numbered starting with 0, in the order in which they would be
+returned by the
+.BR acl_get_entry (3)
+function.
 .SH RETURN VALUE
-The value 0 is returned if successful; otherwise the value -1 is
-returned and the global variable errno is set to indicate the error.
+If successful, the
+.B acl_check
+function returns 0 if the ACL referred to by
+.I acl
+is valid, and a positive error code if the ACL is invalid.
+Otherwise, a value of -1 is returned and the global variable
+.B errno
+is set to indicate the error.
 .SH ERRORS
 If any of the following conditions occur, the
-.B acl_valid
+.B acl_check
 function returns -1 and sets
 .B errno
 to the corresponding value:
@@ -56,28 +99,13 @@ to the corresponding value:
 The argument
 .I acl
 is not a valid pointer to an ACL.
-.TP
-.SM
-\%[EINVAL]
-The argument
-.I acl
-does not point to a valid ACL.
-.TP
-.SM
-\%[EINVAL]
-One or more of the required ACL entries is not present in
-.IR acl .
-.TP
-.SM
-\%[EINVAL]
-The ACL contains entries that are not unique.
 .SH STANDARDS
-IEEE Std 1003.1e draft 17 (\(lqPOSIX.1e\(rq, abandoned)
+This is a non-portable, Linux specific extension to the ACL manipulation
+functions defined in IEEE Std 1003.1e draft 17 (\(lqPOSIX.1e\(rq, abandoned).
 .SH AUTHOR
-Derived from the FreeBSD manual pages written by
-.IR "Robert N M Watson" ;
-and adapted for Linux by
+Written by
 .I "Andreas Gruenbacher"
 <a.gruenbacher@computer.org>.
 .SH SEE ALSO
+.BR acl_valid (3),
 .BR acl (5)

@@ -1,0 +1,82 @@
+.\" Access Control Lists manual pages
+.\"
+.\" (C) 2002 Andreas Gruenbacher, <a.gruenbacher@computer.org>
+.\"
+.\" THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS'' AND
+.\" ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+.\" IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+.\" ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE
+.\" FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+.\" DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+.\" OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+.\" HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+.\" LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+.\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+.\" SUCH DAMAGE.
+.\"
+.TH ACL_FROM_TEXT 3 "Linux ACL Library" "March 2002" "Access Control Lists"
+.SH NAME
+acl_from_text \- create an ACL from text
+.SH LIBRARY
+Linux Access Control Lists library (libacl, \-lacl).
+.SH C SYNOPSIS
+.sp
+.nf
+.B #include <sys/types.h>
+.B #include <sys/acl.h>
+.sp
+.B "acl_t acl_from_text (const char *\f2buf_p\f3);"
+.Op
+.SH DESCRIPTION
+The
+.B acl_from_text
+function converts the text form of the ACL referred to by
+.I buf_p
+into the internal form of an ACL and returns a pointer to the working storage
+that contains the ACL. The
+.B acl_from_text
+function accepts as input the long text form and short text form of an ACL as described in
+.BR acl (5).
+.PP
+This function may cause memory to be allocated.  The caller should free any
+releasable memory, when the new ACL is no longer required, by calling
+.BR acl_free (3)
+with the (void*)acl_t returned by
+.B acl_from_text
+as an argument.
+.SH RETURN VALUE
+Upon successful completion, this function returns a pointer to the
+working storage.  Otherwise, a value of (acl_t)NULL is returned, and
+.B errno
+is set to indicate the error.
+.SH ERRORS
+If any of the following conditions occur, the
+.B acl_from_text
+function returns a value of (acl_t)NULL and sets
+.B errno
+to the corresponding value:
+.TP
+.SM
+\%[EINVAL]
+The argument
+.I buf_p
+cannot be translated into an ACL.
+.TP
+.SM
+\%[ENOMEM]
+The
+.B acl_t
+to be returned requires more memory than is allowed by the hardware or
+system-imposed memory management constraints.
+.SH STANDARDS
+IEEE Std 1003.1e draft 17 (\(lqPOSIX.1e\(rq, abandoned)
+.SH AUTHOR
+Derived from the FreeBSD manual pages written by
+.IR "Robert N M Watson" ;
+and adapted for Linux by
+.I "Andreas Gruenbacher"
+<a.gruenbacher@computer.org>.
+.SH SEE ALSO
+.BR acl_to_text (3),
+.BR acl_free (3),
+.BR acl (5)
