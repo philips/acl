@@ -167,7 +167,10 @@ main(int argc, char *argv[])
 	if (! dflag) { 
 		acl = acl_from_text(argv[optind]);
 		if (acl == NULL || acl_valid(acl) == -1) {
-			fprintf(stderr, inv_acl, program, argv[optind]);
+ 			char *errs = acl_error_string(); 
+  			fprintf (stderr, inv_acl, program, argv[optind]);
+ 			if (errs) 
+ 				fprintf (stderr, "%s\n", errs);
 			return(1);
 		} 
 		optind++;
@@ -178,7 +181,10 @@ main(int argc, char *argv[])
 	if (bflag || dflag) {
 		dacl = acl_from_text (argv[optind]);
 		if (dacl == NULL || acl_valid (dacl) == -1) {
+ 			char *errs = acl_error_string(); 
 			fprintf(stderr, inv_acl, program, argv[optind]);
+ 			if (errs) 
+ 				fprintf (stderr, "%s\n", errs);
 			return(1);
 		}
 		optind++;

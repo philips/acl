@@ -145,6 +145,7 @@ extern acl_t acl_from_text (const char *__text);
 extern ssize_t acl_size (acl_t __acl);
 extern char *acl_to_text (acl_t __acl, ssize_t *__lenp);
 extern char *acl_to_short_text (acl_t __acl, ssize_t *__lenp);
+extern char *acl_error_string(void);
 
 /* Object manipulation */
 extern int acl_delete_def_file (const char *__file);
