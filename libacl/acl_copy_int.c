@@ -43,7 +43,7 @@ acl_copy_int(const void *buf_p)
 		return NULL;
 	}
 	entries = size / sizeof(struct __acl_entry);
-	acl_obj_p = __acl_init_obj();
+	acl_obj_p = __acl_init_obj(entries);
 	if (acl_obj_p == NULL)
 		goto fail;
 	end_p = ext_acl->x_entries + entries;
@@ -53,8 +53,9 @@ acl_copy_int(const void *buf_p)
 			goto fail;
 		/* XXX Convert to machine endianness */
 		entry_obj_p->eentry = *ent_p;
-		__acl_reorder_obj_p(entry_obj_p);
 	}
+	if (__acl_reorder_obj_p(acl_obj_p))
+		goto fail;
 	return int2ext(acl_obj_p);
 
 fail:

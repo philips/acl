@@ -31,6 +31,7 @@ __acl_free_acl_obj(acl_obj *acl_obj_p)
 		acl_obj_p->anext = acl_obj_p->anext->enext;
 		free_obj_p(entry_obj_p);
 	}
+	free(acl_obj_p->aprealloc);
 	free_obj_p(acl_obj_p);
 }
 

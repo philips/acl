@@ -23,7 +23,7 @@
 
 
 acl_obj *
-__acl_init_obj(void)
+__acl_init_obj(int count)
 {
 	acl_obj *acl_obj_p = new_obj_p(acl);
 	if (!acl_obj_p)
@@ -31,6 +31,22 @@ __acl_init_obj(void)
 	acl_obj_p->aused = 0;
 	acl_obj_p->aprev = acl_obj_p->anext = (acl_entry_obj *)acl_obj_p;
 	acl_obj_p->acurr = (acl_entry_obj *)acl_obj_p;
+
+	/* aprealloc points to an array of pre-allocated ACL entries.
+	   Entries between [aprealloc, aprealloc_end) are still available.
+	   Pre-allocated entries are consumed from the last entry to the
+	   first and aprealloc_end decremented. After all pre-allocated
+	   entries are consumed, further entries are malloc'ed.
+	   aprealloc == aprealloc_end is true when no more pre-allocated	
+	   entries are available. */
+
+	acl_obj_p->aprealloc = (acl_entry_obj *)
+		malloc(count * sizeof(acl_entry_obj));
+	if (acl_obj_p->aprealloc != NULL)
+		acl_obj_p->aprealloc_end = acl_obj_p->aprealloc + count;
+	else
+		acl_obj_p->aprealloc_end = NULL;
+
 	return acl_obj_p;
 }
 
@@ -44,7 +60,7 @@ acl_init(int count)
 		errno = EINVAL;
 		return NULL;
 	}
-	obj = __acl_init_obj();
+	obj = __acl_init_obj(count);
 	return int2ext(obj);
 }
 

@@ -34,7 +34,7 @@ acl_copy_entry(acl_entry_t dest_d, acl_entry_t src_d)
 	dest_p->etag  = src_p->etag;
 	dest_p->eid   = src_p->eid;
 	dest_p->eperm = src_p->eperm;
-	__acl_reorder_obj_p(dest_p);
+	__acl_reorder_entry_obj_p(dest_p);
 	return 0;
 }
 

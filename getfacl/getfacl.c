@@ -428,9 +428,10 @@ int do_print(const char *path_p, const struct stat *st)
 
 	if (opt_print_default_acl && S_ISDIR(st->st_mode)) {
 		default_acl = acl_get_file(path_p, ACL_TYPE_DEFAULT);
-		if (default_acl == NULL && errno != ENOSYS && errno != ENOTSUP)
-			goto fail;
-		if (acl_entries(default_acl) == 0) {
+		if (default_acl == NULL) {
+			if (errno != ENOSYS && errno != ENOTSUP)
+				goto fail;
+		} else if (acl_entries(default_acl) == 0) {
 			acl_free(default_acl);
 			default_acl = NULL;
 		}

@@ -20,11 +20,12 @@
   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 
+#include <alloca.h>
 #include "libacl.h"
 
 
 static inline int
-__acl_entry_compare(acl_entry_obj *a_p, acl_entry_obj *b_p)
+__acl_entry_p_compare(const acl_entry_obj *a_p, const acl_entry_obj *b_p)
 {
 	if (a_p->etag < b_p->etag)
 		return -1;
@@ -40,13 +41,21 @@ __acl_entry_compare(acl_entry_obj *a_p, acl_entry_obj *b_p)
 }
 
 
+static int
+__acl_entry_pp_compare(const void *a, const void *b)
+{
+	return __acl_entry_p_compare(*(const acl_entry_obj **)a,
+				   *(const acl_entry_obj **)b);
+}
+
+
 /*
   Take an ACL entry form its current place in the entry ring,
   and insert it at its proper place. Entries that are not valid
   (yet) are not reordered.
 */
 int
-__acl_reorder_obj_p(acl_entry_obj *entry_obj_p)
+__acl_reorder_entry_obj_p(acl_entry_obj *entry_obj_p)
 {
 	acl_obj *acl_obj_p = entry_obj_p->econtainer;
 	acl_entry_obj *here_obj_p;
@@ -69,7 +78,7 @@ __acl_reorder_obj_p(acl_entry_obj *entry_obj_p)
 
 	/* Search for next greater entry */
 	FOREACH_ACL_ENTRY(here_obj_p, acl_obj_p) {
-		if (__acl_entry_compare(here_obj_p, entry_obj_p) > 0)
+		if (__acl_entry_p_compare(here_obj_p, entry_obj_p) > 0)
 			break;
 	}
 	
@@ -79,6 +88,47 @@ __acl_reorder_obj_p(acl_entry_obj *entry_obj_p)
 	entry_obj_p->eprev->enext = entry_obj_p;
 	entry_obj_p->enext->eprev = entry_obj_p;
 
+	return 0;
+}
+
+
+/*
+  Sort all ACL entries at once, after initializing them. This function is
+  only used when converting complete ACLs from external formats to ACLs;
+  the ACL entries are always kept in canonical order while an ACL is
+  manipulated.
+*/
+int
+__acl_reorder_obj_p(acl_obj *acl_obj_p)
+{
+	acl_entry_obj **vector = alloca(sizeof(acl_entry_obj *) *
+					acl_obj_p->aused), **v, *x;
+	acl_entry_obj *entry_obj_p;
+
+	if (acl_obj_p->aused <= 1)
+		return 0;
+
+	v = vector;
+	FOREACH_ACL_ENTRY(entry_obj_p, acl_obj_p) {
+		*v++ = entry_obj_p;
+	}
+
+	qsort(vector, acl_obj_p->aused, sizeof(acl_entry_obj *),
+	       __acl_entry_pp_compare);
+
+	x = (acl_entry_obj *)acl_obj_p;
+	for (v = vector; v != vector + acl_obj_p->aused; v++) {
+		(*v)->eprev = x;
+		x = *v;
+	}
+	acl_obj_p->aprev = *(vector + acl_obj_p->aused - 1);
+
+	x = (acl_entry_obj *)acl_obj_p;
+	for (v = vector + acl_obj_p->aused - 1; v != vector - 1; v--) {
+		(*v)->enext = x;
+		x = *v;
+	}
+	acl_obj_p->anext = *vector;
 	return 0;
 }
 

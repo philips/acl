@@ -40,7 +40,7 @@ acl_from_mode(mode_t mode)
 	acl_obj *acl_obj_p;
 	acl_entry_obj *entry_obj_p;
 
-	acl_obj_p = __acl_init_obj();
+	acl_obj_p = __acl_init_obj(3);
 	if (!acl_obj_p)
 		goto fail;
 

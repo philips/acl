@@ -59,7 +59,7 @@ acl_calc_mask(acl_t *acl_p)
 		if (mask_obj_p == NULL)
 			return -1;
 		mask_obj_p->etag = ACL_MASK;
-		__acl_reorder_obj_p(mask_obj_p);
+		__acl_reorder_entry_obj_p(mask_obj_p);
 	}
 	mask_obj_p->eperm.sperm = perm;
 	return 0;

@@ -198,7 +198,7 @@ parse_acl_entry(const char **text_p, acl_t *acl_p)
 	const char *backup;
 	int error, perm_chars;
 
-	init_obj(acl_entry, entry_obj);
+	new_obj_p_here(acl_entry, &entry_obj);
 	init_acl_entry_obj(entry_obj);
 
 	/* parse acl entry type */

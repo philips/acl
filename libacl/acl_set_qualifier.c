@@ -42,7 +42,7 @@ acl_set_qualifier(acl_entry_t entry_d, const void *tag_qualifier_p)
 			errno = EINVAL;
 			return -1;
 	}
-	__acl_reorder_obj_p(entry_obj_p);
+	__acl_reorder_entry_obj_p(entry_obj_p);
 	return 0;
 }
 

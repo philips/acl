@@ -37,7 +37,7 @@ acl_set_tag_type(acl_entry_t entry_d, acl_tag_t tag_type)
 		case ACL_MASK:
 		case ACL_OTHER:
 			entry_obj_p->etag = tag_type;
-			__acl_reorder_obj_p(entry_obj_p);
+			__acl_reorder_entry_obj_p(entry_obj_p);
 			return 0;
 		default:
 			errno = EINVAL;

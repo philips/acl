@@ -33,7 +33,7 @@ __acl_from_xattr(const char *ext_acl_p, size_t size)
 	acl_ea_entry *ext_end_p;
 	acl_obj *acl_obj_p;
 	acl_entry_obj *entry_obj_p;
-	int error;
+	int entries, error;
 
 	if (size < sizeof(acl_ea_header)) {
 		errno = EINVAL;
@@ -48,9 +48,10 @@ __acl_from_xattr(const char *ext_acl_p, size_t size)
 		errno = EINVAL;
 		return NULL;
 	}
-	ext_end_p = ext_entry_p + (size / sizeof(acl_ea_entry));
+	entries = size / sizeof(acl_ea_entry);
+	ext_end_p = ext_entry_p + entries;
 
-	acl_obj_p = __acl_init_obj();
+	acl_obj_p = __acl_init_obj(entries);
 	if (acl_obj_p == NULL)
 		return NULL;
 	while (ext_end_p != ext_entry_p) {
@@ -79,11 +80,10 @@ __acl_from_xattr(const char *ext_acl_p, size_t size)
 				error = EINVAL;
 				goto fail;
 		}
-		/* we keep the ACL entries permanently ordered. */
-		__acl_reorder_obj_p(entry_obj_p);
-
 		ext_entry_p++;
 	}
+	if (__acl_reorder_obj_p(acl_obj_p))
+		goto fail;
 	return int2ext(acl_obj_p);
 
 fail:

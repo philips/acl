@@ -32,7 +32,7 @@ acl_dup(acl_t acl)
 
 	if (!acl_obj_p)
 		return NULL;
-	dup_obj_p = __acl_init_obj();
+	dup_obj_p = __acl_init_obj(acl_obj_p->aused);
 	if (!dup_obj_p)
 		return NULL;
 

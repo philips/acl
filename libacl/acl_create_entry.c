@@ -27,9 +27,14 @@ __acl_create_entry_obj(acl_obj *acl_obj_p)
 {
 	acl_entry_obj *entry_obj_p;
 
-	entry_obj_p = new_obj_p(acl_entry);
-	if (!entry_obj_p)
-		return NULL;
+	if (acl_obj_p->aprealloc == acl_obj_p->aprealloc_end) {
+		entry_obj_p = new_obj_p(acl_entry);
+		if (!entry_obj_p)
+			return NULL;
+	} else {
+		entry_obj_p = --acl_obj_p->aprealloc_end;
+		new_obj_p_here(acl_entry, entry_obj_p);
+	}
 	acl_obj_p->aused++;
 
 	/* Insert at the end of the entry ring */

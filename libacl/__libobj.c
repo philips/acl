@@ -9,12 +9,23 @@
 /* object creation, destruction, conversion and validation */
 
 void *
-__new_obj_p(int magic, size_t size)
+__new_var_obj_p(int magic, size_t size)
 {
 	obj_prefix *obj_p = (obj_prefix *)malloc(size);
-	if (obj_p)
+	if (obj_p) {
 		obj_p->p_magic = (long)magic;
+		obj_p->p_flags = OBJ_MALLOC_FLAG;
+	}
 	return obj_p;
+}
+
+
+void
+__new_obj_p_here(int magic, void *here)
+{
+	obj_prefix *obj_p = here;
+	obj_p->p_magic = (long)magic;
+	obj_p->p_flags = 0;
 }
 
 
@@ -22,7 +33,8 @@ void
 __free_obj_p(obj_prefix *obj_p)
 {
 	obj_p->p_magic = 0;
-	free(obj_p);
+	if (obj_p->p_flags & OBJ_MALLOC_FLAG)
+		free(obj_p);
 }
 
 

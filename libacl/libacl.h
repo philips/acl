@@ -74,9 +74,9 @@ struct acl_entry_obj_tag {
 
 #define init_acl_entry_obj(entry) do { \
 	(entry).etag = ACL_UNDEFINED_TAG; \
-	init_obj(acl_permset, (entry).eperm); \
+	new_obj_p_here(acl_permset, &(entry).eperm); \
 	(entry).eperm.sperm = ACL_PERM_NONE; \
-	init_obj(qualifier, (entry).eid); \
+	new_obj_p_here(qualifier, &(entry).eid); \
 	(entry).eid.qid = ACL_UNDEFINED_ID; \
 	} while(0)
 
@@ -84,6 +84,7 @@ struct acl_entry_obj_tag {
 struct __acl_ext {
 	acl_entry_obj		*a_prev, *a_next;
 	acl_entry_obj		*a_curr;
+	acl_entry_obj		*a_prealloc, *a_prealloc_end;
 	size_t			a_used;
 };
 struct acl_obj_tag {
@@ -91,10 +92,12 @@ struct acl_obj_tag {
 	struct __acl_ext	i;
 };
 
-#define aprev i.a_prev
-#define anext i.a_next
-#define acurr i.a_curr
-#define aused i.a_used
+#define aprev		i.a_prev
+#define anext		i.a_next
+#define acurr		i.a_curr
+#define aused		i.a_used
+#define aprealloc	i.a_prealloc
+#define aprealloc_end	i.a_prealloc_end
 
 /* external ACL representation */
 struct __acl {
@@ -102,8 +105,10 @@ struct __acl {
 	struct __acl_entry	x_entries[0];
 };
 
-extern int __acl_reorder_obj_p(acl_entry_obj *acl_entry_obj_p);
-extern acl_obj *__acl_init_obj(void);
+extern int __acl_reorder_entry_obj_p(acl_entry_obj *acl_entry_obj_p);
+extern int __acl_reorder_obj_p(acl_obj *acl_obj_p);
+
+extern acl_obj *__acl_init_obj(int count);
 extern acl_entry_obj *__acl_create_entry_obj(acl_obj *acl_obj_p);
 extern void __acl_free_acl_obj(acl_obj *acl_obj_p);
 
@@ -115,4 +120,3 @@ extern char *__acl_to_any_text(acl_t acl, ssize_t *len_p,
 	for( (entry_obj_p) = (acl_obj_p)->anext; \
 	     (entry_obj_p) != (acl_entry_obj *)(acl_obj_p); \
 	     (entry_obj_p) = (entry_obj_p)->enext )
-

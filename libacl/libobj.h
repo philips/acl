@@ -16,13 +16,13 @@
 #define int2ext(int_p) \
 	((int_p) ? &(int_p)->i : NULL)
 #define new_var_obj_p(T, sz) \
-	((T##_obj *)__new_obj_p(T##_MAGIC, sizeof(T##_obj) + sz))
+	((T##_obj *)__new_var_obj_p(T##_MAGIC, sizeof(T##_obj) + sz))
 #define realloc_var_obj_p(T, p, sz) \
 	((T##_obj *)realloc(p, sizeof(T##_obj) + sz))
 #define new_obj_p(T) \
 	new_var_obj_p(T, 0)
-#define init_obj(T, o) \
-	((o).o_prefix.p_magic = T##_MAGIC)
+#define new_obj_p_here(T, p) \
+	__new_obj_p_here(T##_MAGIC, p)
 #define check_obj_p(T, obj_p) \
 	((T##_obj *)__check_obj_p((obj_prefix *)(obj_p), T##_MAGIC))
 #define free_obj_p(obj_p) \
@@ -34,10 +34,12 @@
 /* does not become padded by the compiler on 64-bit architectures] */
 
 typedef struct {
-	long			p_magic;
+	unsigned long		p_magic:16;
+	unsigned long		p_flags:16;
 } obj_prefix;
 
-#define pmagic i.p_magic
+#define pmagic o_prefix.p_magic
+#define pflags o_prefix.p_flags
 
 /* magic object values */
 #define acl_MAGIC		(0x712C)
@@ -46,6 +48,9 @@ typedef struct {
 #define qualifier_MAGIC		(0x1C27)
 #define string_MAGIC		(0xD5F2)
 #define cap_MAGIC		(0x6CA8)
+
+/* object flags */
+#define OBJ_MALLOC_FLAG		1
 
 /* object types */
 struct string_obj_tag;
@@ -63,7 +68,8 @@ struct string_obj_tag {
 #define sstr i.s_str
 
 /* object creation, destruction, conversion and validation */
-void *__new_obj_p(int magic, size_t size);
+void *__new_var_obj_p(int magic, size_t size);
+void __new_obj_p_here(int magic, void *here);
 void __free_obj_p(obj_prefix *obj_p);
 obj_prefix *__check_obj_p(obj_prefix *obj_p, int magic);
 #ifdef LIBACL_DEBUG
