@@ -175,7 +175,7 @@ main (int argc, char *argv[])
 	/* directory default acl */
 	if (bflag || dflag) {
 		dacl = acl_from_text (argv[optind]);
-		if (dacl == NULL || acl_valid(acl) == -1)
+		if (dacl == NULL || acl_valid(dacl) == -1)
 		{
 			fprintf (stderr, inv_acl, program, argv[optind]);
 			return (1);
