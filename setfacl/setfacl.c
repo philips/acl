@@ -169,7 +169,6 @@ restore(
 
 		error = read_acl_seq(file, seq, CMD_ENTRY_REPLACE,
 		                     SEQ_PARSE_WITH_PERM |
-				     SEQ_PARSE_NO_RELATIVE |
 				     SEQ_PARSE_DEFAULT |
 				     SEQ_PARSE_MULTI,
 				     &line, NULL);
@@ -450,33 +449,23 @@ int main(int argc, char *argv[])
 				seq_remove_default_acl_cmd = seq->s_last;
 
 				seq_cmd = CMD_ENTRY_REPLACE;
-				parse_mode = SEQ_PARSE_WITH_PERM |
-				             SEQ_PARSE_NO_RELATIVE;
+				parse_mode = SEQ_PARSE_WITH_PERM;
 				goto set_modify_delete;
 
 			case 'm':  /* modify */
 				seq_cmd = CMD_ENTRY_REPLACE;
 				parse_mode = SEQ_PARSE_WITH_PERM;
-#if POSIXLY_CORRECT || 1
-				parse_mode |= SEQ_PARSE_NO_RELATIVE;
-#else
-				if (posixly_correct)
-					parse_mode |= SEQ_PARSE_NO_RELATIVE;
-				else
-					parse_mode |= SEQ_PARSE_ANY_RELATIVE;
-#endif
 				goto set_modify_delete;
 
 			case 'x':  /* delete */
 				seq_cmd = CMD_REMOVE_ENTRY;
-				parse_mode = SEQ_PARSE_NO_RELATIVE;
 #if POSIXLY_CORRECT
-				parse_mode |= SEQ_PARSE_ANY_PERM;
+				parse_mode = SEQ_PARSE_ANY_PERM;
 #else
 				if (posixly_correct)
-					parse_mode |= SEQ_PARSE_ANY_PERM;
+					parse_mode = SEQ_PARSE_ANY_PERM;
 				else
-					parse_mode |= SEQ_PARSE_NO_PERM;
+					parse_mode = SEQ_PARSE_NO_PERM;
 #endif
 				goto set_modify_delete;
 
@@ -518,33 +507,23 @@ int main(int argc, char *argv[])
 				seq_remove_default_acl_cmd = seq->s_last;
 
 				seq_cmd = CMD_ENTRY_REPLACE;
-				parse_mode = SEQ_PARSE_WITH_PERM |
-				             SEQ_PARSE_NO_RELATIVE;
+				parse_mode = SEQ_PARSE_WITH_PERM;
 				goto set_modify_delete_from_file;
 
 			case 'M':  /* modify from file */
 				seq_cmd = CMD_ENTRY_REPLACE;
 				parse_mode = SEQ_PARSE_WITH_PERM;
-#if POSIXLY_CORRECT || 1
-				parse_mode |= SEQ_PARSE_NO_RELATIVE;
-#else
-				if (posixly_correct)
-					parse_mode |= SEQ_PARSE_NO_RELATIVE;
-				else
-					parse_mode |= SEQ_PARSE_ANY_RELATIVE;
-#endif
 				goto set_modify_delete_from_file;
 
 			case 'X':  /* delete from file */
 				seq_cmd = CMD_REMOVE_ENTRY;
-				parse_mode = SEQ_PARSE_NO_RELATIVE;
 #if POSIXLY_CORRECT
-				parse_mode |= SEQ_PARSE_ANY_PERM;
+				parse_mode = SEQ_PARSE_ANY_PERM;
 #else
 				if (posixly_correct)
-					parse_mode |= SEQ_PARSE_ANY_PERM;
+					parse_mode = SEQ_PARSE_ANY_PERM;
 				else
-					parse_mode |= SEQ_PARSE_NO_PERM;
+					parse_mode = SEQ_PARSE_NO_PERM;
 #endif
 				goto set_modify_delete_from_file;
 

@@ -1,3 +1,11 @@
+2.2.25 (25 August 2004)
+* Fix processing of the X pseudo permission in setfacl: Must not
+  modify the sequence of commands directly or else only the first
+  file is processed correctly, and X is not evaluated for any other
+  file. Add test case for X pseudo permission.
+* Remove support for relative permission changes; this non-standard
+  feature was disabled since a while already.
+
 2.2.24 (17 May 2004)
 * Update example source code.
 

@@ -100,7 +100,6 @@ has_execute_perms(
 	}
 }
 
-
 int
 clone_entry(
 	acl_t from_acl,
@@ -146,24 +145,23 @@ print_test(
 static void
 set_perm(
 	acl_entry_t ent,
-	mode_t add,
-	mode_t remove)
+	mode_t perm)
 {
 	acl_permset_t set;
 
 	acl_get_permset(ent, &set);
-	if (remove & CMD_PERM_READ)
-		acl_delete_perm(set, ACL_READ);
-	if (remove & CMD_PERM_WRITE)
-		acl_delete_perm(set, ACL_WRITE);
-	if (remove & CMD_PERM_EXECUTE)
-		acl_delete_perm(set, ACL_EXECUTE);
-	if (add & CMD_PERM_READ)
+	if (perm & CMD_PERM_READ)
 		acl_add_perm(set, ACL_READ);
-	if (add & CMD_PERM_WRITE)
+	else
+		acl_delete_perm(set, ACL_READ);
+	if (perm & CMD_PERM_WRITE)
 		acl_add_perm(set, ACL_WRITE);
-	if (add & CMD_PERM_EXECUTE)
+	else
+		acl_delete_perm(set, ACL_WRITE);
+	if (perm & CMD_PERM_EXECUTE)
 		acl_add_perm(set, ACL_EXECUTE);
+	else
+		acl_delete_perm(set, ACL_EXECUTE);
 }
 
 
@@ -280,6 +278,8 @@ do_set(
 	if (error == 0)
 		return 0;
 	while (error == 1) {
+		mode_t perm = cmd->c_perm;
+
 		if (cmd->c_type == ACL_TYPE_ACCESS) {
 			xacl = &acl;
 			old_xacl = &old_acl;
@@ -297,10 +297,10 @@ do_set(
 		RETRIEVE_ACL(cmd->c_type);
 
 		/* Check for `X', and replace with `x' as appropriate. */
-		if (cmd->c_perm & CMD_PERM_COND_EXECUTE) {
-			cmd->c_perm &= ~CMD_PERM_COND_EXECUTE;
+		if (perm & CMD_PERM_COND_EXECUTE) {
+			perm &= ~CMD_PERM_COND_EXECUTE;
 			if (S_ISDIR(st->st_mode) || has_execute_perms(*xacl))
-				cmd->c_perm |= CMD_PERM_EXECUTE;
+				perm |= CMD_PERM_EXECUTE;
 		}
 
 		switch(cmd->c_cmd) {
@@ -314,19 +314,7 @@ do_set(
 						acl_set_qualifier(ent,
 								  &cmd->c_id);
 				}
-				set_perm(ent, cmd->c_perm, ~cmd->c_perm);
-				break;
-
-			case CMD_ENTRY_ADD:
-				ent = find_entry(*xacl, cmd->c_tag, cmd->c_id);
-				if (ent)
-					set_perm(ent, cmd->c_perm, 0);
-				break;
-
-			case CMD_ENTRY_SUBTRACT:
-				ent = find_entry(*xacl, cmd->c_tag, cmd->c_id);
-				if (ent)
-					set_perm(ent, 0, cmd->c_perm);
+				set_perm(ent, perm);
 				break;
 
 			case CMD_REMOVE_ENTRY:

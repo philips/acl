@@ -40,10 +40,6 @@ extern "C" {
 #define SEQ_PARSE_NO_PERM	(0x0002)
 #define SEQ_PARSE_ANY_PERM	(0x0001|0x0002)
 
-#define SEQ_PARSE_WITH_RELATIVE	(0x0004)
-#define SEQ_PARSE_NO_RELATIVE	(0x0008)
-#define SEQ_PARSE_ANY_RELATIVE	(0x0004|0x0008)
-
 #define SEQ_PARSE_MULTI		(0x0010)
 #define SEQ_PARSE_DEFAULT	(0x0020)	/* "default:" = default acl */
 

@@ -55,8 +55,6 @@ typedef struct seq_obj *seq_t;
 
 /* command types */
 #define CMD_ENTRY_REPLACE	(0)
-#define CMD_ENTRY_ADD		(1)
-#define CMD_ENTRY_SUBTRACT	(2)
 #define CMD_REMOVE_ENTRY	(3)
 #define CMD_REMOVE_EXTENDED_ACL	(4)
 #define CMD_REMOVE_ACL		(5)

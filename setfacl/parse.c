@@ -291,19 +291,6 @@ user_entry:
 	if (!(parse_mode & SEQ_PARSE_WITH_PERM))
 		return cmd;
 
-	if (parse_mode & SEQ_PARSE_WITH_RELATIVE) {
-		if (**text_p == '+') {
-			(*text_p)++;
-			cmd->c_cmd = CMD_ENTRY_ADD;
-		} else if (**text_p == '^') {
-			(*text_p)++;
-			cmd->c_cmd = CMD_ENTRY_SUBTRACT;
-		} else {
-			if (!(parse_mode & SEQ_PARSE_NO_RELATIVE))
-				goto fail;
-		}
-	}
-
 	/* parse permissions */
 	SKIP_WS(*text_p);
 	if (**text_p >= '0' && **text_p <= '7') {
