@@ -860,6 +860,185 @@ acl_entry_sort (acl_t acl)
 	    acl_entry_compare);
 }
 
+int
+acl_add_perm (acl_permset_t permset_d, acl_perm_t perm)
+{
+	if (perm != ACL_READ && perm != ACL_WRITE && perm != ACL_EXECUTE) {
+		setoserror(EINVAL);
+		return -1;
+	}
+	
+	if(permset_d == NULL) {
+		setoserror(EINVAL);
+		return -1;
+	}
+		
+	*permset_d |= perm;	
+	return 0;
+}
+
+int
+acl_clear_perms (acl_permset_t permset_d)
+{
+	if(permset_d == NULL) {
+		setoserror(EINVAL);
+		return -1;
+	}
+	*permset_d = 0;
+	return 0;
+}
+
+int
+acl_delete_perm(acl_permset_t permset_d, acl_perm_t perm)
+{
+	if (perm != ACL_READ && perm != ACL_WRITE && perm != ACL_EXECUTE) {
+		setoserror(EINVAL);
+		return -1;
+	}
+	
+	if(permset_d == NULL) {
+		setoserror(EINVAL);
+		return -1;
+	}
+		
+	*permset_d &= ~perm;
+	return 0;
+}
+
+int
+acl_get_permset (acl_entry_t entry_d, acl_permset_t *permset_p)
+{
+	if(entry_d == NULL){
+		setoserror(EINVAL);
+		return -1;
+	}
+	
+	*permset_p = &entry_d->ae_perm;  
+	return 0; 
+}
+
+void *
+acl_get_qualifier (acl_entry_t entry_d)
+{
+	if(entry_d == NULL){
+		setoserror(EINVAL);
+		return NULL;
+	}
+	
+	if ( entry_d->ae_tag != ACL_USER &&
+		 entry_d->ae_tag != ACL_GROUP ) {
+		 setoserror(EINVAL);
+		 return NULL;
+	}
+	
+	return &entry_d->ae_id;
+}
+
+int
+acl_get_tag_type (acl_entry_t entry_d, acl_tag_t *tag_p)
+{
+	acl_tag_t *new_tag_p;
+	
+	if(entry_d == NULL){
+		setoserror(EINVAL);
+		return -1;
+	}
+	
+	switch ( *new_tag_p = entry_d->ae_tag ) {
+		case ACL_USER:
+		case ACL_USER_OBJ:
+		case ACL_GROUP:
+		case ACL_GROUP_OBJ:
+		case ACL_OTHER_OBJ:
+		case ACL_MASK:
+			// only change the value if it is valid
+			*tag_p = entry_d->ae_tag;
+			return 0;
+			break;
+		default:
+			setoserror(EINVAL);
+			return -1;
+	} 
+}
+
+acl_t
+acl_init (int count)
+{
+	acl_t a;
+	if((count > ACL_MAX_ENTRIES) || (count < 0)) {
+		setoserror(EINVAL);
+		return NULL;
+	}
+	else {
+		if( (a = (struct acl *)malloc(sizeof(struct acl))) == NULL){
+			setoserror(ENOMEM);
+			return NULL;
+		} 
+		a->acl_cnt = 0;
+		return a;
+	}
+
+}
+
+int
+acl_set_permset (acl_entry_t entry_d, acl_permset_t permset_d)
+{
+	if( (entry_d == NULL) || (permset_d == NULL) ){
+		setoserror(EINVAL);
+		return -1;
+		}
+		
+	if(*permset_d & ~(ACL_READ|ACL_WRITE|ACL_EXECUTE)) {
+		setoserror(EINVAL);
+		return -1;
+		}
+		
+	entry_d->ae_perm = *permset_d;
+	return 0;
+}
+
+int
+acl_set_qualifier (acl_entry_t entry_d, const void *qual_p)
+{
+	if(entry_d == NULL || qual_p == NULL){
+		setoserror(EINVAL);
+		return -1;
+	}
+	
+	if(entry_d->ae_tag != ACL_GROUP &&
+		entry_d->ae_tag != ACL_USER) {
+		setoserror(EINVAL);
+		return -1;
+	}	
+	entry_d->ae_id = *((uid_t *)qual_p);
+	return 0;
+}
+
+int
+acl_set_tag_type (acl_entry_t entry_d, acl_tag_t tag_type)
+{
+	if(entry_d == NULL){
+		setoserror(EINVAL);
+		return -1;
+	}
+	
+	switch (tag_type) {
+		case ACL_USER:
+		case ACL_USER_OBJ:
+		case ACL_GROUP:
+		case ACL_GROUP_OBJ:
+		case ACL_OTHER_OBJ:
+		case ACL_MASK:
+			entry_d->ae_tag = tag_type;
+			break;
+		default:
+			setoserror(EINVAL);
+			return -1;
+	}
+	return 0;
+}
+
+
 /*
  * system calls
  *
