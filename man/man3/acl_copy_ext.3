@@ -54,13 +54,13 @@ to the ACL referenced by
 .Va acl
 continue to refer to the ACL.
 .Sh RETURN VALUE
-Upon successful completion, this function returns the number of bytes placed in the buffer pointed to by
+Upon success, this function returns the number of bytes placed in the buffer pointed to by
 .Va buf_p .
-Otherwise, a value of
+On error, a value of
 .Li (ssize_t)-1
 is returned and
 .Va errno
-is set to indicate the error.
+is set appropriately.
 .Sh ERRORS
 If any of the following conditions occur, the
 .Fn acl_copy_ext

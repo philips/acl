@@ -44,14 +44,14 @@ continue to refer to the ACL. The order of ACL entries within
 .Va acl
 remains unchanged.
 .Sh RETURN VALUE
-Upon successful completion, the
+On success, the
 .Fn acl_size
 function returns the size in bytes of the contiguous, persistent form of
-the ACL. Otherwise, a value of
+the ACL. On error, a value of
 .Li (ssize_t)-1
 is returned and
 .Va errno
-is set to indicate the error.
+is set appropriately.
 .Sh ERRORS
 If any of the following conditions occur, the
 .Fn acl_size

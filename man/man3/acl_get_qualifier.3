@@ -74,11 +74,11 @@ entries in the ACL containing the entry referred to by
 .Va entry_d
 remains unchanged.
 .Sh RETURN VALUE
-Upon successful completion, the function returns a pointer to the tag qualifier that was retrieved into ACL working storage. Otherwise, a value of
+On success, the function returns a pointer to the tag qualifier that was retrieved into ACL working storage. On error, a value of
 .Li (void *)NULL
 is returned and
 .Va errno
-is set to indicate the error.
+is set appropriately.
 .Sh ERRORS
 If any of the following conditions occur, the
 .Fn acl_get_qualifier

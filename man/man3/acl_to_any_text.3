@@ -122,12 +122,12 @@ returned by
 .Fn acl_to_any_text
 as an argument.
 .Sh RETURN VALUE
-Upon successful completion, this function returns a pointer to the text
-representation of the ACL.  Otherwise, a value of
+On success, this function returns a pointer to the text
+representation of the ACL.  On error, a value of
 .Li (char *)NULL
 is returned, and
 .Va errno
-is set to indicate the error.
+is set appropriately.
 .Sh ERRORS
 If any of the following conditions occur, the
 .Fn acl_to_any_text

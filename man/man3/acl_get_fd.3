@@ -48,12 +48,12 @@ returned by
 .Fn acl_get_fd
 as an argument.
 .Sh RETURN VALUE
-Upon successful completion, this function shall return a pointer to the
-working storage.  Otherwise, a value of
+On success, this function shall return a pointer to the
+working storage.  On error, a value of
 .Li (acl_t)NULL
 shall be returned, and
 .Va errno
-shall be set to indicate the error.
+is set appropriately.
 .Sh ERRORS
 If any of the following conditions occur, the
 .Fn acl_get_fd

@@ -43,15 +43,15 @@ returned by
 .Fn acl_copy_int
 as an argument.
 .Sh RETURN VALUE
-Upon successful completion,
+Upon success,
 the
 .Fn acl_copy_int
 function returns a pointer that references the ACL in working storage.
-Otherwise, a value of
+On error, a value of
 .Li (acl_t)NULL
 is returned, and
 .Va errno
-is set to indicate the error.
+is set appropriately.
 .Sh ERRORS
 If any of the following conditions occur, the
 .Fn acl_copy_int

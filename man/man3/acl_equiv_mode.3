@@ -51,7 +51,7 @@ is set to the value that defines the same owner, group and other
 permissions as contained in
 the ACL.
 .Sh RETURN VALUE
-Upon successful completion, this function returns the value
+On success, this function returns the value
 .Li 0
 if
 .Va acl
@@ -59,11 +59,11 @@ is an equivalent ACL, and the value
 .Li 1
 if
 .Va acl
-is not an equivalent ACL. Otherwise, the value
+is not an equivalent ACL. On error, the value
 .Li -1
 is returned, and
 .Va errno
-is set to indicate the error.
+is set appropriately.
 .Sh ERRORS
 If any of the following conditions occur, the
 .Fn acl_equiv_mode
