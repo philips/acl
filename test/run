@@ -16,6 +16,8 @@ if (isatty(fileno(STDOUT))) {
 my ($prog, $in, $out) = ([], [], []);
 my $line = 0;
 my $prog_line;
+my ($tests, $failed);
+
 for (;;) {
   my $script = <>; $line++;
   $script =~ s/\@OWNER\@/$owner/g;
@@ -39,6 +41,8 @@ for (;;) {
 		 #print "$out->[$n] != $result->[$n]";
 	 }
        }
+       $tests++;
+       $failed++ unless $good;
        print $good ? $OK : $FAILED, "\n";
        if (!$good) {
          for (my $n=0; $n < $nmax; $n++) {
@@ -52,8 +56,6 @@ for (;;) {
     }
     #$prog = [ split /\s+/, $script ] if $script;
     $prog = [ map { s/\\(.)/$1/g; $_ } split /(?<!\\)\s+/, $script ] if $script;
-    #$prog = $script;
-    #chomp $prog;
     $prog_line = $line;
     $in = [];
     $out = [];
@@ -64,6 +66,16 @@ for (;;) {
   }
   last unless defined($script);
 }
+my $status = sprintf("%d commands (%d passed, %d failed)",
+	$tests, $tests-$failed, $failed);
+if (isatty(fileno(STDOUT))) {
+	if ($failed) {
+		$status = "\033[31m\033[1m" . $status . "\033[m";
+	} else {
+		$status = "\033[32m" . $status . "\033[m";
+	}
+}
+print $status, "\n";
 
 sub exec_test($$) {
   my ($prog, $in) = @_;
@@ -74,7 +86,7 @@ sub exec_test($$) {
     return [];
   } elsif ($prog->[0] eq "cd") {
     if (!chdir $prog->[1]) {
-      return [ "chdir: " . $prog->[1] . ": $!\n" ];
+      return [ "chdir: $prog->[1]: $!\n" ];
     }
     return [];
   }
@@ -139,10 +151,7 @@ sub exec_test($$) {
       or die "Can't join STDOUT and STDERR: $!";
 
     #print ERR_DUP "<", join(' ', @$prog), ">\n";
-    #my $c = join(' ', @$prog);
-    #$c =~ s/\\/\\\\/;
-    #exec ('/bin/sh', '-c', $c);
-    exec (@$prog);
+    exec @$prog;
     print ERR_DUP $prog->[0], ": $!\n";
     exit;
   }

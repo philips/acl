@@ -15,7 +15,7 @@ user::rw-
 group::r--
 other::---
 
-$ getfacl --omit-header -a x
+$ getfacl --omit-header --access x
 user::rw-
 group::r--
 other::---
@@ -55,42 +55,17 @@ $ getfacl -dR .
 # owner: @OWNER@
 # group: @GROUP@
 
-$ getfacl -dLR .
-# file: .
+$ ln -s l ll
+$ getfacl -dLR ll
+# file: ll
 # owner: @OWNER@
 # group: @GROUP@
 
-# file: x
+# file: ll/y
 # owner: @OWNER@
 # group: @GROUP@
 
-# file: d
-# owner: @OWNER@
-# group: @GROUP@
-
-# file: d/y
-# owner: @OWNER@
-# group: @GROUP@
-
-# file: l
-# owner: @OWNER@
-# group: @GROUP@
-
-# file: l/y
-# owner: @OWNER@
-# group: @GROUP@
-
-$ getfacl --post-order -d d
-# file: d/y
-# owner: @OWNER@
-# group: @GROUP@
-
-# file: d
-# owner: @OWNER@
-# group: @GROUP@
-
-$ rm l
+$ rm l ll x
 $ rm -rf d
-$ rm x
 $ cd ..
 $ rmdir test

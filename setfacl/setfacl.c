@@ -101,33 +101,18 @@ int promote_warning;
 
 
 int
-promote(
-	seq_t seq)
+has_any_of_type(
+	cmd_t cmd,
+	acl_type_t acl_type)
 {
-	cmd_t cmd;
-	int error;
-
-restart:
-	error = seq_get_cmd(seq, SEQ_FIRST_CMD, &cmd);
-	while (error == 1) {
-		if (cmd->c_type == ACL_TYPE_DEFAULT) {
-			error = seq_delete_cmd(seq, cmd);
-			if (error != 0)	
-				return -1;
-			goto restart;
-		}
-
-		error = seq_get_cmd(seq, SEQ_NEXT_CMD, &cmd);
-	}
-
-	error = seq_get_cmd(seq, SEQ_FIRST_CMD, &cmd);
-	while (error == 1) {
-		cmd->c_type = ACL_TYPE_DEFAULT;
-		error = seq_get_cmd(seq, SEQ_NEXT_CMD, &cmd);
+	while (cmd) {
+		if (cmd->c_type == acl_type)
+			return 1;
+		cmd = cmd->c_next;
 	}
 	return 0;
 }
-
+	
 
 #if !POSIXLY_CORRECT
 int
@@ -392,6 +377,11 @@ int main(int argc, char *argv[])
 	
 	while ((opt = getopt_long(argc, argv, cmd_line_options,
 		                  long_options, NULL)) != -1) {
+		/* we remember the two REMOVE_ACL commands of the set
+		   operations because we may later need to delete them.  */
+		cmd_t seq_remove_default_acl_cmd = NULL;
+		cmd_t seq_remove_acl_cmd = NULL;
+
 		if (opt != '\1' && saw_files) {
 			if (seq) {
 				seq_free(seq);
@@ -433,10 +423,14 @@ int main(int argc, char *argv[])
 
 			case 's':  /* set */
 				if (seq_append_cmd(seq, CMD_REMOVE_ACL,
-				                        ACL_TYPE_ACCESS) ||
-				    seq_append_cmd(seq, CMD_REMOVE_ACL,
+					                ACL_TYPE_ACCESS))
+					ERRNO_ERROR(1);
+				seq_remove_acl_cmd = seq->s_last;
+				if (seq_append_cmd(seq, CMD_REMOVE_ACL,
 				                        ACL_TYPE_DEFAULT))
 					ERRNO_ERROR(1);
+				seq_remove_default_acl_cmd = seq->s_last;
+
 				seq_cmd = CMD_ENTRY_REPLACE;
 				parse_mode = SEQ_PARSE_WITH_PERM |
 				             SEQ_PARSE_NO_RELATIVE;
@@ -471,6 +465,8 @@ int main(int argc, char *argv[])
 			set_modify_delete:
 				if (!posixly_correct)
 					parse_mode |= SEQ_PARSE_DEFAULT;
+				if (opt_promote)
+					parse_mode |= SEQ_PROMOTE_ACL;
 				if (parse_acl_seq(seq, optarg, &which,
 				                  seq_cmd, parse_mode) != 0) {
 					if (which < 0 ||
@@ -493,10 +489,14 @@ int main(int argc, char *argv[])
 
 			case 'S':  /* set from file */
 				if (seq_append_cmd(seq, CMD_REMOVE_ACL,
-				                        ACL_TYPE_ACCESS) ||
-				    seq_append_cmd(seq, CMD_REMOVE_ACL,
+					                ACL_TYPE_ACCESS))
+					ERRNO_ERROR(1);
+				seq_remove_acl_cmd = seq->s_last;
+				if (seq_append_cmd(seq, CMD_REMOVE_ACL,
 				                        ACL_TYPE_DEFAULT))
 					ERRNO_ERROR(1);
+				seq_remove_default_acl_cmd = seq->s_last;
+
 				seq_cmd = CMD_ENTRY_REPLACE;
 				parse_mode = SEQ_PARSE_WITH_PERM |
 				             SEQ_PARSE_NO_RELATIVE;
@@ -531,6 +531,8 @@ int main(int argc, char *argv[])
 			set_modify_delete_from_file:
 				if (!posixly_correct)
 					parse_mode |= SEQ_PARSE_DEFAULT;
+				if (opt_promote)
+					parse_mode |= SEQ_PROMOTE_ACL;
 				if (strcmp(optarg, "-") == 0) {
 					file = stdin;
 				} else {
@@ -579,8 +581,6 @@ int main(int argc, char *argv[])
 			case '\1':  /* file argument */
 				if (seq_empty(seq))
 					goto synopsis;
-				if (!saw_files && opt_promote)
-					promote(seq);
 				saw_files = 1;
 
 				status = next_file(optarg, seq);
@@ -644,12 +644,26 @@ int main(int argc, char *argv[])
 			default:
 				goto synopsis;
 		}
+		if (seq_remove_acl_cmd) {
+			/* This was a set operation. Check if there are
+			   actually entries of ACL_TYPE_ACCESS; if there
+			   are none, we need to remove this command! */
+			if (!has_any_of_type(seq_remove_acl_cmd->c_next,
+				            ACL_TYPE_ACCESS))
+				seq_delete_cmd(seq, seq_remove_acl_cmd);
+		}
+		if (seq_remove_default_acl_cmd) {
+			/* This was a set operation. Check if there are
+			   actually entries of ACL_TYPE_DEFAULT; if there
+			   are none, we need to remove this command! */
+			if (!has_any_of_type(seq_remove_default_acl_cmd->c_next,
+				            ACL_TYPE_DEFAULT))
+				seq_delete_cmd(seq, seq_remove_default_acl_cmd);
+		}
 	}
 	while (optind < argc) {
 		if (seq_empty(seq))
 			goto synopsis;
-		if (!saw_files && opt_promote)
-			promote(seq);
 		saw_files = 1;
 
 		status = next_file(argv[optind++], seq);

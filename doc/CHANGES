@@ -1,3 +1,11 @@
+2.0.3 (05 March 2002)
+* Clean up the --default option handling in setfacl. The old
+  workarounds caused a bug for unusual input.
+* Changes to the --test output format setfacl generates: ACLs that
+  are not changed are now displayed as `*'.
+* Fix a bug in setfacl/sequence.c:seq_delete_cmd().
+* Minor changes to test scripts
+
 2.0.2 (01 March 2002)
 * Apply several patches from Andreas, namely:
 * man page fixes

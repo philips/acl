@@ -117,10 +117,9 @@ print_test(
 		 "", ',', "", TEXT_ABBREVIATE);
 	default_acl_text = acl_to_any_text(default_acl, NULL,
 		 "d:", ',', "", TEXT_ABBREVIATE);
-	fprintf(file, "%s: %s%s%s\n", path_p,
-		acl_text ? acl_text : "",
-		(acl_text && default_acl_text) ? "," : "",
-		default_acl_text ? default_acl_text : "");
+	fprintf(file, "%s: %s,%s\n", path_p,
+		acl_text ? acl_text : "*",
+		default_acl_text ? default_acl_text : "*");
 	acl_free(acl_text);
 	acl_free(default_acl_text);
 }
@@ -391,7 +390,7 @@ do_set(
 	}
 
 	if (default_acl && acl_entries(default_acl) != 0 &&
-            default_acl_modified) {
+	    default_acl_modified) {
 		if (acl_equiv_mode(default_acl, NULL) != 0) {
 			if (!default_acl_mask_provided &&
 			    !find_entry(default_acl,ACL_MASK,ACL_UNDEFINED_ID))

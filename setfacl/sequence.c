@@ -155,7 +155,7 @@ seq_delete_cmd(
 		return -1;
 	if (cmd == seq->s_last)
 		seq->s_last = prev;
-	prev->c_next = NULL;
+	prev->c_next = cmd->c_next;
 	cmd_free(cmd);
 	return 0;
 }

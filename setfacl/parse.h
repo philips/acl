@@ -47,6 +47,8 @@ extern "C" {
 #define SEQ_PARSE_MULTI		(0x0010)
 #define SEQ_PARSE_DEFAULT	(0x0020)	/* "default:" = default acl */
 
+#define SEQ_PROMOTE_ACL		(0x0040)	/* promote from acl
+                                                   to default acl */
 
 cmd_t
 parse_acl_cmd(

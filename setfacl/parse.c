@@ -185,14 +185,25 @@ parse_acl_cmd(
 		return NULL;
 
 	cmd->c_cmd = seq_cmd;
-	cmd->c_type = ACL_TYPE_ACCESS;
+	if (parse_mode & SEQ_PROMOTE_ACL)
+		cmd->c_type = ACL_TYPE_DEFAULT;
+	else
+		cmd->c_type = ACL_TYPE_ACCESS;
 	cmd->c_id   = ACL_UNDEFINED_ID;
 	cmd->c_perm = 0;
 
 	if (parse_mode & SEQ_PARSE_DEFAULT) {
 		/* check for default acl entry */
-		if (skip_tag_name(text_p, "default"))
+		backup = *text_p;
+		if (skip_tag_name(text_p, "default")) {
+			if (parse_mode & SEQ_PROMOTE_ACL) {
+				/* if promoting from acl to default acl and
+				   a default acl entry is found, fail. */
+				*text_p = backup;
+				goto fail;
+			}
 			cmd->c_type = ACL_TYPE_DEFAULT;
+		}
 	}
 
 	/* parse acl entry type */
