@@ -37,7 +37,7 @@ ifeq ($(HAVE_BUILDDEFS), yes)
 include $(TOPDIR)/include/builddefs
 endif
 
-CONFIGURE = configure include/builddefs
+CONFIGURE = configure include/builddefs include/config.h
 LSRCFILES = configure configure.in Makepkgs install-sh README VERSION
 
 LDIRT = config.log .dep config.status config.cache confdefs.h conftest* \
