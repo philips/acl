@@ -57,7 +57,7 @@ acl_get_file(const char *path_p, acl_type_t type)
 		return NULL;
 	retval = getxattr(path_p, name, ext_acl_p, size_guess);
 	if (retval == -1 && errno == ERANGE) {
-		retval = getxattr(path_p, ACL_EA_ACCESS, NULL, 0);
+		retval = getxattr(path_p, name, NULL, 0);
 		if (retval > 0) {
 			ext_acl_p = alloca(retval);
 			if (!ext_acl_p)
