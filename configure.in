@@ -37,9 +37,9 @@ pkg_release=$PKG_BUILD
 AC_SUBST(pkg_version)
 AC_SUBST(pkg_release)
 
-dnl pkg_distribution="SGI XFS"
-dnl test -z "$DISTRIBUTION" || pkg_distribution="$DISTRIBUTION"
-dnl AC_SUBST(pkg_distribution)
+pkg_distribution="Generic Linux"
+test -z "$DISTRIBUTION" || pkg_distribution="$DISTRIBUTION"
+AC_SUBST(pkg_distribution)
 
 pkg_builder=`id -u -n`@`hostname`
 test -z "$PACKAGE_BUILDER" || pkg_builder="$PACKAGE_BUILDER"

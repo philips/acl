@@ -1,0 +1,11 @@
+acl (2.0.1-1) unstable; urgency=low
+
+  * Initial release (closes #97686)
+  * Uses the official Linux extended attributes interfaces (currently
+     supported by ext2, ext3, and XFS)
+
+ -- Nathan Scott <nathans@debian.org>  Tue, 26 Feb 2002 13:25:26 +1100
+
+Local variables:
+mode: debian-changelog
+End:

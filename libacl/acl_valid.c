@@ -20,8 +20,7 @@
 */
 
 #include <errno.h>
-#include <sys/acl.h>
-#include "libacl.h"
+#include <acl/libacl.h>
 
 
 /* 23.4.28 */

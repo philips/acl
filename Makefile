@@ -43,9 +43,8 @@ LSRCFILES = configure configure.in Makepkgs install-sh README VERSION
 LDIRT = config.log .dep config.status config.cache confdefs.h conftest* \
 	Logs/* built .census install.* install-dev.* install-lib.* *.gz
 
-# TODO - get "po" (internationalisation stuff) into SUBDIRS below;
-# Ideally, incorporate into include/buildrules (& use in attr too).
-SUBDIRS = include libacl getfacl setfacl chacl man build test doc po examples
+SUBDIRS = include libacl getfacl setfacl chacl man doc po \
+	  test examples build debian
 
 default: $(CONFIGURE)
 ifeq ($(HAVE_BUILDDEFS), no)
