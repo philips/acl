@@ -1,9 +1,20 @@
+acl-1.0.3 (24 May 2001)
+	- Update libacl functions of acl_get_file, acl_get_fd,
+	  so that they can do ext2 P1003.1e style semantics by default 
+	  or IRIX P1003.1e semantics.
+	  The change affects what is returned for a file if an
+	  ACL is requested and no ACL has been explicitly set.
+	  For ext2 P1003.1e style on an access ACL, 
+	  a 3 entry mininum ACL based on the file's mode is returned 
+	  wheras for IRIX an special empty ACL is returned.
+	- Add new function, acl_set_compat, to allow IRIX compatibility 
+	  if needed
 
-acl-1.0.1 (18 May 2001)
+acl-1.0.2 (18 May 2001)
 	- updates to man pages
 
 acl-1.0.1 (30 January 2001)
-        - minor rpm and deb packaging work
+	- minor rpm and deb packaging work
 
 acl-1.0.0 (15 January 2001)
 	- access control list code abstracted from xfs-cmds package
