@@ -579,6 +579,27 @@ acl_set_compat (acl_compat_t compat_bits)
 	    acl_compat = 0;
 }
 
+/*
+ * Could this be rationalised?  libacl.c has a similar routine
+ * Ensure compatibility semantics can be preserved though.
+ */
+static void
+local_acl_from_mode(acl_t aclp, uid_t uid, gid_t gid, mode_t mode)
+{
+	aclp->acl_cnt = 3;
+        aclp->acl_entry[0].ae_tag  = ACL_USER_OBJ;
+        aclp->acl_entry[0].ae_id   = uid;
+        aclp->acl_entry[0].ae_perm = (mode & S_IRWXU) >> 6;
+
+        aclp->acl_entry[1].ae_tag  = ACL_GROUP_OBJ;
+        aclp->acl_entry[1].ae_id   = gid;
+        aclp->acl_entry[1].ae_perm = (mode & S_IRWXG) >> 3;
+
+        aclp->acl_entry[2].ae_tag  = ACL_OTHER_OBJ;
+        aclp->acl_entry[2].ae_id   = ACL_UNDEFINED_ID;
+        aclp->acl_entry[2].ae_perm = (mode & S_IRWXO);
+}
+
 /* 
  * Get an ACL by file descriptor.
  */
@@ -602,10 +623,7 @@ acl_get_fd (int fd)
 		struct stat st;
 		if (fstat(fd, &st) != 0)
 			return NULL;
-		if ((aclp = acl_from_mode (st.st_mode)) == NULL)
-			return NULL;
-        	aclp->acl_entry[0].ae_id = st.st_uid;
-		aclp->acl_entry[1].ae_id = st.st_gid;
+		local_acl_from_mode (aclp, st.st_uid, st.st_gid, st.st_mode);
 	}
 	return aclp;
 }
@@ -651,10 +669,7 @@ acl_get_file (const char *path_p, acl_type_t type)
 			struct stat st;
 			if (stat(path_p, &st) != 0)
 				return NULL;
-			if ((aclp = acl_from_mode (st.st_mode)) == NULL)
-				return NULL;
-			aclp->acl_entry[0].ae_id = st.st_uid;
-			aclp->acl_entry[1].ae_id = st.st_gid;
+			local_acl_from_mode (aclp, st.st_uid, st.st_gid, st.st_mode);
 		}
 		else { /* default ACL */
 			/* empty ACL and NOT ACL_NOT_PRESENT */
