@@ -1,3 +1,13 @@
+acl-1.0.6 (13 June 2001)
+	- Move acl/acl.h --to--> sys/acl.h which makes
+	  it satisfy the Posix ACL standard.
+	  This was also what was used in IRIX.
+	- A fix was also done on June 11 for "chacl -b" and
+	  "chacl -d" where the default ACL is being given. 
+	  The code was checking the validity of the access ACL
+	  instead of the default ACL. This is a real problem for
+	  the -d option which doesn't have an access ACL specified ! 
+
 acl-1.0.5 (6 June 2001)
 	- Fix up acl_to_text and acl_to_short_text so that if it is
 	  given an empty ACL then an empty string is returned. 
