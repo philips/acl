@@ -270,14 +270,14 @@ list_acl(char *file)
 			program, file, strerror(errno));
 		return 0;
 	}
-	acl_text = acl_to_any_text(acl, NULL, "", ',', "", TEXT_ABBREVIATE);
+	acl_text = acl_to_any_text(acl, NULL, ',', TEXT_ABBREVIATE);
 	if (acl_text == NULL) {
 		fprintf(stderr, _("%s: cannot get access ACL text on '%s': %s\n"),
 			program, file, strerror(errno));
 		return 0;
 	}
 	if (acl_entries(dacl) > 0) {
-		dacl_text = acl_to_any_text(dacl, NULL, "", ',', "", TEXT_ABBREVIATE);
+		dacl_text = acl_to_any_text(dacl, NULL, ',', TEXT_ABBREVIATE);
 		if (dacl_text == NULL) {
 			fprintf(stderr, _("%s: cannot get default ACL text on '%s': %s\n"),
 				program, file, strerror(errno));

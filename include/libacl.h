@@ -18,7 +18,6 @@ extern "C" {
 /* Print NO, SOME or ALL effective permissions comments. SOME prints
    effective rights comments for entries which have different permissions
    than effective permissions.  */
-#define TEXT_NO_EFFECTIVE		0x00
 #define TEXT_SOME_EFFECTIVE		0x01
 #define TEXT_ALL_EFFECTIVE		0x02
 
