@@ -2,6 +2,7 @@
 * Cleanups to the build process, in particular the automatic rpm
   package generation Makefile and spec file template.
 * Makepkgs script can now propagate failures back up from make.
+* Change default --prefix to /usr.
 
 2.2.6 (26 February 2003)
 * Add symbol level versioning to libacl. This improves link time
