@@ -61,9 +61,15 @@ typedef struct seq_obj *seq_t;
 #define CMD_REMOVE_EXTENDED_ACL	(4)
 #define CMD_REMOVE_ACL		(5)
 
+/* constants for permission specifiers */
+#define CMD_PERM_READ		(4)
+#define CMD_PERM_WRITE		(2)
+#define CMD_PERM_EXECUTE	(1)
+#define CMD_PERM_COND_EXECUTE	(8)
+
+/* iteration over command sequence */
 #define SEQ_FIRST_CMD		(0)
 #define SEQ_NEXT_CMD		(1)
-
 
 /* command sequence manipulation */
 

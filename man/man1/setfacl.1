@@ -168,12 +168,23 @@ For
 .I uid
 and
 .I gid
-you can specify either a name or a number. The
+you can specify either a name or a number.
+.PP
+The
 .I perms
-field can be a combination of the characters
-.IR r ", " w ", " x ", " \- ,
-or an octal digit (0-7).
-
+field is a combination of characters that indicate the permissions: read
+.IR (r) ,
+write
+.IR (w) ,
+execute
+.IR (x) ,
+execute only if the file is a directory or already has execute permission
+for some user
+.IR (X) .
+Alternatively, the
+.I perms
+field can be an octal digit (0-7).
+.PP
 .SS AUTOMATICALLY CREATED ENTRIES
 Initially, files and directories contain only the three base ACL entries
 for the owner, the group, and others. There are some rules that

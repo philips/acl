@@ -1,3 +1,7 @@
+2.2.2 (15 January 2003)
+* Add 'X' permission specification for setfacl(1) following
+  the same usage as chmod(1).
+
 2.2.1 (16 December 2002)
 * Clarify man page with respect to fileutils support.
 * Minor Debian build update to remove a shell script "bash-ism".

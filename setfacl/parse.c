@@ -318,29 +318,31 @@ user_entry:
 
 	for (perm_chars=0; perm_chars<3; perm_chars++, (*text_p)++) {
 		switch(**text_p) {
-			case 'r':
-				if (cmd->c_perm & S_IROTH)
+			case 'r': /* read */
+				if (cmd->c_perm & CMD_PERM_READ)
 					goto fail;
-				cmd->c_perm |= S_IROTH;
+				cmd->c_perm |= CMD_PERM_READ;
 				break;
 
-			case 'w':
-				if (cmd->c_perm & S_IWOTH)
+			case 'w':  /* write */
+				if (cmd->c_perm & CMD_PERM_WRITE)
 					goto fail;
-				cmd->c_perm |= S_IWOTH;
+				cmd->c_perm |= CMD_PERM_WRITE;
 				break;
 
-			case 'x':
-				if (cmd->c_perm & S_IXOTH)
+			case 'x':  /* execute */
+				if (cmd->c_perm & CMD_PERM_EXECUTE)
 					goto fail;
-				cmd->c_perm |= S_IXOTH;
+				cmd->c_perm |= CMD_PERM_EXECUTE;
 				break;
 
-			/*case 'X':
-				if (cmd->c_perm & ...)
+			case 'X':  /* execute only if directory or some
+				      entries already have execute permissions
+				      set */
+				if (cmd->c_perm & CMD_PERM_COND_EXECUTE)
 					goto fail;
-				cmd->c_perm |= ...;
-				break:*/
+				cmd->c_perm |= CMD_PERM_COND_EXECUTE;
+				break;
 
 			case '-':
 				/* ignore */

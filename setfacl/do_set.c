@@ -79,6 +79,27 @@ find_entry(
 	}
 }
 
+int
+has_execute_perms(
+	acl_t acl)
+{
+	acl_entry_t ent;
+
+	if (acl_get_entry(acl, ACL_FIRST_ENTRY, &ent) != 1)
+		return 0;
+
+	for(;;) {
+		acl_permset_t permset;
+
+		acl_get_permset(ent, &permset);
+		if (acl_get_perm(permset, ACL_EXECUTE) != 0)
+			return 1;
+
+		if (acl_get_entry(acl, ACL_NEXT_ENTRY, &ent) != 1)
+			return 0;
+	}
+}
+
 
 int
 clone_entry(
@@ -131,18 +152,17 @@ set_perm(
 	acl_permset_t set;
 
 	acl_get_permset(ent, &set);
-	remove &= ~add;
-	if (remove & S_IROTH)
+	if (remove & CMD_PERM_READ)
 		acl_delete_perm(set, ACL_READ);
-	if (remove & S_IWOTH)
+	if (remove & CMD_PERM_WRITE)
 		acl_delete_perm(set, ACL_WRITE);
-	if (remove & S_IXOTH)
+	if (remove & CMD_PERM_EXECUTE)
 		acl_delete_perm(set, ACL_EXECUTE);
-	if (add & S_IROTH)
+	if (add & CMD_PERM_READ)
 		acl_add_perm(set, ACL_READ);
-	if (add & S_IWOTH)
+	if (add & CMD_PERM_WRITE)
 		acl_add_perm(set, ACL_WRITE);
-	if (add & S_IXOTH)
+	if (add & CMD_PERM_EXECUTE)
 		acl_add_perm(set, ACL_EXECUTE);
 }
 
@@ -232,11 +252,11 @@ remove_extended_entries(
 }
 
 
-#define RETRIEVE_ACL(type) ({ \
+#define RETRIEVE_ACL(type) do { \
 	error = retrieve_acl(path_p, type, st, old_xacl, xacl); \
 	if (error) \
 		goto fail; \
-	})
+	} while(0)
 
 int
 do_set(
@@ -274,37 +294,42 @@ do_set(
 				default_acl_mask_provided = 1;
 		}
 
+		RETRIEVE_ACL(cmd->c_type);
+
+		/* Check for `X', and replace with `x' as appropriate. */
+		if (cmd->c_perm & CMD_PERM_COND_EXECUTE) {
+			cmd->c_perm &= ~CMD_PERM_COND_EXECUTE;
+			if (S_ISDIR(st->st_mode) || has_execute_perms(*xacl))
+				cmd->c_perm |= CMD_PERM_EXECUTE;
+		}
+
 		switch(cmd->c_cmd) {
 			case CMD_ENTRY_REPLACE:
-				RETRIEVE_ACL(cmd->c_type);
 				ent = find_entry(*xacl, cmd->c_tag, cmd->c_id);
 				if (!ent) {
 					if (acl_create_entry(xacl, &ent) != 0)
 						goto fail;
 					acl_set_tag_type(ent, cmd->c_tag);
 					if (cmd->c_id != ACL_UNDEFINED_ID)
-						acl_set_qualifier(
-						               ent, &cmd->c_id);
+						acl_set_qualifier(ent,
+								  &cmd->c_id);
 				}
 				set_perm(ent, cmd->c_perm, ~cmd->c_perm);
 				break;
 
 			case CMD_ENTRY_ADD:
-				RETRIEVE_ACL(cmd->c_type);
 				ent = find_entry(*xacl, cmd->c_tag, cmd->c_id);
 				if (ent)
 					set_perm(ent, cmd->c_perm, 0);
 				break;
 
 			case CMD_ENTRY_SUBTRACT:
-				RETRIEVE_ACL(cmd->c_type);
 				ent = find_entry(*xacl, cmd->c_tag, cmd->c_id);
 				if (ent)
 					set_perm(ent, 0, cmd->c_perm);
 				break;
 
 			case CMD_REMOVE_ENTRY:
-				RETRIEVE_ACL(cmd->c_type);
 				ent = find_entry(*xacl, cmd->c_tag, cmd->c_id);
 				if (ent)
 					acl_delete_entry(*xacl, ent);
@@ -313,12 +338,10 @@ do_set(
 				break;
 
 			case CMD_REMOVE_EXTENDED_ACL:
-				RETRIEVE_ACL(cmd->c_type);
 				remove_extended_entries(acl);
 				break;
 
 			case CMD_REMOVE_ACL:
-				RETRIEVE_ACL(cmd->c_type);
 				acl_free(*xacl);
 				*xacl = acl_init(5);
 				if (!*xacl)
