@@ -75,7 +75,7 @@ main(int argc, char *argv[])
 {
 	char *file;
 	int switch_flag = 0;            /* ensure only one switch is used */
-	int args_required = 1;	
+	int args_required = 2;	
 	int failed = 0;			/* exit status */
 	int c;				/* For use by getopt(3) */
 	int dflag = 0;			/* a Default ACL is desired */
@@ -111,18 +111,23 @@ main(int argc, char *argv[])
 				break;
 			case 'R':
 				Rflag = 1;
+				args_required = 1;
 				break;
 			case 'D':
 				Dflag = 1;
+				args_required = 1;
 				break;
 			case 'B':
 				Bflag = 1;
+				args_required = 1;
 				break;
 			case 'l':
 				lflag = 1;
+				args_required = 1;
 				break;
 			case 'r':
 				rflag = 1;
+				args_required = 1;
 				break;
 			default:
 				usage();

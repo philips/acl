@@ -1,3 +1,8 @@
+2.2.14 (04 August 2003)
+* Fix chacl argument count checking in one or two places.
+* Fix libmisc quote/unquote routines so they handle NULL as input,
+  was causing some SEGV's inside libacl routines.
+
 2.2.13 (29 July 2003)
 * Add internal library for misc. functions: quote, unquote, high_water_alloc.
 * Quote special characters in path names and user names.
