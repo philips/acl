@@ -33,7 +33,7 @@
 
 TOPDIR = ..
 
-LTLDFLAGS = -Wl,--version-script,$(TOPDIR)/exports
+LTLDFLAGS += -Wl,--version-script,$(TOPDIR)/exports
 include $(TOPDIR)/include/builddefs
 
 LTLIBRARY = libacl.la
