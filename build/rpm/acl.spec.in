@@ -24,12 +24,14 @@ This package contains the libacl.so dynamic library which contains
 the POSIX 1003.1e draft standard 17 functions for manipulating access
 control lists.
 
-%package -n acl-devel
+%package -n libacl-devel
 Summary: Access control list static libraries and headers.
 Group: Development/Libraries
 Requires: libacl
+Provides: acl-devel
+Obsoletes: acl-devel
 
-%description -n acl-devel
+%description -n libacl-devel
 This package contains static libraries and header files needed to develop
 programs which make use of the access control list programming interface
 defined in POSIX 1003.1e draft standard 17.
@@ -88,6 +90,6 @@ rm -rf $RPM_BUILD_ROOT
 
 %files -f files.rpm
 
-%files -n acl-devel -f filesdevel.rpm
+%files -n libacl-devel -f filesdevel.rpm
 
 %files -n libacl -f fileslib.rpm

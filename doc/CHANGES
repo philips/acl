@@ -1,8 +1,13 @@
+2.1.0 (19 October 2002)
 * Remove the -s and -S short options from setfacl, since it confuses
   many users (--set and -set-file still exist). 
 * Update the setfacl(1) manual page.
 * Improve the wording of some error messages, and update the pot/po
   files. Also update the setfacl.test script.
+* Change the devel .rpm and .deb package names so that they now use
+  a "lib" prefix.
+* Several packaging changes related to this to ensure upgrades work
+  and depenency information isn't lost.
 
 2.0.19 (04 September 2002)
 * Correct the description of the access check algorithm in acl(5).
