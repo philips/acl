@@ -41,7 +41,7 @@ acl_print(
 {
 	acl_obj *acl_obj_p = ext2int(acl, acl);
 	acl_entry_obj *entry_obj_p, *mask_obj_p = NULL;
-	int n, written = 0, len, size = 256;
+	int n, len, count = 0, written = 0, size = 256;
 	char *text_p, *tmp;
 	if (!acl_obj_p)
 		return -1;
@@ -59,6 +59,8 @@ acl_print(
 		}
 	}
 
+	count = acl_entries(acl);
+
 	FOREACH_ACL_ENTRY(entry_obj_p, acl_obj_p) {
 		len = acl_entry_to_any_str(int2ext(entry_obj_p), text_p, size,
 					  int2ext(mask_obj_p), prefix, options);
@@ -74,7 +76,14 @@ acl_print(
 			continue;
 		}
 
-		n = fprintf(file, "%s\n", text_p);
+		if (options & TEXT_NO_ENDOFLINE) {
+			if (--count)
+				n = fprintf(file, "%s,", text_p);
+			else
+				n = fprintf(file, "%s", text_p);
+		}
+		else
+			n = fprintf(file, "%s\n", text_p);
 		if (n < 0)
 			goto fail;
 		written += n;

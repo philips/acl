@@ -54,7 +54,8 @@ POSIX_CFILES = \
 	acl_valid.c
 
 LIBACL_CFILES = \
-	acl_check.c acl_cmp.c acl_entries.c acl_entry_to_any_str.c \
+	acl_check.c acl_cmp.c acl_delete_acc_file.c acl_entries.c \
+	acl_entry_to_any_str.c \
 	acl_equiv_mode.c acl_error.c acl_extended_fd.c acl_extended_file.c \
 	acl_from_mode.c acl_get_fd_mode.c acl_get_file_mode.c \
 	acl_set_fd_mode.c acl_set_file_mode.c acl_size.c acl_to_any_text.c

@@ -1,5 +1,5 @@
 /*
-  File: acl_delete_def_file.c
+  File: acl_delete_acc_file.c
 
   Copyright (C) 1999, 2000
   Andreas Gruenbacher, <a.gruenbacher@computer.org>
@@ -25,15 +25,14 @@
 #include "acl_ea.h"
 
 
-/* 23.4.8 */
 int
-acl_delete_def_file(
+acl_delete_acc_file(
 	const char *path_p)
 {
 	int error;
-	
-	error = removexattr(path_p, ACL_EA_DEFAULT);
-	if (error < 0)
+
+	error = removexattr(path_p, ACL_EA_ACCESS);
+	if (error < 0 && errno != ENOATTR)
 		return -1;
 	return 0;
 }
