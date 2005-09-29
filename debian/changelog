@@ -1,8 +1,9 @@
-acl (2.2.31-1) unstable; urgency=low
+acl (2.2.32-1) unstable; urgency=low
 
   * New upstream release
+  * Added French translation (closes: #330596)
 
- -- Nathan Scott <nathans@debian.org>  Fri, 11 Mar 2005 11:59:20 +1100
+ -- Nathan Scott <nathans@debian.org>  Thu, 29 Sep 2005 09:47:28 +1000
 
 acl (2.2.29-1) unstable; urgency=low
 
@@ -21,7 +22,7 @@ acl (2.2.26-1) unstable; urgency=low
 
   * New upstream release
   * acl.5 man page user/group typo fixed (closes: #272186)
-
+ 
  -- Nathan Scott <nathans@debian.org>  Fri, 10 Sep 2004 10:51:19 +1000
 
 acl (2.2.23-1) unstable; urgency=low
