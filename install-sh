@@ -1,6 +1,6 @@
 #! /bin/sh
 #
-# Copyright (c) 2000-2002 Silicon Graphics, Inc.  All Rights Reserved.
+# Copyright (c) 2000-2001 Silicon Graphics, Inc.  All Rights Reserved.
 #
 # This script emulates bsd install and also recognises
 # two environment variables, with the following semantics :-
@@ -22,7 +22,7 @@
 #       not set       set      |    yes        no
 #       set           not set  |    no         yes
 #       set           set      |    yes        yes
-# 
+#
 _usage() {
     echo "Usage: $prog [-o owner] [-g group] [-m mode] -d directory"
     echo "or     $prog [-D] [-o owner] [-g group] [-m mode] file directory/file"
@@ -325,6 +325,7 @@ else
 	    shift
 	done
 
+	# echo DIR=$dir list=\"$list\"
 	for f in $list
 	do
 	    $CP $f $dir
