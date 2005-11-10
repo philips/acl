@@ -1,3 +1,7 @@
+2.2.33 (10 November 2005)
+* Sync up build system (m4 macros, etc) with other projects
+* Update SGI copyright/licence notices
+
 2.2.32 (29 September 2005)
 * Add French translation from the debian-l10n-french folks
   (thanks to Sylvain Archenault)

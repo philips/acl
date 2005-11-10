@@ -1,3 +1,9 @@
+acl (2.2.33-1) unstable; urgency=low
+
+  * New upstream release
+
+ -- Nathan Scott <nathans@debian.org>  Thu, 10 Nov 2005 07:59:12 +1100
+
 acl (2.2.32-1) unstable; urgency=low
 
   * New upstream release
@@ -22,7 +28,7 @@ acl (2.2.26-1) unstable; urgency=low
 
   * New upstream release
   * acl.5 man page user/group typo fixed (closes: #272186)
- 
+
  -- Nathan Scott <nathans@debian.org>  Fri, 10 Sep 2004 10:51:19 +1000
 
 acl (2.2.23-1) unstable; urgency=low
