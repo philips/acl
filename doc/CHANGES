@@ -1,3 +1,6 @@
+2.2.34 (05 December 2005)
+* Debian packaging updates
+
 2.2.33 (10 November 2005)
 * Sync up build system (m4 macros, etc) with other projects
 * Update SGI copyright/licence notices

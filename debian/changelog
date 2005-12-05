@@ -1,3 +1,10 @@
+acl (2.2.34-1) unstable; urgency=low
+
+  * New upstream release
+  * Add libacl1-dev dependency on libattr1-dev (closes: #341711)
+
+ -- Nathan Scott <nathans@debian.org>  Mon, 05 Dec 2005 11:15:41 +1100
+
 acl (2.2.33-1) unstable; urgency=low
 
   * New upstream release
