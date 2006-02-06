@@ -191,7 +191,7 @@ AC_DEFUN([AC_PACKAGE_NEED_ATTR_XATTR_H],
         echo
         echo 'FATAL ERROR: attr/xattr.h does not exist.'
         echo 'Install the extended attributes (attr) development package.'
-        echo 'Alternatively, run "make install-lib" from the attr source.'
+        echo 'Alternatively, run "make install-dev" from the attr source.'
         exit 1
     fi
   ])
@@ -202,7 +202,7 @@ AC_DEFUN([AC_PACKAGE_NEED_ATTR_ERROR_H],
         echo
         echo 'FATAL ERROR: attr/error_context.h does not exist.'
         echo 'Install the extended attributes (attr) development package.'
-        echo 'Alternatively, run "make install-lib" from the attr source.'
+        echo 'Alternatively, run "make install-dev" from the attr source.'
         exit 1
     fi
   ])
@@ -214,7 +214,7 @@ AC_DEFUN([AC_PACKAGE_NEED_ATTRIBUTES_H],
         echo
         echo 'FATAL ERROR: attributes.h does not exist.'
         echo 'Install the extended attributes (attr) development package.'
-        echo 'Alternatively, run "make install-lib" from the attr source.'
+        echo 'Alternatively, run "make install-dev" from the attr source.'
         exit 1
     fi
   ])
