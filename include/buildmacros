@@ -1,5 +1,4 @@
-#
-# Copyright (c) 2002-2003 Silicon Graphics, Inc.  All Rights Reserved.
+ Copyright (c) 2002-2003 Silicon Graphics, Inc.  All Rights Reserved.
 #
 
 BUILDRULES = $(TOPDIR)/include/buildrules
@@ -56,7 +55,6 @@ INSTALL_LTLIB = \
 	cd $(TOPDIR)/$(LIBNAME)/.libs; \
 	../$(INSTALL) -m 755 -d $(PKG_LIB_DIR); \
 	../$(INSTALL) -m 644 -T so_dot_version $(LIBNAME).lai $(PKG_LIB_DIR); \
-	test "$(PKG_DISTRIBUTION)" = debian || \
 	../$(INSTALL) -T so_dot_current $(LIBNAME).lai $(PKG_LIB_DIR)
 endif
 
