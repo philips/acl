@@ -1,5 +1,6 @@
 2.2.35 (15 February 2006)
 * Debian packaging updates (debmake out, debhelper in)
+* Fix GNU/Hurd builds (no PATH_MAX macro)
 
 2.2.34 (05 December 2005)
 * Debian packaging updates
