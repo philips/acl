@@ -3,7 +3,7 @@ acl (2.2.35-1) unstable; urgency=low
   * New upstream release
   * Switch from debmake to debhelper
 
-  -- Nathan Scott <nathans@debian.org>  Wed, 15 Feb 2006 20:43:49 +1100
+ -- Nathan Scott <nathans@debian.org>  Wed, 15 Feb 2006 20:43:49 +1100
 
 acl (2.2.34-1) unstable; urgency=low
 
