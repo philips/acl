@@ -1,7 +1,7 @@
 acl (2.2.36-1) unstable; urgency=low
 
   * New upstream release
-  * Fixed build dependency on libc-dev (closes: #358786)
+  * Fixed build dependency on libc-dev (closes: #358788)
 
  -- Nathan Scott <nathans@debian.org>  Tue, 28 Mar 2006 09:14:25 +1100
 
