@@ -1,3 +1,7 @@
+2.2.36 (28 March 2006)
+* Debian packaging updates (libc-dev dependency fixed)
+* Enable -O2 optimised builds by default
+
 2.2.35 (15 February 2006)
 * Debian packaging updates (debmake out, debhelper in)
 * Fix GNU/Hurd builds (no PATH_MAX macro)
