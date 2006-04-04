@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2003 Silicon Graphics, Inc.  All Rights Reserved.
+# Copyright (c) 2003-2006 Silicon Graphics, Inc.  All Rights Reserved.
 #
 
 TOPDIR = ..
@@ -10,7 +10,8 @@ LSRCFILES = \
 	package_attrdev.m4 \
 	package_globals.m4 \
 	package_utilies.m4 \
-	visibility_hidden.m4
+	visibility_hidden.m4 \
+	multilib.m4
 
 default: 
 
