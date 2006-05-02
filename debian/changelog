@@ -1,3 +1,10 @@
+acl (2.2.37-1) unstable; urgency=low
+
+  * New upstream release
+  * Fix tree walking with symbolic links (closes: #333160)
+
+ -- Nathan Scott <nathans@debian.org>  Tue, 02 May 2006 09:41:15 +1000
+
 acl (2.2.36-1) unstable; urgency=low
 
   * New upstream release

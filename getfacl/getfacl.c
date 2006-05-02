@@ -595,10 +595,34 @@ int __do_print(const char *file, const struct stat *stat,
 	return 0;
 }
 
+char *resolve_symlinks(const char *file)
+{
+	static char buffer[4096];
+	char *path = NULL;
+	ssize_t len;
+
+	len = readlink(file, buffer, sizeof(buffer)-1);
+	if (len < 0) {
+		if (errno == EINVAL)	/* not a symlink, use given path */
+			path = (char *)file;
+	} else {
+		buffer[len+1] = '\0';
+		path = buffer;
+	}
+	return path;
+}
+
 int walk_tree(const char *file)
 {
+	const char *p;
+
 	__errors = 0;
-	if (nftw(file, __do_print, 0, opt_walk_physical * FTW_PHYS) < 0) {
+	if ((p = resolve_symlinks(file)) == NULL) {
+		fprintf(stderr, "%s: %s: %s\n", progname,
+			xquote(file), strerror(errno));
+		__errors++;
+	}
+	if (nftw(p, __do_print, 0, opt_walk_logical ? 0 : FTW_PHYS) < 0) {
 		fprintf(stderr, "%s: %s: %s\n", progname, xquote(file),
 			strerror(errno));
 		__errors++;

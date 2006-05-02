@@ -1,3 +1,7 @@
+2.2.37 (02 May 2006)
+* Fix handling of symbolic links in setfacl/getfacl, and resulting
+  nftw-related oddities.
+
 2.2.36 (28 March 2006)
 * Debian packaging updates (libc-dev dependency fixed)
 * Enable -O2 optimised builds by default
