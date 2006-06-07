@@ -4,7 +4,7 @@
 
   Copyright (C) 1999-2002
   Andreas Gruenbacher, <a.gruenbacher@bestbits.at>
- 	
+
   This program is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
   License as published by the Free Software Foundation; either
@@ -338,8 +338,7 @@ int walk_tree(const char *file, seq_t seq)
 		fprintf(stderr, "%s: %s: %s\n", progname,
 			xquote(file), strerror(errno));
 		__errors++;
-	}
-	if (nftw(p, __do_set, 0, opt_walk_logical ? 0 : FTW_PHYS) < 0) {
+	} else if (nftw(p, __do_set, 0, opt_walk_logical ? 0 : FTW_PHYS) < 0) {
 		fprintf(stderr, "%s: %s: %s\n", progname,
 			xquote(file), strerror(errno));
 		__errors++;

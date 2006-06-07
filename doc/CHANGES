@@ -1,3 +1,8 @@
+2.2.39
+* Fix a segfault in getfacl/setfacl when handling non-existent
+  files, related to previos nftw-related workarounds.  Thanks
+  to Daniel Kahn Gillmor for the fix.
+
 2.2.38
 * Add Swedish translation from the debian localisation folks
   (thanks to Daniel Nylander)
