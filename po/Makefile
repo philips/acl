@@ -5,8 +5,10 @@
 TOPDIR = ..
 include $(TOPDIR)/include/builddefs
 
+POTHEAD = $(PKG_NAME).pot
 LINGUAS = de fr pl sv
-LSRCFILES = $(LINGUAS:%=%.po) $(PKG_NAME).pot
+LSRCFILES = $(LINGUAS:%=%.po) $(POTHEAD)
+LDIRT = $(POTHEAD)
 
 XGETTEXTFILES =	$(TOPDIR)/chacl/chacl.c \
 		$(TOPDIR)/setfacl/do_set.c \
@@ -16,7 +18,7 @@ XGETTEXTFILES =	$(TOPDIR)/chacl/chacl.c \
 		$(TOPDIR)/libacl/perm_copy_fd.c \
 		$(TOPDIR)/libacl/perm_copy_file.c
 
-default: $(LINGUAS:%=%.mo)
+default: $(POTHEAD) $(LINGUAS:%=%.mo)
 
 include $(BUILDRULES)
 

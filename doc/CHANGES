@@ -1,9 +1,15 @@
-2.2.39
+2.2.40 (03 July 2006)
+* Update translation Makefile to work better with the Ubuntu
+  translation system.  Thanks to feedback from Martin Pitt.
+* Fix annoying "ignores datarootdir" warning from configure.
+* Fix issues with makedepend build infrastructure.
+
+2.2.39 (06 June 2006)
 * Fix a segfault in getfacl/setfacl when handling non-existent
   files, related to previos nftw-related workarounds.  Thanks
   to Daniel Kahn Gillmor for the fix.
 
-2.2.38
+2.2.38 (23 May 2006)
 * Add Swedish translation from the debian localisation folks
   (thanks to Daniel Nylander)
 

@@ -107,6 +107,11 @@ AC_DEFUN([AC_PACKAGE_NEED_ATTRIBUTES_H],
     fi
   ])
 
+AC_DEFUN([AC_PACKAGE_WANT_ATTRLIST_LIBATTR],
+  [ AC_CHECK_LIB(attr, attr_list, [have_attr_list=true], [have_attr_list=false])
+    AC_SUBST(have_attr_list)
+  ])
+
 AC_DEFUN([AC_PACKAGE_NEED_GETXATTR_LIBATTR],
   [ AC_CHECK_LIB(attr, getxattr,, [
         echo
@@ -134,8 +139,8 @@ AC_DEFUN([AC_PACKAGE_NEED_ATTRGET_LIBATTR],
     libattr="-lattr"
     test -f `pwd`/../attr/libattr/libattr.la && \
         libattr="`pwd`/../attr/libattr/libattr.la"
-    test -f $(libexecdir)$(libdirsuffix)/libattr.la && \
-	libattr="$(libexecdir)$(libdirsuffix)/libattr.la"
+    test -f ${libexecdir}${libdirsuffix}/libattr.la && \
+	libattr="${libexecdir}${libdirsuffix}/libattr.la"
     AC_SUBST(libattr)
   ])
 
@@ -200,7 +205,7 @@ AC_DEFUN([AC_PACKAGE_GLOBALS],
 
 #
 # Check for specified utility (env var) - if unset, fail.
-# 
+#
 AC_DEFUN([AC_PACKAGE_NEED_UTILITY],
   [ if test -z "$2"; then
         echo
@@ -301,6 +306,13 @@ AC_DEFUN([AC_PACKAGE_UTILITIES],
         msgmerge=$MSGMERGE
         AC_SUBST(msgmerge)
         AC_PACKAGE_NEED_UTILITY($1, "$msgmerge", msgmerge, gettext)
+
+        if test -z "$XGETTEXT"; then
+                AC_PATH_PROG(XGETTEXT, xgettext,, /usr/bin:/usr/local/bin:/usr/freeware/bin)
+        fi
+        xgettext=$XGETTEXT
+        AC_SUBST(xgettext)
+        AC_PACKAGE_NEED_UTILITY($1, "$xgettext", xgettext, gettext)
     fi
 
     if test -z "$RPM"; then
