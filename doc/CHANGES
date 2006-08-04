@@ -1,5 +1,6 @@
 2.2.41 (14 July 2006)
 * Fix issues with makedepend on libtool libraries.
+* Fix issues with install using named ids instead of numeric ones.
 
 2.2.40 (03 July 2006)
 * Update translation Makefile to work better with the Ubuntu
