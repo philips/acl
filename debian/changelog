@@ -1,3 +1,10 @@
+acl (2.2.42-1) unstable; urgency=low
+
+  * New upstream release
+  * Incorporate Petr Salinger's GNU/kFreeBSD patch (closes: #401511)
+
+ -- Nathan Scott <nathans@debian.org>  Fri, 08 Dec 2006 14:21:40 +1100
+
 acl (2.2.41-1) unstable; urgency=low
 
   * New upstream release

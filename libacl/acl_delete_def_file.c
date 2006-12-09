@@ -23,6 +23,7 @@
 #include <attr/xattr.h>
 #include "byteorder.h"
 #include "acl_ea.h"
+#include "config.h"
 
 
 /* 23.4.8 */

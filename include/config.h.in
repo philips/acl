@@ -30,3 +30,8 @@
 #endif
 #include <locale.h>
 
+/* On GNU/kFreeBSD, ENODATA is not defined in the system headers */
+#include <errno.h>
+#ifndef ENODATA
+# define ENODATA ENOATTR
+#endif
