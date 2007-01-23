@@ -1,3 +1,6 @@
+2.2.43 (23 January 2007)
+* Fix a build issue with cross-compiling, thanks to Diego Pettenò.
+
 2.2.42 (08 December 2006)
 * Fix a build issue on GNU/kFreeBSD, thanks to Petr Salinger.
 
