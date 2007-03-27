@@ -1,3 +1,7 @@
+2.2.44 (27 Mar 2007)
+* Add Spanish and Galician translation
+  (thanks to Antonio Trueba)
+
 2.2.43 (23 January 2007)
 * Fix a build issue with cross-compiling, thanks to Diego Pettenò.
 
