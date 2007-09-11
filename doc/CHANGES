@@ -1,9 +1,12 @@
-2.2.44 (27 Mar 2007)
+2.2.45 (11 September 2007)
+* Fix symlink handling with getfacl and setfacl, thanks to Utako Usaka.
+
+2.2.44 (27 March 2007)
 * Add Spanish and Galician translation
   (thanks to Antonio Trueba)
 
 2.2.43 (23 January 2007)
-* Fix a build issue with cross-compiling, thanks to Diego Pettenò.
+* Fix a build issue with cross-compiling, thanks to Diego Pettenï¿½
 
 2.2.42 (08 December 2006)
 * Fix a build issue on GNU/kFreeBSD, thanks to Petr Salinger.
@@ -198,7 +201,7 @@
 
 2.1.0 (19 October 2002)
 * Remove the -s and -S short options from setfacl, since it confuses
-  many users (--set and -set-file still exist). 
+  many users (--set and -set-file still exist).
 * Update the setfacl(1) manual page.
 * Improve the wording of some error messages, and update the pot/po
   files. Also update the setfacl.test script.
@@ -318,7 +321,7 @@
 
 2.0.1 (27 February 2002)
 * Apply Andreas Gruenbacher's diffs.
-* Fix up chacl for deletion of access ACL to be in line with Andreas. 
+* Fix up chacl for deletion of access ACL to be in line with Andreas.
 * Incorporate the Debian packaging again.
 
 2.0.0 (21 February 2002)
@@ -340,7 +343,7 @@
 
 0.7.22
 * Create a shared version of libacl, instead of linking statically.
-* Added missing error reporting to getfacl do_print() function.     
+* Added missing error reporting to getfacl do_print() function.
 
 0.7.16
 * Minor cleanups/fixes in the make files
