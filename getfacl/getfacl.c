@@ -598,17 +598,17 @@ int __do_print(const char *file, const struct stat *stat,
 char *resolve_symlinks(const char *file)
 {
 	static char buffer[4096];
+	struct stat stat;
 	char *path = NULL;
-	ssize_t len;
 
-	len = readlink(file, buffer, sizeof(buffer)-1);
-	if (len < 0) {
-		if (errno == EINVAL)	/* not a symlink, use given path */
-			path = (char *)file;
-	} else {
-		buffer[len+1] = '\0';
-		path = buffer;
-	}
+	if (lstat(file, &stat) == -1)
+		return path;
+
+	if (S_ISLNK(stat.st_mode) && !opt_walk_physical)
+		path = realpath(file, buffer);
+	else
+		path = (char *)file; 	/* not a symlink, use given path */
+
 	return path;
 }
 
