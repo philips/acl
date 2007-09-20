@@ -94,19 +94,22 @@ default ACL. This is equivalent to using the
 function.
 .Sh CORRESPONDENCE BETWEEN ACL ENTRIES AND FILE PERMISSION BITS
 The permissions defined by ACLs are a superset of the permissions
-specified by the file permission bits. The permissions defined for
-the file owner correspond to the permissions of the ACL_USER_OBJ entry.
-The permissions defined for the file group correspond to the permissions
-of the ACL_GROUP_OBJ entry, if the ACL has no ACL_MASK entry. If the ACL
-has an ACL_MASK entry, then the permissions defined for the file group
-correspond to the permissions of the ACL_MASK entry. The permissions
-defined for the other class correspond to the permissions of the
-ACL_OTHER_OBJ entry.
+specified by the file permission bits.
 .Pp
-Modification of the file permission bits results in the modification of
-the permissions in the associated ACL entries. Modification of the
-permissions in the ACL entries results in the modification of the file
-permission bits.
+There is a correspondence between the file owner, group, and other
+permissions and specific ACL entries: the owner permissions correspond
+to the permissions of the ACL_USER_OBJ entry. If the ACL has an ACL_MASK
+entry, the group permissions correspond to the permissions of the
+ACL_MASK entry.  Otherwise, if the ACL has no ACL_MASK entry, the group
+permissions correspond to the permissions of the ACL_GROUP_OBJ entry.
+The other permissions correspond to the permissions of the ACL_OTHER_OBJ
+entry.
+.Pp
+The file owner, group, and other permissions always match the
+permissions of the corresponding ACL entry. Modification of the file
+permission bits results in the modification of the associated ACL
+entries, and modification of these ACL entries results in the
+modification of the file permission bits.
 .Sh OBJECT CREATION AND DEFAULT ACLs
 The access ACL of a file object is initialized when the object is
 created with any of the

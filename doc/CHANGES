@@ -1,3 +1,8 @@
+2.2.46 (???)
+* Update acl.5 man page to clarify the relationship between
+  the file permissions and the *OBJ ACL entries thanks
+  to Andreas Gruenbacher.
+
 2.2.45 (11 September 2007)
 * Fix symlink handling with getfacl and setfacl, thanks to Utako Usaka.
 
