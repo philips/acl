@@ -1,7 +1,13 @@
-2.2.46 (???)
-* Update acl.5 man page to clarify the relationship between
-  the file permissions and the *OBJ ACL entries thanks
-  to Andreas Gruenbacher.
+2.2.46 (21 November 2007)
+* From Andreas Gruenbacher:
+    * Update acl.5 man page to clarify the relationship between
+      the file permissions and the *OBJ ACL entries.
+    * In some cases, gcc does not link in functions from libmisc.a
+      unless libmisc is specified before the dynamic libraries on
+      the command line.
+    * Rip out nftw tree walking, it is broken and hopeless to fix.
+      The replacement walk_tree() function does exactly what we
+      want, and is much simpler to use.
 
 2.2.45 (11 September 2007)
 * Fix symlink handling with getfacl and setfacl, thanks to Utako Usaka.

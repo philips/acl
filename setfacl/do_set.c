@@ -36,10 +36,10 @@
 #include "sequence.h"
 #include "parse.h"
 #include "config.h"
+#include "walk_tree.h"
 
 
 extern const char *progname;
-extern int opt_recursive;
 extern int opt_recalculate;
 extern int opt_test;
 extern int print_options;
@@ -259,8 +259,10 @@ int
 do_set(
 	const char *path_p,
 	const struct stat *st,
-	const seq_t seq)
+	int walk_flags,
+	void *arg)
 {
+	const seq_t seq = (const seq_t)arg;
 	acl_t old_acl = NULL, old_default_acl = NULL;
 	acl_t acl = NULL, default_acl = NULL;
 	acl_t *xacl, *old_xacl;
@@ -271,6 +273,11 @@ do_set(
 	char *acl_text;
 	int acl_modified = 0, default_acl_modified = 0;
 	int acl_mask_provided = 0, default_acl_mask_provided = 0;
+
+	if (walk_flags & WALK_TREE_FAILED) {
+		fprintf(stderr, "%s: %s: %s\n", progname, path_p, strerror(errno));
+		return 1;
+	}
 
 	/* Execute the commands in seq (read ACLs on demand) */
 	error = seq_get_cmd(seq, SEQ_FIRST_CMD, &cmd);
@@ -426,7 +433,7 @@ do_set(
 	}
 
 	/* Only directores can have default ACLs */
-	if (default_acl && !S_ISDIR(st->st_mode) && opt_recursive) {
+	if (default_acl && !S_ISDIR(st->st_mode) && (walk_flags & WALK_TREE_RECURSIVE)) {
 		/* In recursive mode, ignore default ACLs for files */
 		acl_free(default_acl);
 		default_acl = NULL;

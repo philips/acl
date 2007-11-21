@@ -9,8 +9,8 @@ LTCOMMAND = setfacl
 CFILES = setfacl.c do_set.c sequence.c parse.c
 HFILES = sequence.h parse.h
 
-LLDLIBS = $(LIBACL) $(LIBATTR) $(LIBMISC)
-LTDEPENDENCIES = $(LIBACL) $(LIBMISC)
+LLDLIBS = $(LIBMISC) $(LIBACL) $(LIBATTR)
+LTDEPENDENCIES = $(LIBMISC) $(LIBACL)
 
 default: $(LTCOMMAND)
 

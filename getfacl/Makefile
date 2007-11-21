@@ -9,8 +9,8 @@ LTCOMMAND = getfacl
 CFILES = getfacl.c user_group.c
 HFILES = user_group.h
 
-LLDLIBS = $(LIBACL) $(LIBATTR) $(LIBMISC)
-LTDEPENDENCIES = $(LIBACL) $(LIBMISC)
+LLDLIBS = $(LIBMISC) $(LIBACL) $(LIBATTR)
+LTDEPENDENCIES = $(LIBMISC) $(LIBACL)
 
 default: $(LTCOMMAND)
 

@@ -28,20 +28,15 @@
 #include <sys/stat.h>
 #include <dirent.h>
 #include <libgen.h>
-#include <ftw.h>
 #include <getopt.h>
 #include <locale.h>
 #include "config.h"
 #include "sequence.h"
 #include "parse.h"
+#include "walk_tree.h"
 #include "misc.h"
 
-extern int
-do_set(
-        const char *path_p,
-        const struct stat *stat_p,
-	const seq_t seq);
-
+extern int do_set(const char *path_p, const struct stat *stat_p, int flags, void *arg);
 
 #define POSIXLY_CORRECT_STR "POSIXLY_CORRECT"
 
@@ -82,9 +77,7 @@ struct option long_options[] = {
 const char *progname;
 const char *cmd_line_options, *cmd_line_spec;
 
-int opt_recursive;  /* recurse into sub-directories? */
-int opt_walk_logical;  /* always follow symbolic links */
-int opt_walk_physical;  /* never follow symbolic links */
+int walk_flags = WALK_TREE_DEREFERENCE;
 int opt_recalculate;  /* recalculate mask entry (0=default, 1=yes, -1=no) */
 int opt_promote;  /* promote access ACL to default ACL */
 int opt_test;  /* do not write to the file system.
@@ -188,7 +181,7 @@ restore(
 		stat.st_uid = uid;
 		stat.st_gid = gid;
 
-		error = do_set(path_p, &stat, seq);
+		error = do_set(path_p, &stat, 0, seq);
 		if (error != 0) {
 			status = 1;
 			goto resume;
@@ -275,77 +268,6 @@ void help(void)
 }
 
 
-static int __errors;
-static seq_t __seq;
-
-int __do_set(const char *file, const struct stat *stat,
-             int flag, struct FTW *ftw)
-{
-	int saved_errno = errno;
-	
-	/* Process the target of a symbolic link, and traverse the link,
-	   only if doing a logical walk, or if the symbolic link was
-	   specified on the command line. Always skip symbolic links if
-	   doing a physical walk. */
-
-	if (S_ISLNK(stat->st_mode) &&
-	    (opt_walk_physical || (ftw->level > 0 && !opt_walk_logical)))
-		return 0;
-
-	if (do_set(file, stat, __seq))
-		__errors++;
-
-	if (flag == FTW_DNR && opt_recursive) {
-		/* Item is a directory which can't be read. */
-		fprintf(stderr, "%s: %s: %s\n",
-			progname, file, strerror(saved_errno));
-		return 0;
-	}
-
-	/* We also get here in non-recursive mode. In that case,
-	   return something != 0 to abort nftw. */
-
-	if (!opt_recursive)
-		return 1;
-
-	return 0;
-}
-
-char *resolve_symlinks(const char *file)
-{
-	static char buffer[4096];
-	struct stat stat;
-	char *path = NULL;
-
-	if (lstat(file, &stat) == -1)
-		return path;
-
-	if (S_ISLNK(stat.st_mode) && !opt_walk_physical)
-		path = realpath(file, buffer);
-	else
-		path = (char *)file;    /* not a symlink, use given path */
-
-	return path;
-}
-
-int walk_tree(const char *file, seq_t seq)
-{
-	const char *p;
-
-	__errors = 0;
-	__seq = seq;
-	if ((p = resolve_symlinks(file)) == NULL) {
-		fprintf(stderr, "%s: %s: %s\n", progname,
-			xquote(file), strerror(errno));
-		__errors++;
-	} else if (nftw(p, __do_set, 0, opt_walk_logical ? 0 : FTW_PHYS) < 0) {
-		fprintf(stderr, "%s: %s: %s\n", progname,
-			xquote(file), strerror(errno));
-		__errors++;
-	}
-	return __errors;
-}
-
 int next_file(const char *arg, seq_t seq)
 {
 	char *line;
@@ -353,14 +275,14 @@ int next_file(const char *arg, seq_t seq)
 
 	if (strcmp(arg, "-") == 0) {
 		while ((line = next_line(stdin)))
-			errors = walk_tree(line, seq);
+			errors = walk_tree(line, walk_flags, do_set, seq);
 		if (!feof(stdin)) {
 			fprintf(stderr, _("%s: Standard input: %s\n"),
 				progname, strerror(errno));
 			errors = 1;
 		}
 	} else {
-		errors = walk_tree(arg, seq);
+		errors = walk_tree(arg, walk_flags, do_set, seq);
 	}
 	return errors ? 1 : 0;
 }
@@ -627,17 +549,17 @@ int main(int argc, char *argv[])
 				break;
 
 			case 'R':  /* recursive */
-				opt_recursive = 1;
+				walk_flags |= WALK_TREE_RECURSIVE;
 				break;
 
 			case 'L':  /* follow symlinks */
-				opt_walk_logical = 1;
-				opt_walk_physical = 0;
+				walk_flags |= WALK_TREE_LOGICAL;
+				walk_flags &= ~WALK_TREE_PHYSICAL;
 				break;
 
 			case 'P':  /* do not follow symlinks */
-				opt_walk_logical = 0;
-				opt_walk_physical = 1;
+				walk_flags |= WALK_TREE_PHYSICAL;
+				walk_flags &= ~WALK_TREE_LOGICAL;
 				break;
 
 			case 't':  /* test mode */

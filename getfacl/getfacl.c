@@ -34,10 +34,10 @@
 #include <dirent.h>
 #include <libgen.h>
 #include <getopt.h>
-#include <ftw.h>
 #include <locale.h>
 #include "config.h"
 #include "user_group.h"
+#include "walk_tree.h"
 #include "misc.h"
 
 #define POSIXLY_CORRECT_STR "POSIXLY_CORRECT"
@@ -70,24 +70,22 @@ struct option long_options[] = {
 const char *progname;
 const char *cmd_line_options;
 
-int opt_recursive;  /* recurse into sub-directories? */
-int opt_walk_logical;  /* always follow symbolic links */
-int opt_walk_physical;  /* never follow symbolic links */
-int opt_print_acl = 0;
-int opt_print_default_acl = 0;
+int walk_flags = WALK_TREE_DEREFERENCE;
+int opt_print_acl;
+int opt_print_default_acl;
 int opt_strip_leading_slash = 1;
 int opt_comments = 1;  /* include comments */
-int opt_skip_base = 0;  /* skip files that only have the base entries */
-int opt_tabular = 0;  /* tabular output format (alias `showacl') */
+int opt_skip_base;  /* skip files that only have the base entries */
+int opt_tabular;  /* tabular output format (alias `showacl') */
 #if POSIXLY_CORRECT
 const int posixly_correct = 1;  /* Posix compatible behavior! */
 #else
-int posixly_correct = 0;  /* Posix compatible behavior? */
+int posixly_correct;  /* Posix compatible behavior? */
 #endif
-int had_errors = 0;
-int absolute_warning = 0;  /* Absolute path warning was issued */
+int had_errors;
+int absolute_warning;  /* Absolute path warning was issued */
 int print_options = TEXT_SOME_EFFECTIVE;
-int opt_numeric = 0;  /* don't convert id's to symbolic names */
+int opt_numeric;  /* don't convert id's to symbolic names */
 
 
 static const char *xquote(const char *str)
@@ -425,11 +423,17 @@ acl_get_file_mode(const char *path_p)
 	return acl_from_mode(st.st_mode);
 }
 
-int do_print(const char *path_p, const struct stat *st)
+int do_print(const char *path_p, const struct stat *st, int walk_flags, void *unused)
 {
 	const char *default_prefix = NULL;
 	acl_t acl = NULL, default_acl = NULL;
 	int error = 0;
+
+	if (walk_flags & WALK_TREE_FAILED) {
+		fprintf(stderr, "%s: %s: %s\n", progname, xquote(path_p),
+			strerror(errno));
+		return 1;
+	}
 
 	if (opt_print_acl) {
 		acl = acl_get_file(path_p, ACL_TYPE_ACCESS);
@@ -549,7 +553,7 @@ void help(void)
 "      --skip-base         skip files that only have the base entries\n"
 "  -R, --recursive         recurse into subdirectories\n"
 "  -L, --logical           logical walk, follow symbolic links\n"
-"  -P  --physical          physical walk, do not follow symbolic links\n"
+"  -P, --physical          physical walk, do not follow symbolic links\n"
 "      --tabular           use tabular output format\n"
 "      --numeric           print numeric user/group identifiers\n"
 "      --absolute-names    don't strip leading '/' in pathnames\n"));
@@ -558,75 +562,6 @@ void help(void)
 	printf(_(
 "      --version           print version and exit\n"
 "      --help              this help text\n"));
-}
-
-
-static int __errors;
-int __do_print(const char *file, const struct stat *stat,
-               int flag, struct FTW *ftw)
-{
-	int saved_errno = errno;
-
-	/* Process the target of a symbolic link, and traverse the link,
-           only if doing a logical walk, or if the symbolic link was
-           specified on the command line. Always skip symbolic links if
-           doing a physical walk. */
-
-	if (S_ISLNK(stat->st_mode) &&
-	    (opt_walk_physical || (ftw->level > 0 && !opt_walk_logical)))
-		return 0;
-
-	if (do_print(file, stat))
-		__errors++;
-
-	if (flag == FTW_DNR && opt_recursive) {
-		/* Item is a directory which can't be read. */
-		fprintf(stderr, "%s: %s: %s\n",
-			progname, file, strerror(saved_errno));
-		return 0;
-	}
-
-	/* We also get here in non-recursive mode. In that case,
-	   return something != 0 to abort nftw. */
-
-	if (!opt_recursive)
-		return 1;
-
-	return 0;
-}
-
-char *resolve_symlinks(const char *file)
-{
-	static char buffer[4096];
-	struct stat stat;
-	char *path = NULL;
-
-	if (lstat(file, &stat) == -1)
-		return path;
-
-	if (S_ISLNK(stat.st_mode) && !opt_walk_physical)
-		path = realpath(file, buffer);
-	else
-		path = (char *)file; 	/* not a symlink, use given path */
-
-	return path;
-}
-
-int walk_tree(const char *file)
-{
-	const char *p;
-
-	__errors = 0;
-	if ((p = resolve_symlinks(file)) == NULL) {
-		fprintf(stderr, "%s: %s: %s\n", progname,
-			xquote(file), strerror(errno));
-		__errors++;
-	} else if (nftw(p, __do_print, 0, opt_walk_logical? 0 : FTW_PHYS) < 0) {
-		fprintf(stderr, "%s: %s: %s\n", progname, xquote(file),
-			strerror(errno));
-		__errors++;
-	}
-	return __errors;
 }
 
 int main(int argc, char *argv[])
@@ -691,21 +626,21 @@ int main(int argc, char *argv[])
 			case 'R':  /* recursive */
 				if (posixly_correct)
 					goto synopsis;
-				opt_recursive = 1;
+				walk_flags |= WALK_TREE_RECURSIVE;
 				break;
 
 			case 'L':  /* follow all symlinks */
 				if (posixly_correct)
 					goto synopsis;
-				opt_walk_logical = 1;
-				opt_walk_physical = 0;
+				walk_flags |= WALK_TREE_LOGICAL;
+				walk_flags &= ~WALK_TREE_PHYSICAL;
 				break;
 
 			case 'P':  /* skip all symlinks */
 				if (posixly_correct)
 					goto synopsis;
-				opt_walk_logical = 0;
-				opt_walk_physical = 1;
+				walk_flags |= WALK_TREE_PHYSICAL;
+				walk_flags &= ~WALK_TREE_LOGICAL;
 				break;
 
 			case 's':  /* skip files with only base entries */
@@ -762,7 +697,7 @@ int main(int argc, char *argv[])
 				if (*line == '\0')
 					continue;
 
-				had_errors += walk_tree(line);
+				had_errors += walk_tree(line, walk_flags, do_print, NULL);
 			}
 			if (!feof(stdin)) {
 				fprintf(stderr, _("%s: Standard input: %s\n"),
@@ -770,7 +705,7 @@ int main(int argc, char *argv[])
 				had_errors++;
 			}
 		} else
-			had_errors += walk_tree(argv[optind]);
+			had_errors += walk_tree(argv[optind], walk_flags, do_print, NULL);
 		optind++;
 	} while (optind < argc);
 
