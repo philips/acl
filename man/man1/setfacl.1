@@ -104,11 +104,15 @@ Test mode. Instead of changing the ACLs of any files, the resulting ACLs are lis
 Apply operations to all files and directories recursively. This option cannot be mixed with `\-\-restore'.
 .TP 4
 .I \-L, \-\-logical
-Logical walk, follow symbolic links. The default behavior is to follow symbolic link arguments, and to skip symbolic links encountered
-in subdirectories. This option cannot be mixed with `\-\-restore'.
+Logical walk, follow symbolic links to directories. The default behavior is to follow
+symbolic link arguments, and skip symbolic links encountered in subdirectories.
+Only effective in combination with \-R.
+This option cannot be mixed with `\-\-restore'.
 .TP 4
 .I \-P, \-\-physical
-Physical walk, skip all symbolic links. This also skips symbolic link arguments.
+Physical walk, do not follow symbolic links to directories.
+This also skips symbolic link arguments.
+Only effective in combination with \-R.
 This option cannot be mixed with `\-\-restore'.
 .TP 4
 .I \-\-version

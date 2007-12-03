@@ -100,13 +100,14 @@ Skip files that only have the base ACL entries (owner, group, others).
 List the ACLs of all files and directories recursively.
 .TP
 .I \-L, \-\-logical
-Logical walk, follow symbolic links. The default behavior is to follow
-symbolic link arguments, and to skip symbolic links encountered in
-subdirectories.
+Logical walk, follow symbolic links to directories. The default behavior is to follow
+symbolic link arguments, and skip symbolic links encountered in subdirectories.
+Only effective in combination with \-R.
 .TP
 .I \-P, \-\-physical
-Physical walk, skip all symbolic links. This also skips symbolic link
-arguments.
+Physical walk, do not follow symbolic links to directories. This also skips symbolic
+link arguments.
+Only effective in combination with \-R.
 .TP
 .I \-\-tabular
 Use an alternative tabular output format. The ACL and the default ACL are displayed side by side. Permissions that are ineffective due to the ACL mask entry are displayed capitalized. The entry tag names for the ACL_USER_OBJ and ACL_GROUP_OBJ entries are also displayed in capital letters, which helps in spotting those entries.
