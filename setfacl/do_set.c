@@ -279,6 +279,16 @@ do_set(
 		return 1;
 	}
 
+	/*
+	 * Symlinks can never have ACLs, so when doing a physical walk, we
+	 * skip symlinks altogether, and when doing a half-logical walk, we
+	 * skip all non-toplevel symlinks. 
+	 */
+	if ((walk_flags & WALK_TREE_SYMLINK) &&
+	    ((walk_flags & WALK_TREE_PHYSICAL) ||
+	     !(walk_flags & (WALK_TREE_TOPLEVEL | WALK_TREE_LOGICAL))))
+		return 0;
+
 	/* Execute the commands in seq (read ACLs on demand) */
 	error = seq_get_cmd(seq, SEQ_FIRST_CMD, &cmd);
 	if (error == 0)

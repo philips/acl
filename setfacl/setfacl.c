@@ -275,14 +275,14 @@ int next_file(const char *arg, seq_t seq)
 
 	if (strcmp(arg, "-") == 0) {
 		while ((line = next_line(stdin)))
-			errors = walk_tree(line, walk_flags, do_set, seq);
+			errors = walk_tree(line, walk_flags, 0, do_set, seq);
 		if (!feof(stdin)) {
 			fprintf(stderr, _("%s: Standard input: %s\n"),
 				progname, strerror(errno));
 			errors = 1;
 		}
 	} else {
-		errors = walk_tree(arg, walk_flags, do_set, seq);
+		errors = walk_tree(arg, walk_flags, 0, do_set, seq);
 	}
 	return errors ? 1 : 0;
 }

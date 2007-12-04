@@ -1,6 +1,7 @@
-2.2.47
-* Update setfacl/getfacl man pages for symlink related options
-  thanks to Andreas G.
+2.2.47 (4 December 2007)
+* From Andreas Gruenbacher:
+    * fix issues for tree walking with file descriptors
+	- fd duplicates and running out
 
 2.2.46 (21 November 2007)
 * From Andreas Gruenbacher:

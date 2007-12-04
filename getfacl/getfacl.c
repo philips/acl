@@ -435,6 +435,16 @@ int do_print(const char *path_p, const struct stat *st, int walk_flags, void *un
 		return 1;
 	}
 
+	/*
+	 * Symlinks can never have ACLs, so when doing a physical walk, we
+	 * skip symlinks altogether, and when doing a half-logical walk, we
+	 * skip all non-toplevel symlinks. 
+	 */
+	if ((walk_flags & WALK_TREE_SYMLINK) &&
+	    ((walk_flags & WALK_TREE_PHYSICAL) ||
+	     !(walk_flags & (WALK_TREE_TOPLEVEL | WALK_TREE_LOGICAL))))
+		return 0;
+
 	if (opt_print_acl) {
 		acl = acl_get_file(path_p, ACL_TYPE_ACCESS);
 		if (acl == NULL && (errno == ENOSYS || errno == ENOTSUP))
@@ -697,7 +707,8 @@ int main(int argc, char *argv[])
 				if (*line == '\0')
 					continue;
 
-				had_errors += walk_tree(line, walk_flags, do_print, NULL);
+				had_errors += walk_tree(line, walk_flags, 0,
+							do_print, NULL);
 			}
 			if (!feof(stdin)) {
 				fprintf(stderr, _("%s: Standard input: %s\n"),
@@ -705,7 +716,8 @@ int main(int argc, char *argv[])
 				had_errors++;
 			}
 		} else
-			had_errors += walk_tree(argv[optind], walk_flags, do_print, NULL);
+			had_errors += walk_tree(argv[optind], walk_flags, 0,
+						do_print, NULL);
 		optind++;
 	} while (optind < argc);
 
