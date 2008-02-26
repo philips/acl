@@ -301,7 +301,7 @@ int main(int argc, char *argv[])
 	int which;
 	int lineno;
 	int error;
-	seq_t seq = NULL;
+	seq_t seq;
 	int seq_cmd, parse_mode;
 	
 	progname = basename(argv[0]);
@@ -326,6 +326,10 @@ int main(int argc, char *argv[])
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 
+	seq = seq_init();
+	if (!seq)
+		ERRNO_ERROR(1);
+
 	while ((opt = getopt_long(argc, argv, cmd_line_options,
 		                  long_options, NULL)) != -1) {
 		/* we remember the two REMOVE_ACL commands of the set
@@ -334,15 +338,11 @@ int main(int argc, char *argv[])
 		cmd_t seq_remove_acl_cmd = NULL;
 
 		if (opt != '\1' && saw_files) {
-			if (seq) {
-				seq_free(seq);
-				seq = NULL;
-			}
-			saw_files = 0;
-		}
-		if (seq == NULL) {
-			if (!(seq = seq_init()))
+			seq_free(seq);
+			seq = seq_init();
+			if (!seq)
 				ERRNO_ERROR(1);
+			saw_files = 0;
 		}
 
 		switch (opt) {
