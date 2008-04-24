@@ -1,3 +1,50 @@
+acl (2.2.47-2) unstable; urgency=low
+
+  * Acknowledge NMU. Closes: Closes: #477515
+
+ -- Anibal Monsalve Salazar <anibal@debian.org>  Thu, 24 Apr 2008 06:47:12 +1000
+
+acl (2.2.47-1.1) unstable; urgency=low
+
+  * Non-maintainer upload.
+  * Don't call configure with --enable-lib64=yes.  (Closes: #477515)
+    This fixes the lib64 rpaths, so no need to call chrpath anymore.
+
+ -- Kurt Roeckx <kurt@roeckx.be>  Wed, 23 Apr 2008 18:58:41 +0200
+
+acl (2.2.47-1) unstable; urgency=low
+
+  * New upstream release
+  * Update debian/watch
+  * Remove empty directories. Closes: #445902, #222534
+  * Fix the following lintian issues:
+    W: acl source: package-uses-deprecated-debhelper-compat-version 1
+    W: acl source: out-of-date-standards-version 3.7.2 (current is 3.7.3)
+    W: libacl1-dev: package-contains-empty-directory usr/share/doc/acl/
+    W: libacl1-dev: description-contains-homepage
+    W: libacl1: package-contains-empty-directory usr/share/doc/acl/
+    W: libacl1: description-contains-homepage
+    W: acl: description-contains-homepage
+    W: acl: binary-or-shlib-defines-rpath ./usr/bin/chacl /lib64
+    W: acl: binary-or-shlib-defines-rpath ./usr/bin/getfacl /lib64
+    W: acl: binary-or-shlib-defines-rpath ./usr/bin/setfacl /lib64
+
+ -- Anibal Monsalve Salazar <anibal@debian.org>  Wed, 23 Apr 2008 21:48:29 +1000
+
+acl (2.2.45-1) unstable; urgency=low
+
+  * New upstream release
+  * debian/control:
+    - Added homepage
+    - Added myself as comaintainer
+    - Set Standards-Version to 3.7.2
+    - libacl1-dev depends on libacl1 (= ${binary:Version})
+    - acl and libacl1 depend on ${misc:Depends}
+  * debian/rules: Regenerate acl.pot
+  * debian/watch: Added
+
+ -- Anibal Monsalve Salazar <anibal@debian.org>  Sat, 15 Sep 2007 14:28:33 +1000
+
 acl (2.2.42-1) unstable; urgency=low
 
   * New upstream release

@@ -1,5 +1,7 @@
 #!/usr/bin/make -f
 
+export DH_VERBOSE=1
+
 package = acl
 develop = lib$(package)1-dev
 library = lib$(package)1
@@ -15,12 +17,12 @@ stdenv = @GZIP=-q; export GZIP;
 options = export DEBUG=-DNDEBUG DISTRIBUTION=debian \
 	  INSTALL_USER=root INSTALL_GROUP=root ;
 checkdir = test -f debian/rules
-checkver = rm -f debian/compat && echo 5 > debian/compat
 
 build: built
 built: config
 	@echo "== dpkg-buildpackage: build" 1>&2
 	$(MAKE) default
+	cd po; rm -rf acl.pot; make acl.pot
 	touch built
 
 config: .census
@@ -36,20 +38,20 @@ clean:
 	-rm -f built .census
 	$(MAKE) distclean
 	-rm -rf $(dirme) $(dirdev) $(dirlib)
-	-rm -f debian/*substvars debian/files* debian/*.debhelper debian/compat
+	-rm -f debian/*substvars debian/files* debian/*.debhelper
 
 binary-indep:
 
 binary-arch: checkroot built
 	@echo "== dpkg-buildpackage: binary-arch" 1>&2
 	$(checkdir)
-	$(checkver)
 	-rm -rf $(dirme) $(dirdev) $(dirlib)
 	$(pkgme)  $(MAKE) -C . install
 	$(pkgdev) $(MAKE) -C . install-dev
 	$(pkglib) $(MAKE) -C . install-lib
 	$(pkgme)  $(MAKE) -C build src-manifest
-
+	rmdir debian/libacl1-dev/usr/share/doc/acl
+	rmdir debian/libacl1/usr/share/doc/acl
 	dh_installdocs
 	dh_installchangelogs
 	dh_strip
