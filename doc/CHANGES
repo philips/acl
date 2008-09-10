@@ -1,3 +1,8 @@
+2.2.49
+* Fix attr/acl code for handling of recursive walking without following symlinks
+  Patch contributed by Brandon Philips <brandon@ifup.org>.
+  http://oss.sgi.com/archives/xfs/2008-07/msg00162.html
+
 2.2.48
 * Fix NULL pointer access / segmentation fault in setfacl.
   When invoked as ``setfacl -- ...'', setfacl segfaults. Reported
