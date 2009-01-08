@@ -9,10 +9,10 @@ HFILES = acl.h libacl.h acl_ea.h misc.h walk_tree.h
 LSRCFILES = builddefs.in buildmacros buildrules config.h.in
 LDIRT = sys acl
 
+default: sys acl
+
 sys acl:
 	$(LN_S) . $@
-
-default: sys acl
 
 include $(BUILDRULES)
 
