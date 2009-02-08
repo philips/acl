@@ -137,7 +137,7 @@ restore(
 		if (error < 0)
 			goto fail;
 		if (error == 0)
-			return 0;
+			return status;
 
 		if (path_p == NULL) {
 			if (filename) {
@@ -151,6 +151,7 @@ restore(
 						 "aborting\n"),
 					progname, backup_line);
 			}
+			status = 1;
 			goto getout;
 		}
 
@@ -169,6 +170,7 @@ restore(
 			fprintf(stderr, _("%s: %s: %s in line %d\n"),
 			        progname, xquote(filename), strerror(errno),
 				line);
+			status = 1;
 			goto getout;
 		}
 
