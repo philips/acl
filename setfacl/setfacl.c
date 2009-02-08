@@ -601,6 +601,8 @@ int main(int argc, char *argv[])
 		}
 	}
 	while (optind < argc) {
+		if(!seq)
+			goto synopsis;
 		if (seq_empty(seq))
 			goto synopsis;
 		saw_files = 1;
