@@ -12,10 +12,10 @@ getfacl \- get file access control lists
 .SH SYNOPSIS
 
 .B getfacl
-[\-dRLPvh] file ...
+[\-aceEsRLPtpndvh] file ...
 
 .B getfacl
-[\-dRLPvh] \-
+[\-aceEsRLPtpndvh] \-
 
 .SH DESCRIPTION
 For each file, getfacl displays the file name, owner, the group,
@@ -78,22 +78,22 @@ accessing the file mode.
 
 .SS OPTIONS
 .TP 4
-.I \-\-access
+.I \-a, \-\-access
 Display the file access control list.
 .TP
 .I \-d, \-\-default
 Display the default access control list.
 .TP
-.I \-\-omit-header
+.I \-c, \-\-omit-header
 Do not display the comment header (the first three lines of each file's output).
 .TP
-.I \-\-all-effective
+.I \-e, \-\-all-effective
 Print all effective rights comments, even if identical to the rights defined by the ACL entry.
 .TP
-.I \-\-no-effective
+.I \-E, \-\-no-effective
 Do not print effective rights comments.
 .TP
-.I \-\-skip-base
+.I \-s, \-\-skip-base
 Skip files that only have the base ACL entries (owner, group, others).
 .TP
 .I \-R, \-\-recursive
@@ -109,17 +109,20 @@ Physical walk, do not follow symbolic links to directories. This also skips symb
 link arguments.
 Only effective in combination with \-R.
 .TP
-.I \-\-tabular
+.I \-t, \-\-tabular
 Use an alternative tabular output format. The ACL and the default ACL are displayed side by side. Permissions that are ineffective due to the ACL mask entry are displayed capitalized. The entry tag names for the ACL_USER_OBJ and ACL_GROUP_OBJ entries are also displayed in capital letters, which helps in spotting those entries.
 .TP
-.I \-\-absolute-names
+.I \-p, \-\-absolute-names
 Do not strip leading slash characters (`/'). The default behavior is to
 strip leading slash characters.
 .TP
-.I \-\-version
+.I \-n, \-\-numeric
+List numeric user and group IDs
+.TP
+.I \-v, \-\-version
 Print the version of getfacl and exit.
 .TP
-.I \-\-help
+.I \-h, \-\-help
 Print help explaining the command line options.
 .TP
 .I \-\-

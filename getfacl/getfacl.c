@@ -43,7 +43,7 @@
 #define POSIXLY_CORRECT_STR "POSIXLY_CORRECT"
 
 #if !POSIXLY_CORRECT
-#  define CMD_LINE_OPTIONS "dRLP"
+#  define CMD_LINE_OPTIONS "aceEsRLPtpndvh"
 #endif
 #define POSIXLY_CMD_LINE_OPTIONS "d"
 
@@ -555,23 +555,23 @@ void help(void)
 #if !POSIXLY_CORRECT
 	} else {
 		printf(_(
-"      --access            display the file access control list only\n"
+"  -a,  --access           display the file access control list only\n"
 "  -d, --default           display the default access control list only\n"
-"      --omit-header       do not display the comment header\n"
-"      --all-effective     print all effective rights\n"
-"      --no-effective      print no effective rights\n"
-"      --skip-base         skip files that only have the base entries\n"
+"  -c, --omit-header       do not display the comment header\n"
+"  -e, --all-effective     print all effective rights\n"
+"  -E, --no-effective      print no effective rights\n"
+"  -s, --skip-base         skip files that only have the base entries\n"
 "  -R, --recursive         recurse into subdirectories\n"
 "  -L, --logical           logical walk, follow symbolic links\n"
 "  -P, --physical          physical walk, do not follow symbolic links\n"
-"      --tabular           use tabular output format\n"
-"      --numeric           print numeric user/group identifiers\n"
-"      --absolute-names    don't strip leading '/' in pathnames\n"));
+"  -t, --tabular           use tabular output format\n"
+"  -n, --numeric           print numeric user/group identifiers\n"
+"  -p, --absolute-names    don't strip leading '/' in pathnames\n"));
 	}
 #endif
 	printf(_(
-"      --version           print version and exit\n"
-"      --help              this help text\n"));
+"  -v, --version           print version and exit\n"
+"  -h, --help              this help text\n"));
 }
 
 int main(int argc, char *argv[])

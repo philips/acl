@@ -42,10 +42,10 @@ extern int do_set(const char *path_p, const struct stat *stat_p, int flags, void
 
 /* '-' stands for `process non-option arguments in loop' */
 #if !POSIXLY_CORRECT
-#  define CMD_LINE_OPTIONS "-:bkndm:M:x:X:RLP"
+#  define CMD_LINE_OPTIONS "-:bkndvhm:M:x:X:RLP"
 #  define CMD_LINE_SPEC "[-bkndRLP] { -m|-M|-x|-X ... } file ..."
 #endif
-#define POSIXLY_CMD_LINE_OPTIONS "-:bkndm:M:x:X:"
+#define POSIXLY_CMD_LINE_OPTIONS "-:bkndvhm:M:x:X:"
 #define POSIXLY_CMD_LINE_SPEC "[-bknd] {-m|-M|-x|-X ... } file ..."
 
 struct option long_options[] = {
@@ -265,8 +265,8 @@ void help(void)
 	}
 #endif
 	printf(_(
-"      --version           print version and exit\n"
-"      --help              this help text\n"));
+"  -v, --version           print version and exit\n"
+"  -h, --help              this help text\n"));
 }
 
 
