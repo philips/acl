@@ -24,6 +24,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
+#include <limits.h>
 
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -412,7 +413,12 @@ read_acl_comments(
 	gid_t *gid_p)
 {
 	int c;
-	char linebuf[1024];
+	/*
+	  Max PATH_MAX bytes even for UTF-8 path names and additional 9
+	  bytes for "# file: ". Not a good solution but for now it is the
+	  best I can do without too much impact on the code. [tw]
+	*/
+	char linebuf[(4*PATH_MAX)+9];
 	char *cp;
 	char *p;
 	int comments_read = 0;
