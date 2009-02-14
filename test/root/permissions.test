@@ -31,7 +31,7 @@ have access to the file owned by root.
 
 	$ su daemon
 	$ echo daemon >> f
-	> f: Permission denied
+	>~ .*f: Permission denied$
 
 	$ su
 
@@ -55,7 +55,7 @@ Verify this.
 	> bin
 
 	$ echo daemon >> f
-	> f: Permission denied
+	>~ .*f: Permission denied$
 
 
 Now, add an ACL entry for user daemon that grants him rw- access. File
@@ -97,7 +97,7 @@ verify that this masks daemon's write permission.
 
 	$ su daemon
 	$ echo daemon >> f
-	> f: Permission denied
+	>~ .*f: Permission denied$
 
 
 Add an entry for group daemon with rw- access, and change the
@@ -110,7 +110,7 @@ access.
 
 	$ su daemon
 	$ echo daemon >> f
-	> f: Permission denied
+	>~ .*f: Permission denied$
 
 
 Remove the entry for user daemon. The group daemon permissions should
@@ -136,7 +136,7 @@ daemon does not have write access anymore.
 
 	$ su daemon
 	$ echo daemon3 >> f
-	> f: Permission denied
+	>~ .*f: Permission denied$
 
 
 Now, remove the group daemon entry. Because user daemon is a member in
@@ -147,7 +147,7 @@ the owning group, he should still have no write access.
 
 	$ su daemon
 	$ echo daemon4 >> f
-	> f: Permission denied
+	>~ .*f: Permission denied$
 
 
 Change the owning group. The other permissions should now grant user
@@ -173,10 +173,10 @@ accumulate.
 	$ setfacl -m g:bin:r,g:daemon:w f
 
 	$ su daemon
-	$ : < f	 # open for reading
-	$ : > f  # open for writing
-	$ : <> f  # open for read-write
-	> f: Permission denied
+	$ : < f
+	$ : > f
+	$ : <> f
+	>~ .*f: Permission denied$
 
 
 Test if directories can have ACLs.  We assume that only one access check
@@ -192,7 +192,7 @@ only need to verify that ACL permissions make a difference.
 	>
 
 	$ echo i > e/i
-	> e/i: Permission denied
+	>~ .*e/i: Permission denied$
 
 	$ su
 	$ setfacl -m u:bin:rx e
@@ -201,7 +201,7 @@ only need to verify that ACL permissions make a difference.
 	$ echo e/*
 	> e/h
 	$ echo i > e/i
-	> e/i: Permission denied
+	>~ .*e/i: Permission denied$
 
 	$ su
 	$ setfacl -m u:bin:rwx e
@@ -226,24 +226,24 @@ not need to exist: The access check is earlier in the code path than the
 test if the device exists.
 
 
-	$ mknod -m 0660 hdt b 91 64	# /dev/hdt
-	$ mknod -m 0660 null c 1 3	# /dev/null
+	$ mknod -m 0660 hdt b 91 64
+	$ mknod -m 0660 null c 1 3
 	$ mkfifo -m 0660 fifo
 
 	$ su bin
 	$ : < hdt
-	> hdt: Permission denied
+	>~ .*hdt: Permission denied$
 	$ : < null
-	> null: Permission denied
+	>~ .*null: Permission denied$
 	$ : < fifo
-	> fifo: Permission denied
+	>~ .*fifo: Permission denied$
 
 	$ su
 	$ setfacl -m u:bin:rw hdt null fifo
 
 	$ su bin
 	$ : < hdt
-	> hdt: No such device or address
+	>~ .*hdt: No such device or address$
 	$ : < null
 	$ ( echo blah > fifo & ) ; cat fifo
 	> blah

@@ -1,5 +1,5 @@
 Setfacl utility tests. Run these tests on a filesystem with ACL support.
- 
+
  	$ mkdir d
 	$ chown bin:bin d
 	$ cd d
@@ -10,11 +10,11 @@ Setfacl utility tests. Run these tests on a filesystem with ACL support.
 	$ touch g
 	$ ls -dl g | awk '{print $1}'
 	> -rw-r-----
-	
+
 	$ setfacl -m m:- g
 	$ ls -dl g | awk '{print $1}'
 	> -rw-------+
-	
+
 	$ getfacl g
 	> # file: g
 	> # owner: bin
@@ -23,8 +23,8 @@ Setfacl utility tests. Run these tests on a filesystem with ACL support.
 	> group::r--	#effective:---
 	> mask::---
 	> other::---
-	> 
-	
+	>
+
 	$ setfacl -x m g
 	$ getfacl g
 	> # file: g
@@ -33,8 +33,8 @@ Setfacl utility tests. Run these tests on a filesystem with ACL support.
 	> user::rw-
 	> group::r--
 	> other::---
-	> 
-	
+	>
+
 	$ setfacl -m u:daemon:rw g
 	$ getfacl g
 	> # file: g
@@ -45,8 +45,8 @@ Setfacl utility tests. Run these tests on a filesystem with ACL support.
 	> group::r--
 	> mask::rw-
 	> other::---
-	> 
-	
+	>
+
 	$ setfacl -m u::rwx,g::r-x,o:- g
 	$ getfacl g
 	> # file: g
@@ -57,8 +57,8 @@ Setfacl utility tests. Run these tests on a filesystem with ACL support.
 	> group::r-x
 	> mask::rwx
 	> other::---
-	> 
-	
+	>
+
 	$ setfacl -m u::rwx,g::r-x,o:-,m:- g
 	$ getfacl g
 	> # file: g
@@ -69,8 +69,8 @@ Setfacl utility tests. Run these tests on a filesystem with ACL support.
 	> group::r-x	#effective:---
 	> mask::---
 	> other::---
-	> 
-	
+	>
+
 	$ setfacl -m u::rwx,g::r-x,o:-,u:root:-,m:- g
 	$ getfacl g
 	> # file: g
@@ -82,8 +82,8 @@ Setfacl utility tests. Run these tests on a filesystem with ACL support.
 	> group::r-x	#effective:---
 	> mask::---
 	> other::---
-	> 
-	
+	>
+
 	$ setfacl -m u::rwx,g::r-x,o:-,u:root:-,m:- g
 	$ getfacl g
 	> # file: g
@@ -95,8 +95,8 @@ Setfacl utility tests. Run these tests on a filesystem with ACL support.
 	> group::r-x	#effective:---
 	> mask::---
 	> other::---
-	> 
-	
+	>
+
 	$ setfacl -m u::rwx,g::r-x,o:-,u:root:- g
 	$ getfacl g
 	> # file: g
@@ -108,37 +108,37 @@ Setfacl utility tests. Run these tests on a filesystem with ACL support.
 	> group::r-x
 	> mask::rwx
 	> other::---
-	> 
-	
+	>
+
 	$ setfacl --test -x u: g
 	> setfacl: g: Malformed access ACL `user:root:---,user:daemon:rw-,group::r-x,mask::rwx,other::---': Missing or wrong entry at entry 1
-	
+
 	$ setfacl --test -x u:x
 	> setfacl: Option -x: Invalid argument near character 3
-	
+
 	$ setfacl -m d:u:root:rwx g
 	> setfacl: g: Only directories can have default ACLs
-	
+
 	$ setfacl -x m g
 	> setfacl: g: Malformed access ACL `user::rwx,user:root:---,user:daemon:rw-,group::r-x,other::---': Missing or wrong entry at entry 5
 	 setfacl --test -m d:u:daemon:rwx setfacl
 	 setfacl --test -n -m d:u:daemon:rwx setfacl
-	
+
 Check if the mask is properly recalculated
- 
+
 	$ mkdir d
 	$ setfacl --test -m u::rwx,u:bin:rwx,g::r-x,o::--- d
 	> d: u::rwx,u:bin:rwx,g::r-x,m::rwx,o::---,*
-	
+
 	$ setfacl --test -m u::rwx,u:bin:rwx,g::r-x,m::---,o::--- d
 	> d: u::rwx,u:bin:rwx,g::r-x,m::---,o::---,*
-	
+
 	$ setfacl --test -d -m u::rwx,u:bin:rwx,g::r-x,o::--- d
 	> d: *,d:u::rwx,d:u:bin:rwx,d:g::r-x,d:m::rwx,d:o::---
-	
+
 	$ setfacl --test -d -m u::rwx,u:bin:rwx,g::r-x,m::---,o::--- d
 	> d: *,d:u::rwx,d:u:bin:rwx,d:g::r-x,d:m::---,d:o::---
-	
+
 	$ su
 	$ cd ..
 	$ rm -r d
