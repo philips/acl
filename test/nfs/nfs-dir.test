@@ -6,13 +6,13 @@ the nfs mount, and requires the following environment variable:
 EXPORT_PATH => the path that is mounted at the working directory.
 
 	Create a test directory and file.
-	
+
 	$ umask 022
 	$ mkdir %{EXPORT_PATH}/test
 	$ echo blah > %{EXPORT_PATH}/test/blah
 
 	Make sure the file can be accessed before.
-	
+
 	$ su bin
 	$ cat test/blah
 	> blah
