@@ -4,7 +4,7 @@ Tests for proper path recursion
 	$ mkdir 1/link
 	$ touch 1/link/file
 	$ ln -s `pwd`/1/link 1/2/link
-	$ getfacl -P -R 1/2
+	$ getfacl -P -R 1/2 | ./sort-getfacl-output
 	> # file: 1/2
 	> # owner: %TUSER
 	> # group: %TGROUP
@@ -20,7 +20,7 @@ Tests for proper path recursion
 	> other::r-x
 	>
 
-	$ getfacl -R 1/2
+	$ getfacl -R 1/2 | ./sort-getfacl-output
 	> # file: 1/2
 	> # owner: %TUSER
 	> # group: %TGROUP
@@ -36,7 +36,7 @@ Tests for proper path recursion
 	> other::r-x
 	>
 
-	$ getfacl -R -L 1/2
+	$ getfacl -R -L 1/2 | ./sort-getfacl-output
 	> # file: 1/2
 	> # owner: %TUSER
 	> # group: %TGROUP
@@ -66,7 +66,7 @@ Tests for proper path recursion
 	> other::r--
 	>
 
-	$ getfacl -P -R 1
+	$ getfacl -P -R 1 | ./sort-getfacl-output
 	> # file: 1
 	> # owner: %TUSER
 	> # group: %TGROUP
@@ -103,7 +103,7 @@ Tests for proper path recursion
 	> other::r--
 	>
 
-	$ getfacl -R 1
+	$ getfacl -R 1 | ./sort-getfacl-output
 	> # file: 1
 	> # owner: %TUSER
 	> # group: %TGROUP
@@ -140,7 +140,7 @@ Tests for proper path recursion
 	> other::r--
 	>
 
-	$ getfacl -R -L 1
+	$ getfacl -R -L 1 | ./sort-getfacl-output
 	> # file: 1
 	> # owner: %TUSER
 	> # group: %TGROUP
