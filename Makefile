@@ -85,6 +85,6 @@ realclean distclean: clean
 	rm -f $(LDIRT) $(CONFIGURE)
 	rm -rf autom4te.cache Logs
 
-.PHONY: tests
-tests: default
-	$(MAKE) -C test/ tests
+.PHONY: tests root-tests nfs-tests
+tests root-tests nfs-tests: default
+	$(MAKE) -C test/ $@
