@@ -26,3 +26,8 @@ acl-*.tar.gz
 *.o
 /po/acl.pot
 /setfacl/setfacl
+/aclocal.m4
+/config.guess
+/config.sub
+/libtool
+/ltmain.sh
