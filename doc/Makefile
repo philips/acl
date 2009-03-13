@@ -5,7 +5,7 @@
 TOPDIR = ..
 include $(TOPDIR)/include/builddefs
 
-LSRCFILES = extensions.txt libacl.txt TODO PORTING CHANGES COPYING INSTALL \
+LSRCFILES = extensions.txt libacl.txt TODO PORTING CHANGES COPYING COPYING.LGPL INSTALL \
 	    old-acl.5
 LDIRT = *.gz
 
@@ -22,7 +22,7 @@ install: default
 ifeq ($(PKG_DISTRIBUTION), debian)
 	$(INSTALL) -S CHANGES.gz $(PKG_DOC_DIR)/changelog.gz
 else
-	$(INSTALL) -m 644 COPYING $(PKG_DOC_DIR)
+	$(INSTALL) -m 644 COPYING COPYING.LGPL $(PKG_DOC_DIR)
 endif
 
 install-dev install-lib:
