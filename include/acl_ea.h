@@ -19,8 +19,6 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-*/
-
 #define ACL_EA_ACCESS		"system.posix_acl_access"
 #define ACL_EA_DEFAULT		"system.posix_acl_default"
 
