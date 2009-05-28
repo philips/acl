@@ -1,3 +1,9 @@
+* When restoring acls and the file ownership from the output of getfacl
+  with setfacl --restore, make sure to only chown(2) files when the
+  owner or owning group does not match the current owner or owning group:
+  otherwise, if the caller does not have the appropriate privilege,
+  chown(2) will implicitly clear the suid and sgid flags.
+
 2.2.49
 * Fix attr/acl code for handling of recursive walking without following symlinks
   Patch contributed by Brandon Philips <brandon@ifup.org>.

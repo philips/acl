@@ -122,14 +122,14 @@ restore(
 	const char *filename)
 {
 	char *path_p;
-	struct stat stat;
+	struct stat st;
 	uid_t uid;
 	gid_t gid;
 	seq_t seq = NULL;
 	int line = 0, backup_line;
 	int error, status = 0;
 
-	memset(&stat, 0, sizeof(stat));
+	memset(&st, 0, sizeof(st));
 
 	for(;;) {
 		backup_line = line;
@@ -174,24 +174,30 @@ restore(
 			goto getout;
 		}
 
-		error = lstat(path_p, &stat);
+		error = stat(path_p, &st);
 		if (opt_test && error != 0) {
 			fprintf(stderr, "%s: %s: %s\n", progname,
 				xquote(path_p), strerror(errno));
 			status = 1;
 		}
-		stat.st_uid = uid;
-		stat.st_gid = gid;
 
-		error = do_set(path_p, &stat, 0, seq);
+		error = do_set(path_p, &st, 0, seq);
 		if (error != 0) {
 			status = 1;
 			goto resume;
 		}
 
+		if (uid != ACL_UNDEFINED_ID && uid != st.st_uid)
+			st.st_uid = uid;
+		else
+			st.st_uid = -1;
+		if (gid != ACL_UNDEFINED_ID && gid != st.st_gid)
+			st.st_gid = gid;
+		else
+			st.st_gid = -1;
 		if (!opt_test &&
-		    (uid != ACL_UNDEFINED_ID || gid != ACL_UNDEFINED_ID)) {
-			if (chown(path_p, uid, gid) != 0) {
+		    (st.st_uid != -1 || st.st_gid != -1)) {
+			if (chown(path_p, st.st_uid, st.st_gid) != 0) {
 				fprintf(stderr, _("%s: %s: Cannot change "
 					          "owner/group: %s\n"),
 					progname, xquote(path_p),
