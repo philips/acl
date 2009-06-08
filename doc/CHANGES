@@ -1,3 +1,6 @@
+* Fix in acl_equiv_mode(): Return the mode that the acl corresponds to even
+  when the acl has more than three entries (i.e., it is not equivalent to
+  this mode).
 * When restoring acls and the file ownership from the output of getfacl
   with setfacl --restore, make sure to only chown(2) files when the
   owner or owning group does not match the current owner or owning group:
