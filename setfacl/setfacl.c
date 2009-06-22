@@ -91,9 +91,9 @@ int chown_error;
 int promote_warning;
 
 
-static const char *xquote(const char *str)
+static const char *xquote(const char *str, const char *quote_chars)
 {
-	const char *q = quote(str);
+	const char *q = quote(str, quote_chars);
 	if (q == NULL) {
 		fprintf(stderr, "%s: %s\n", progname, strerror(errno));
 		exit(1);
@@ -143,7 +143,7 @@ restore(
 			if (filename) {
 				fprintf(stderr, _("%s: %s: No filename found "
 						  "in line %d, aborting\n"),
-					progname, xquote(filename),
+					progname, xquote(filename, "\n\r"),
 					backup_line);
 			} else {
 				fprintf(stderr, _("%s: No filename found in "
@@ -168,7 +168,7 @@ restore(
 				     &line, NULL);
 		if (error != 0) {
 			fprintf(stderr, _("%s: %s: %s in line %d\n"),
-			        progname, xquote(filename), strerror(errno),
+			        progname, xquote(filename, "\n\r"), strerror(errno),
 				line);
 			status = 1;
 			goto getout;
@@ -177,7 +177,7 @@ restore(
 		error = stat(path_p, &st);
 		if (opt_test && error != 0) {
 			fprintf(stderr, "%s: %s: %s\n", progname,
-				xquote(path_p), strerror(errno));
+				xquote(path_p, "\n\r"), strerror(errno));
 			status = 1;
 		}
 
@@ -200,7 +200,7 @@ restore(
 			if (chown(path_p, st.st_uid, st.st_gid) != 0) {
 				fprintf(stderr, _("%s: %s: Cannot change "
 					          "owner/group: %s\n"),
-					progname, xquote(path_p),
+					progname, xquote(path_p, "\n\r"),
 					strerror(errno));
 				status = 1;
 			}
@@ -228,7 +228,7 @@ getout:
 	return status;
 
 fail:
-	fprintf(stderr, "%s: %s: %s\n", progname, xquote(filename),
+	fprintf(stderr, "%s: %s: %s\n", progname, xquote(filename, "\n\r"),
 		strerror(errno));
 	status = 1;
 	goto getout;
@@ -481,7 +481,7 @@ int main(int argc, char *argv[])
 					if (file == NULL) {
 						fprintf(stderr, "%s: %s: %s\n",
 							progname,
-							xquote(optarg),
+							xquote(optarg, "\n\r"),
 							strerror(errno));
 						status = 2;
 						goto cleanup;
@@ -507,7 +507,7 @@ int main(int argc, char *argv[])
 							progname,
 							strerror(errno),
 							lineno,
-							xquote(optarg));
+							xquote(optarg, "\n\r"));
 					} else {
 						fprintf(stderr, _(
 							"%s: %s in line "
@@ -540,7 +540,7 @@ int main(int argc, char *argv[])
 					if (file == NULL) {
 						fprintf(stderr, "%s: %s: %s\n",
 							progname,
-							xquote(optarg),
+							xquote(optarg, "\n\r"),
 							strerror(errno));
 						status = 2;
 						goto cleanup;

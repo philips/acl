@@ -1,3 +1,7 @@
+* Stop quoting nonprintable characters in the getfacl output: what is printable
+  or not depends on the locale settings, and getfacl often gets it wrong. We
+  still need to quote a few special characters like newlines so that setfacl
+  can always parse getfacl's output.
 * Fix in acl_equiv_mode(): Return the mode that the acl corresponds to even
   when the acl has more than three entries (i.e., it is not equivalent to
   this mode).

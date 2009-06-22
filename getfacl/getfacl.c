@@ -88,9 +88,9 @@ int print_options = TEXT_SOME_EFFECTIVE;
 int opt_numeric;  /* don't convert id's to symbolic names */
 
 
-static const char *xquote(const char *str)
+static const char *xquote(const char *str, const char *quote_chars)
 {
-	const char *q = quote(str);
+	const char *q = quote(str, quote_chars);
 	if (q == NULL) {
 		fprintf(stderr, "%s: %s\n", progname, strerror(errno));
 		exit(1);
@@ -152,7 +152,7 @@ struct name_list *get_list(const struct stat *st, acl_t acl)
 					name = group_name(*id_p, opt_numeric);
 				break;
 		}
-		name = xquote(name);
+		name = xquote(name, "\t\n\r");
 		len = strlen(name);
 		if (last == NULL) {
 			first = last = (struct name_list *)
@@ -360,7 +360,7 @@ int do_show(FILE *stream, const char *path_p, const struct stat *st,
 		if (ret < 0)
 			return ret;
 	}
-	fprintf(stream, "# file: %s\n", xquote(path_p));
+	fprintf(stream, "# file: %s\n", xquote(path_p, "\n\r"));
 	while (acl_names != NULL || dacl_names != NULL) {
 		acl_tag_t acl_tag, dacl_tag;
 
@@ -430,7 +430,7 @@ int do_print(const char *path_p, const struct stat *st, int walk_flags, void *un
 	int error = 0;
 
 	if (walk_flags & WALK_TREE_FAILED) {
-		fprintf(stderr, "%s: %s: %s\n", progname, xquote(path_p),
+		fprintf(stderr, "%s: %s: %s\n", progname, xquote(path_p, "\n\r"),
 			strerror(errno));
 		return 1;
 	}
@@ -493,11 +493,11 @@ int do_print(const char *path_p, const struct stat *st, int walk_flags, void *un
 			goto fail;
 	} else {
 		if (opt_comments) {
-			printf("# file: %s\n", xquote(path_p));
+			printf("# file: %s\n", xquote(path_p, "\n\r"));
 			printf("# owner: %s\n",
-			       xquote(user_name(st->st_uid, opt_numeric)));
+			       xquote(user_name(st->st_uid, opt_numeric), " \t\n\r"));
 			printf("# group: %s\n",
-			       xquote(group_name(st->st_gid, opt_numeric)));
+			       xquote(group_name(st->st_gid, opt_numeric), " \t\n\r"));
 		}
 		if (acl != NULL) {
 			char *acl_text = acl_to_any_text(acl, NULL, '\n',
@@ -534,7 +534,7 @@ cleanup:
 	return error;
 
 fail:
-	fprintf(stderr, "%s: %s: %s\n", progname, xquote(path_p),
+	fprintf(stderr, "%s: %s: %s\n", progname, xquote(path_p, "\n\r"),
 		strerror(errno));
 	error = -1;
 	goto cleanup;

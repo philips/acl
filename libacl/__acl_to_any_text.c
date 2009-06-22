@@ -160,7 +160,7 @@ acl_entry_to_any_str(const acl_entry_t entry_d, char *text_p, ssize_t size,
 					str = NULL;
 				else
 					str = quote(user_name(
-						entry_obj_p->eid.qid));
+						entry_obj_p->eid.qid), ":, \t\n\r");
 				if (str != NULL) {
 					strncpy(text_p, str, size);
 					ADVANCE(strlen(str));
@@ -183,7 +183,7 @@ acl_entry_to_any_str(const acl_entry_t entry_d, char *text_p, ssize_t size,
 					str = NULL;
 				else
 					str = quote(group_name(
-						entry_obj_p->eid.qid));
+						entry_obj_p->eid.qid), ":, \t\n\r");
 				if (str != NULL) {
 					strncpy(text_p, str, size);
 					ADVANCE(strlen(str));
