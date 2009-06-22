@@ -70,7 +70,7 @@ struct option long_options[] = {
 const char *progname;
 const char *cmd_line_options;
 
-int walk_flags = WALK_TREE_DEREFERENCE;
+int walk_flags = WALK_TREE_DEREFERENCE_TOPLEVEL;
 int opt_print_acl;
 int opt_print_default_acl;
 int opt_strip_leading_slash = 1;
@@ -642,7 +642,7 @@ int main(int argc, char *argv[])
 			case 'L':  /* follow all symlinks */
 				if (posixly_correct)
 					goto synopsis;
-				walk_flags |= WALK_TREE_LOGICAL;
+				walk_flags |= WALK_TREE_LOGICAL | WALK_TREE_DEREFERENCE;
 				walk_flags &= ~WALK_TREE_PHYSICAL;
 				break;
 
@@ -650,7 +650,8 @@ int main(int argc, char *argv[])
 				if (posixly_correct)
 					goto synopsis;
 				walk_flags |= WALK_TREE_PHYSICAL;
-				walk_flags &= ~WALK_TREE_LOGICAL;
+				walk_flags &= ~(WALK_TREE_LOGICAL | WALK_TREE_DEREFERENCE |
+						WALK_TREE_DEREFERENCE_TOPLEVEL);
 				break;
 
 			case 's':  /* skip files with only base entries */

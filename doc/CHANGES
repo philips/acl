@@ -1,3 +1,6 @@
+* Make sure that getfacl -R only calls stat(2) on symlinks when it needs to.
+  This fixes http://oss.sgi.com/bugzilla/show_bug.cgi?id=790 "getfacl follows
+  symlinks, even without -L".
 * Stop quoting nonprintable characters in the getfacl output: what is printable
   or not depends on the locale settings, and getfacl often gets it wrong. We
   still need to quote a few special characters like newlines so that setfacl
