@@ -33,10 +33,9 @@
 #include "config.h"
 #include "sequence.h"
 #include "parse.h"
+#include "do_set.h"
 #include "walk_tree.h"
 #include "misc.h"
-
-extern int do_set(const char *path_p, const struct stat *stat_p, int flags, void *arg);
 
 #define POSIXLY_CORRECT_STR "POSIXLY_CORRECT"
 
@@ -125,7 +124,8 @@ restore(
 	struct stat st;
 	uid_t uid;
 	gid_t gid;
-	seq_t seq = NULL;
+	mode_t mask, flags;
+	struct do_set_args args;
 	int line = 0, backup_line;
 	int error, status = 0;
 
@@ -133,7 +133,8 @@ restore(
 
 	for(;;) {
 		backup_line = line;
-		error = read_acl_comments(file, &line, &path_p, &uid, &gid);
+		error = read_acl_comments(file, &line, &path_p, &uid, &gid,
+					  &flags);
 		if (error < 0)
 			goto fail;
 		if (error == 0)
@@ -155,13 +156,13 @@ restore(
 			goto getout;
 		}
 
-		if (!(seq = seq_init()))
+		if (!(args.seq = seq_init()))
 			goto fail;
-		if (seq_append_cmd(seq, CMD_REMOVE_ACL, ACL_TYPE_ACCESS) ||
-		    seq_append_cmd(seq, CMD_REMOVE_ACL, ACL_TYPE_DEFAULT))
+		if (seq_append_cmd(args.seq, CMD_REMOVE_ACL, ACL_TYPE_ACCESS) ||
+		    seq_append_cmd(args.seq, CMD_REMOVE_ACL, ACL_TYPE_DEFAULT))
 			goto fail;
 
-		error = read_acl_seq(file, seq, CMD_ENTRY_REPLACE,
+		error = read_acl_seq(file, args.seq, CMD_ENTRY_REPLACE,
 		                     SEQ_PARSE_WITH_PERM |
 				     SEQ_PARSE_DEFAULT |
 				     SEQ_PARSE_MULTI,
@@ -181,7 +182,8 @@ restore(
 			status = 1;
 		}
 
-		error = do_set(path_p, &st, 0, seq);
+		args.mode = 0;
+		error = do_set(path_p, &st, 0, &args);
 		if (error != 0) {
 			status = 1;
 			goto resume;
@@ -205,14 +207,28 @@ restore(
 				status = 1;
 			}
 		}
+
+		mask = S_ISUID | S_ISGID | S_ISVTX;
+		if ((st.st_mode & mask) != (flags & mask)) {
+			if (!args.mode)
+				args.mode = st.st_mode;
+			args.mode &= (S_IRWXU | S_IRWXG | S_IRWXO);
+			if (chmod(path_p, flags | args.mode) != 0) {
+				fprintf(stderr, _("%s: %s: Cannot change "
+					          "mode: %s\n"),
+					progname, xquote(path_p, "\n\r"),
+					strerror(errno));
+				status = 1;
+			}
+		}
 resume:
 		if (path_p) {
 			free(path_p);
 			path_p = NULL;
 		}
-		if (seq) {
-			seq_free(seq);
-			seq = NULL;
+		if (args.seq) {
+			seq_free(args.seq);
+			args.seq = NULL;
 		}
 	}
 
@@ -221,9 +237,9 @@ getout:
 		free(path_p);
 		path_p = NULL;
 	}
-	if (seq) {
-		seq_free(seq);
-		seq = NULL;
+	if (args.seq) {
+		seq_free(args.seq);
+		args.seq = NULL;
 	}
 	return status;
 
@@ -280,17 +296,20 @@ int next_file(const char *arg, seq_t seq)
 {
 	char *line;
 	int errors = 0;
+	struct do_set_args args;
+
+	args.seq = seq;
 
 	if (strcmp(arg, "-") == 0) {
 		while ((line = next_line(stdin)))
-			errors = walk_tree(line, walk_flags, 0, do_set, seq);
+			errors = walk_tree(line, walk_flags, 0, do_set, &args);
 		if (!feof(stdin)) {
 			fprintf(stderr, _("%s: Standard input: %s\n"),
 				progname, strerror(errno));
 			errors = 1;
 		}
 	} else {
-		errors = walk_tree(arg, walk_flags, 0, do_set, seq);
+		errors = walk_tree(arg, walk_flags, 0, do_set, &args);
 	}
 	return errors ? 1 : 0;
 }

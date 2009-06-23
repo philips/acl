@@ -410,7 +410,8 @@ read_acl_comments(
 	int *line,
 	char **path_p,
 	uid_t *uid_p,
-	gid_t *gid_p)
+	gid_t *gid_p,
+	mode_t *flags)
 {
 	int c;
 	/*
@@ -429,6 +430,8 @@ read_acl_comments(
 		*uid_p = ACL_UNDEFINED_ID;
 	if (gid_p)
 		*gid_p = ACL_UNDEFINED_ID;
+	if (flags)
+		*flags = 0;
 
 	for(;;) {
 		c = fgetc(file);
@@ -493,6 +496,29 @@ read_acl_comments(
 				if (get_gid(unquote(cp), gid_p) != 0)
 					continue;
 			}
+		} else if (strncmp(cp, "flags:", 6) == 0) {
+			mode_t f = 0;
+
+			cp += 6;
+			SKIP_WS(cp);
+
+			if (cp[0] == 's')
+				f |= S_ISUID;
+			else if (cp[0] != '-')
+				goto fail;
+			if (cp[1] == 's')
+				f |= S_ISGID;
+			else if (cp[1] != '-')
+				goto fail;
+			if (cp[2] == 't')
+				f |= S_ISVTX;
+			else if (cp[2] != '-')
+				goto fail;
+			if (cp[3] != '\0')
+				goto fail;
+
+			if (flags)
+				*flags = f;
 		}
 	}
 	if (ferror(file))

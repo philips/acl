@@ -64,7 +64,8 @@ read_acl_comments(
 	int *line,
 	char **path_p,
 	uid_t *uid_p,
-	gid_t *gid_p);
+	gid_t *gid_p,
+	mode_t *flags);
 int
 read_acl_seq(
 	FILE *file,

@@ -423,6 +423,18 @@ acl_get_file_mode(const char *path_p)
 	return acl_from_mode(st.st_mode);
 }
 
+static const char *
+flagstr(mode_t mode)
+{
+	static char str[4];
+
+	str[0] = (mode & S_ISUID) ? 's' : '-';
+	str[1] = (mode & S_ISGID) ? 's' : '-';
+	str[2] = (mode & S_ISVTX) ? 't' : '-';
+	str[3] = '\0';
+	return str;
+}
+
 int do_print(const char *path_p, const struct stat *st, int walk_flags, void *unused)
 {
 	const char *default_prefix = NULL;
@@ -498,6 +510,8 @@ int do_print(const char *path_p, const struct stat *st, int walk_flags, void *un
 			       xquote(user_name(st->st_uid, opt_numeric), " \t\n\r"));
 			printf("# group: %s\n",
 			       xquote(group_name(st->st_gid, opt_numeric), " \t\n\r"));
+			if (st->st_mode & (S_ISVTX | S_ISUID | S_ISGID))
+				printf("# flags: %s\n", flagstr(st->st_mode));
 		}
 		if (acl != NULL) {
 			char *acl_text = acl_to_any_text(acl, NULL, '\n',

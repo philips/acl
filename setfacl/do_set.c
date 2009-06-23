@@ -34,6 +34,7 @@
 #include <dirent.h>
 #include <ftw.h>
 #include "sequence.h"
+#include "do_set.h"
 #include "parse.h"
 #include "config.h"
 #include "walk_tree.h"
@@ -262,7 +263,7 @@ do_set(
 	int walk_flags,
 	void *arg)
 {
-	const seq_t seq = (const seq_t)arg;
+	struct do_set_args *args = arg;
 	acl_t old_acl = NULL, old_default_acl = NULL;
 	acl_t acl = NULL, default_acl = NULL;
 	acl_t *xacl, *old_xacl;
@@ -290,7 +291,7 @@ do_set(
 		return 0;
 
 	/* Execute the commands in seq (read ACLs on demand) */
-	error = seq_get_cmd(seq, SEQ_FIRST_CMD, &cmd);
+	error = seq_get_cmd(args->seq, SEQ_FIRST_CMD, &cmd);
 	if (error == 0)
 		return 0;
 	while (error == 1) {
@@ -357,7 +358,7 @@ do_set(
 				goto fail;
 		}
 
-		error = seq_get_cmd(seq, SEQ_NEXT_CMD, &cmd);
+		error = seq_get_cmd(args->seq, SEQ_NEXT_CMD, &cmd);
 	}
 
 	if (error < 0)
@@ -467,19 +468,21 @@ do_set(
 		goto cleanup;
 	}
 	if (acl) {
+		int equiv_mode;
+		mode_t mode = 0;
+
+		equiv_mode = acl_equiv_mode(acl, &mode);
+
 		if (acl_set_file(path_p, ACL_TYPE_ACCESS, acl) != 0) {
 			if (errno == ENOSYS || errno == ENOTSUP) {
-				int saved_errno = errno;
-				mode_t mode;
-
-				if (acl_equiv_mode(acl, &mode) != 0) {
-					errno = saved_errno;
+				if (equiv_mode != 0)
 					goto fail;
-				} else if (chmod(path_p, mode) != 0)
+				else if (chmod(path_p, mode) != 0)
 					goto fail;
 			} else
 				goto fail;
 		}
+		args->mode = mode;
 	}
 	if (default_acl) {
 		if (S_ISDIR(st->st_mode)) {

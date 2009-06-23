@@ -21,7 +21,7 @@ include $(TOPDIR)/include/builddefs
 
 LTCOMMAND = setfacl
 CFILES = setfacl.c do_set.c sequence.c parse.c
-HFILES = sequence.h parse.h
+HFILES = sequence.h parse.h do_set.h
 
 LLDLIBS = $(LIBMISC) $(LIBACL) $(LIBATTR)
 LTDEPENDENCIES = $(LIBMISC) $(LIBACL)
