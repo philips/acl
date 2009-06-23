@@ -38,10 +38,10 @@ $(TESTS):
 	@echo "*** $@ ***"; perl run $@
 
 $(NFS):
-	@echo "NFS specific tests"; @echo "*** $@ ***"; perl run $@
+	@echo "NFS specific tests"; echo "*** $@ ***"; perl run $@
 
 $(ROOT):
-	@echo "Note: Tests must run as root"; @echo "*** $@ ***"; perl run $@
+	@echo "Note: Tests must run as root"; echo "*** $@ ***"; perl run $@
 
 .PHONY: $(TESTS) $(NFS) $(ROOT)
 .NOTPARALLEL:
