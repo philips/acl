@@ -110,8 +110,10 @@ the input set are discarded. (A warning is issued if that happens).
 .I \-\-restore=file
 Restore a permission backup created by `getfacl \-R' or similar. All permissions
 of a complete directory subtree are restored using this mechanism. If the input
-contains owner comments or group comments, and setfacl is run by root, the
-owner and owning group of all files are restored as well. This option cannot be mixed with other options except `\-\-test'.
+contains owner comments or group comments, setfacl attempts to restore the
+owner and owning group. If the input contains flags comments (which define the setuid,
+setgid, and sticky bits), setfacl sets those three bits accordingly; otherwise,
+it clears them. This option cannot be mixed with other options except `\-\-test'.
 .TP 4
 .I \-\-test
 Test mode. Instead of changing the ACLs of any files, the resulting ACLs are listed.
