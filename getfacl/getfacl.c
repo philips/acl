@@ -510,7 +510,7 @@ int do_print(const char *path_p, const struct stat *st, int walk_flags, void *un
 			       xquote(user_name(st->st_uid, opt_numeric), " \t\n\r"));
 			printf("# group: %s\n",
 			       xquote(group_name(st->st_gid, opt_numeric), " \t\n\r"));
-			if (st->st_mode & (S_ISVTX | S_ISUID | S_ISGID))
+			if ((st->st_mode & (S_ISVTX | S_ISUID | S_ISGID)) && !posixly_correct)
 				printf("# flags: %s\n", flagstr(st->st_mode));
 		}
 		if (acl != NULL) {
