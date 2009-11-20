@@ -19,7 +19,7 @@
 TOPDIR = ..
 include $(TOPDIR)/include/builddefs
 
-LSRCFILES = README Makefile.examples get-acl.c set-acl.c copy-acl.c
+LSRCFILES = README Makefile.examples get-acl.c set-acl.c copy-acl.c copyperm.c
 LDIRT = get-acl set-acl copy-acl
 
 include $(BUILDRULES)

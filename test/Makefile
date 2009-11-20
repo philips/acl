@@ -22,7 +22,7 @@ include $(TOPDIR)/include/builddefs
 TESTS = $(wildcard *.test)
 ROOT = $(wildcard root/*.test)
 NFS = $(wildcard nfs/*.test)
-LSRCFILES = run make-tree $(TESTS) $(ROOT) $(NFS)
+LSRCFILES = sort-getfacl-output run make-tree $(TESTS) $(ROOT) $(NFS)
 
 include $(BUILDRULES)
 
