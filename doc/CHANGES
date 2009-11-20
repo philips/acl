@@ -1,3 +1,8 @@
+acl 2.2.49 (19 November 2009)
+==========
+* Add missing files to tarball: tests/sort-getfacl-output and examples/copyperm.c
+* Update docs/CHANGES for 2.2.48 release
+
 acl 2.2.48 (31 July 2009)
 ==========
 * Make sure that getfacl -R only calls stat(2) on symlinks when it needs to.
