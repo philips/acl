@@ -136,8 +136,10 @@ restore(
 		backup_line = line;
 		error = read_acl_comments(file, &line, &path_p, &uid, &gid,
 					  &flags);
-		if (error < 0)
+		if (error < 0) {
+			error = -error;
 			goto fail;
+		}
 		if (error == 0)
 			return status;
 
@@ -158,10 +160,10 @@ restore(
 		}
 
 		if (!(args.seq = seq_init()))
-			goto fail;
+			goto fail_errno;
 		if (seq_append_cmd(args.seq, CMD_REMOVE_ACL, ACL_TYPE_ACCESS) ||
 		    seq_append_cmd(args.seq, CMD_REMOVE_ACL, ACL_TYPE_DEFAULT))
-			goto fail;
+			goto fail_errno;
 
 		error = read_acl_seq(file, args.seq, CMD_ENTRY_REPLACE,
 		                     SEQ_PARSE_WITH_PERM |
@@ -249,9 +251,11 @@ getout:
 	}
 	return status;
 
+fail_errno:
+	error = errno;
 fail:
 	fprintf(stderr, "%s: %s: %s\n", progname, xquote(filename, "\n\r"),
-		strerror(errno));
+		strerror(error));
 	status = 1;
 	goto getout;
 }
