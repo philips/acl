@@ -128,6 +128,7 @@ restore(
 	struct do_set_args args;
 	int line = 0, backup_line;
 	int error, status = 0;
+	int chmod_required = 0;
 
 	memset(&st, 0, sizeof(st));
 
@@ -206,10 +207,15 @@ restore(
 					strerror(errno));
 				status = 1;
 			}
+
+			/* chown() clears setuid/setgid so force a chmod if
+			 * S_ISUID/S_ISGID was expected */
+			if ((st.st_mode & flags) & (S_ISUID | S_ISGID))
+				chmod_required = 1;
 		}
 
 		mask = S_ISUID | S_ISGID | S_ISVTX;
-		if ((st.st_mode & mask) != (flags & mask)) {
+		if (chmod_required || ((st.st_mode & mask) != (flags & mask))) {
 			if (!args.mode)
 				args.mode = st.st_mode;
 			args.mode &= (S_IRWXU | S_IRWXG | S_IRWXO);
