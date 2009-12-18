@@ -27,17 +27,18 @@ acl_t
 acl_copy_int(const void *buf_p)
 {
 	const struct __acl *ext_acl = (struct __acl *)buf_p;
-	const struct __acl_entry *ent_p = ext_acl->x_entries, *end_p;
-	size_t size = ext_acl ? ext_acl->x_size : 0;
+	const struct __acl_entry *ent_p, *end_p;
+	size_t size;
 	int entries;
 	acl_obj *acl_obj_p;
 	acl_entry_obj *entry_obj_p;
 
-	if (!ext_acl || size < sizeof(struct __acl)) {
+	if (!ext_acl || ext_acl->x_size < sizeof(struct __acl)) {
 		errno = EINVAL;
 		return NULL;
 	}
-	size -= sizeof(struct __acl);
+	ent_p = ext_acl->x_entries;
+	size = ext_acl->x_size - sizeof(struct __acl);
 	if (size % sizeof(struct __acl_entry)) {
 		errno = EINVAL;
 		return NULL;
