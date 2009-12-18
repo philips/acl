@@ -525,8 +525,10 @@ read_acl_comments(
 		return -1;
 	return comments_read;
 fail:
-	if (path_p && *path_p)
+	if (path_p && *path_p) {
 		free(*path_p);
+		*path_p = NULL;
+	}
 	return -EINVAL;
 }
 
