@@ -424,3 +424,31 @@ Now, chmod should change the group_obj entry
 	> 
 
 	$ rmdir d
+
+Dangling symlink test http://savannah.nongnu.org/bugs/?28131
+
+	$ mkdir d
+	$ ln -s d/a d/b
+	$ getfacl -R d
+	> # file: d
+	> # owner: %TUSER
+	> # group: %TGROUP
+	> user::rwx
+	> group::rwx
+	> other::r-x
+	> 
+	$ setfacl -R -m u:bin:rw d
+	$ getfacl -RL d
+	> getfacl: d/b: No such file or directory
+	> # file: d
+	> # owner: %TUSER
+	> # group: %TGROUP
+	> user::rwx
+	> user:bin:rw-
+	> group::rwx
+	> mask::rwx
+	> other::r-x
+	> 
+	$ setfacl -RL -m u:bin:rw d
+	> setfacl: d/b: No such file or directory
+	$ rm -R d
