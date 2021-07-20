@@ -247,6 +247,16 @@ option description).
 .PP
 .SH EXAMPLES
 .PP
+A minimum ACL:
+.PP
+.nf
+  u::rwx,g::r-x,o::r-- file
+.fi
+.PP
+The file ACL is set so that the file's owner has "rwx", the file's
+group has read and execute, and others have read only access to the file.
+.P
+.PP
 Granting an additional user read access
 .RS
 .fam C
